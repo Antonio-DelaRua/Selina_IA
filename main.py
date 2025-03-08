@@ -4,11 +4,8 @@ from PIL import Image, ImageTk
 import openai
 import os
 
-
-
 # Configurar la API key de OpenAI
 openai.api_key = "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"
-
 
 def chat_with_bot(prompt):
     try:
@@ -118,6 +115,16 @@ def do_move(event):
 
     muneco_label.place(x=x, y=y)
 
+def apply_gravity():
+    x = muneco_label.winfo_x()
+    y = muneco_label.winfo_y()
+    if y < root.winfo_height() - muneco_label.winfo_height():
+        muneco_label.place(x=x, y=y+10)
+        root.after(50, apply_gravity)  # Aplicar gravedad cada 50 ms
+
+def on_right_click_release(event):
+    apply_gravity()
+
 # Crear la ventana principal de Tkinter
 root = tk.Tk()
 root.title("Muñeco Interactivo")
@@ -145,16 +152,24 @@ except Exception as e:
 
 # Crear un label para el muñeco y colocar en el canvas
 muneco_label = tk.Label(root, image=muneco_photo, bg='white')
-muneco_label.place(x=200, y=100)  # Colocar el muñeco en el centro de la ventana
+
+# Obtener las dimensiones de la pantalla y calcular la posición inicial del muñeco
+screen_width = root.winfo_screenwidth()
+screen_height = root.winfo_screenheight()
+initial_x = (screen_width // 2) - (200 // 2)
+initial_y = (screen_height // 2) - (200 // 2)
+
+# Colocar el muñeco en el centro de la ventana
+muneco_label.place(x=initial_x, y=initial_y)
+
+# Aplicar gravedad al iniciar la aplicación
+root.after(100, apply_gravity)
 
 # Asociar eventos para arrastrar el muñeco y doble clic para el input
 muneco_label.bind("<Button-1>", start_move)
 muneco_label.bind("<B1-Motion>", do_move)
 muneco_label.bind("<Double-1>", on_muneco_double_click)
-
-# Crear un label para mostrar la respuesta del chatbot
-response_label = tk.Label(root, text="", bg='grey', wraplength=400, font=("Arial", 14), justify="center")
-response_label.place(relx=0.5, rely=0.75, anchor='center')
+muneco_label.bind("<ButtonRelease-3>", on_right_click_release)
 
 # Ejecutar el bucle principal de Tkinter
 root.mainloop()
