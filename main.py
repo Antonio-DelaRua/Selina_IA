@@ -41,12 +41,12 @@ def chat_with_bot(prompt):
                 {"role": "system", "content": prompt},
             ],
             max_tokens=150,
-            temperature=0.7,
+            temperature=0.5,
         )
         return response.choices[0].message['content'].strip()
     except openai.error.OpenAIError as e:
         print(f"Error al llamar a la API de OpenAI: {e}")
-        return "Lo siento, ocurrió un error al intentar comunicarme con el chatbot."
+        return "HA HA HA HA no ha dicho la palabra magica."
 
 def on_muneco_double_click(event):
     def send_message(event=None):
@@ -83,10 +83,10 @@ def on_muneco_double_click(event):
     frame = Frame(input_window, bg='white')
     frame.pack(pady=10, padx=10, expand=True, fill='both')
 
-    send_button = Button(frame, text="Enviar", command=send_message, bg='blue', fg='white', font=("Arial", 14))
+    send_button = Button(frame, text="Enviar", command=send_message, bg='blue', fg='white', font=("Comic Sans MS", 12))
     send_button.pack(side='left', padx=10, pady=10, fill='y')
 
-    text_widget = Text(frame, font=("Arial", 14), wrap='word', height=1)
+    text_widget = Text(frame, font=("Times New Roman", 14), wrap='word', height=1)
     text_widget.pack(side='left', fill='both', expand=True)
     text_widget.bind("<KeyRelease>", on_text_change)
     text_widget.bind("<Return>", send_message)
@@ -95,6 +95,12 @@ def on_muneco_double_click(event):
     text_widget.focus_set()  # Enfocar automáticamente el campo de entrada
 
 def show_response(response_text):
+    def copy_to_clipboard(event=None):
+        response_text_widget.config(state=tk.NORMAL)
+        root.clipboard_clear()
+        root.clipboard_append(response_text_widget.get("1.0", tk.END))
+        response_text_widget.config(state=tk.DISABLED)
+
     response_window = Toplevel(root)
     response_window.title("Respuesta del Chatbot")
     
@@ -113,11 +119,16 @@ def show_response(response_text):
     response_window.geometry(f"{window_width}x{window_height}+{position_x}+{position_y}")
     response_window.configure(bg='white')
 
-    response_label = Label(response_window, text=response_text, bg='white', wraplength=350, font=("Arial", 14), justify="center")
-    response_label.pack(pady=20, padx=20, expand=True, fill='both')
+    frame = Frame(response_window, bg='white')
+    frame.pack(expand=True, fill='both')
 
-    close_button = Button(response_window, text="Cerrar", command=response_window.destroy, bg='red', fg='white', font=("Arial", 14))
-    close_button.pack(pady=10)
+    response_text_widget = Text(frame, bg='white', wrap='word', font=("Times New Roman", 14), padx=20, pady=20)
+    response_text_widget.insert(tk.END, response_text)
+    response_text_widget.config(state=tk.DISABLED)  # Hacer el widget de texto de solo lectura
+    response_text_widget.pack(expand=True, fill='both')
+
+    # Vincular Ctrl+Espacio para copiar el texto
+    response_window.bind("<Control-space>", copy_to_clipboard)
 
 def reset_api_key(event=None):
     if os.path.exists(CONFIG_FILE):
@@ -160,7 +171,7 @@ def on_right_click_release(event):
 
 # Crear la ventana principal de Tkinter
 root = tk.Tk()
-root.title("Muñeco Interactivo")
+root.title("ShanksGpt")
 root.configure(bg='white')  # Fondo blanco para la ventana
 
 # Configuración para ocupar toda la pantalla
