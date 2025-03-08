@@ -1,14 +1,37 @@
 import tkinter as tk
-from tkinter import Toplevel, Text, Button, Frame, Label
+from tkinter import Toplevel, Text, Button, Frame, Label, simpledialog
 from PIL import Image, ImageTk
 import openai
 import os
+import configparser
 
+# Ruta del archivo de configuración
+CONFIG_FILE = "config.ini"
 
+# Función para obtener la clave de API
+def get_api_key():
+    config = configparser.ConfigParser()
+    if not os.path.exists(CONFIG_FILE):
+        return prompt_for_api_key(config)
+    else:
+        config.read(CONFIG_FILE)
+        if 'DEFAULT' in config and 'OpenAIAPIKey' in config['DEFAULT']:
+            return config['DEFAULT']['OpenAIAPIKey']
+        else:
+            return prompt_for_api_key(config)
 
-# Configurar la API key de OpenAI
-openai.api_key = "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"
+def prompt_for_api_key(config):
+    api_key = simpledialog.askstring("API Key", "Por favor, introduce tu clave de API de OpenAI:")
+    if api_key:
+        config['DEFAULT'] = {'OpenAIAPIKey': api_key}
+        with open(CONFIG_FILE, 'w') as configfile:
+            config.write(configfile)
+        return api_key
+    else:
+        return None
 
+OPENAI_API_KEY = get_api_key()
+openai.api_key = OPENAI_API_KEY
 
 def chat_with_bot(prompt):
     try:
@@ -96,6 +119,13 @@ def show_response(response_text):
     close_button = Button(response_window, text="Cerrar", command=response_window.destroy, bg='red', fg='white', font=("Arial", 14))
     close_button.pack(pady=10)
 
+def reset_api_key(event=None):
+    if os.path.exists(CONFIG_FILE):
+        os.remove(CONFIG_FILE)
+    global OPENAI_API_KEY
+    OPENAI_API_KEY = get_api_key()
+    openai.api_key = OPENAI_API_KEY
+
 def start_move(event):
     global startX, startY
     startX = event.x
@@ -117,6 +147,16 @@ def do_move(event):
         y = root.winfo_height() - muneco_label.winfo_height()
 
     muneco_label.place(x=x, y=y)
+
+def apply_gravity():
+    x = muneco_label.winfo_x()
+    y = muneco_label.winfo_y()
+    if y < root.winfo_height() - muneco_label.winfo_height():
+        muneco_label.place(x=x, y=y+10)
+        root.after(50, apply_gravity)  # Aplicar gravedad cada 50 ms
+
+def on_right_click_release(event):
+    apply_gravity()
 
 # Crear la ventana principal de Tkinter
 root = tk.Tk()
@@ -145,16 +185,27 @@ except Exception as e:
 
 # Crear un label para el muñeco y colocar en el canvas
 muneco_label = tk.Label(root, image=muneco_photo, bg='white')
-muneco_label.place(x=200, y=100)  # Colocar el muñeco en el centro de la ventana
+
+# Obtener las dimensiones de la pantalla y calcular la posición inicial del muñeco
+screen_width = root.winfo_screenwidth()
+screen_height = root.winfo_screenheight()
+initial_x = (screen_width // 2) - (200 // 2)
+initial_y = (screen_height // 2) - (200 // 2)
+
+# Colocar el muñeco en el centro de la ventana
+muneco_label.place(x=initial_x, y=initial_y)
+
+# Aplicar gravedad al iniciar la aplicación
+root.after(100, apply_gravity)
 
 # Asociar eventos para arrastrar el muñeco y doble clic para el input
 muneco_label.bind("<Button-1>", start_move)
 muneco_label.bind("<B1-Motion>", do_move)
 muneco_label.bind("<Double-1>", on_muneco_double_click)
+muneco_label.bind("<ButtonRelease-3>", on_right_click_release)
 
-# Crear un label para mostrar la respuesta del chatbot
-response_label = tk.Label(root, text="", bg='grey', wraplength=400, font=("Arial", 14), justify="center")
-response_label.place(relx=0.5, rely=0.75, anchor='center')
+# Vincular Ctrl+1 para restablecer la clave de API
+root.bind("<Control-Key-1>", reset_api_key)
 
 # Ejecutar el bucle principal de Tkinter
 root.mainloop()
