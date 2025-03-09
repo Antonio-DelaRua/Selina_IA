@@ -1,7 +1,8 @@
 import tkinter as tk
-from tkinter import Toplevel, Text, Button, Frame, Label, simpledialog
+from tkinter import Toplevel, Text, Button, Frame, simpledialog
 from PIL import Image, ImageTk
-import openai
+import requests
+import json
 import os
 import configparser
 
@@ -15,37 +16,46 @@ def get_api_key():
         return prompt_for_api_key(config)
     else:
         config.read(CONFIG_FILE)
-        if 'DEFAULT' in config and 'OpenAIAPIKey' in config['DEFAULT']:
-            return config['DEFAULT']['OpenAIAPIKey']
+        if 'DEFAULT' in config and 'DeepSeekAPIKey' in config['DEFAULT']:
+            return config['DEFAULT']['DeepSeekAPIKey']
         else:
             return prompt_for_api_key(config)
 
 def prompt_for_api_key(config):
-    api_key = simpledialog.askstring("API Key", "Por favor, introduce tu clave de API de OpenAI:")
+    api_key = simpledialog.askstring("API Key", "Por favor, introduce tu clave de API de DeepSeek:")
     if api_key:
-        config['DEFAULT'] = {'OpenAIAPIKey': api_key}
+        config['DEFAULT'] = {'DeepSeekAPIKey': api_key}
         with open(CONFIG_FILE, 'w') as configfile:
             config.write(configfile)
         return api_key
     else:
         return None
 
-OPENAI_API_KEY = get_api_key()
-openai.api_key = OPENAI_API_KEY
+DEEPSEEK_API_KEY = get_api_key()
 
 def chat_with_bot(prompt):
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": prompt},
-            ],
-            max_tokens=150,
-            temperature=0.5,
+        response = requests.post(
+            url="https://openrouter.ai/api/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {DEEPSEEK_API_KEY}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "<YOUR_SITE_URL>",  # Opcional. URL del sitio para rankings en openrouter.ai.
+                "X-Title": "<YOUR_SITE_NAME>",  # Opcional. Título del sitio para rankings en openrouter.ai.
+            },
+            data=json.dumps({
+                "model": "deepseek/deepseek-r1:free",
+                "messages": [
+                    {"role": "user", "content": prompt}
+                ],
+                "max_tokens": 150,
+                "temperature": 0.5,
+            })
         )
-        return response.choices[0].message['content'].strip()
-    except openai.error.OpenAIError as e:
-        print(f"Error al llamar a la API de OpenAI: {e}")
+        response_data = response.json()
+        return response_data['choices'][0]['message']['content'].strip()
+    except Exception as e:
+        print(f"Error al llamar a la API de DeepSeek: {e}")
         return "HA HA HA HA no ha dicho la palabra magica."
 
 def on_muneco_double_click(event):
@@ -133,9 +143,8 @@ def show_response(response_text):
 def reset_api_key(event=None):
     if os.path.exists(CONFIG_FILE):
         os.remove(CONFIG_FILE)
-    global OPENAI_API_KEY
-    OPENAI_API_KEY = get_api_key()
-    openai.api_key = OPENAI_API_KEY
+    global DEEPSEEK_API_KEY
+    DEEPSEEK_API_KEY = get_api_key()
 
 def start_move(event):
     global startX, startY
