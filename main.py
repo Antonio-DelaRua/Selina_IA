@@ -4,6 +4,7 @@ from PIL import Image, ImageTk
 import requests
 import json
 import threading
+import os
 
 # Direct API Key
 OPENROUTER_API_KEY = "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"
@@ -207,23 +208,36 @@ def do_move(event):
     muneco_label.place(x=x, y=y)
 
 def apply_gravity():
-    x = muneco_label.winfo_x()
-    y = muneco_label.winfo_y()
-    if y < root.winfo_height() - muneco_label.winfo_height():
-        muneco_label.place(x=x, y=y+10)
-        root.after(50, apply_gravity)  # Aplicar gravedad cada 50 ms
+    def fall_animation(index=1):  # Comenzar con la imagen fall_2
+        if index == 1:
+            muneco_label.config(image=fall_images[1])
+            x = muneco_label.winfo_x()
+            y = muneco_label.winfo_y()
+            if y < root.winfo_height() - muneco_label.winfo_height():
+                muneco_label.place(x=x, y=y+10)
+                root.after(50, fall_animation, 1)  # Mantener la imagen fall_2
+            else:
+                root.after(100, fall_animation, 2)  # Cambiar a la imagen fall_3
+        elif index == 2:
+            muneco_label.config(image=fall_images[2])
+            root.after(100, fall_animation, 0)  # Cambiar a la imagen fall_1
+        else:
+            muneco_label.config(image=fall_images[0])
+
+    fall_animation()
 
 def move_to_edge(direction):
-    x = muneco_label.winfo_x()
-    y = muneco_label.winfo_y()
-    if direction == "left":
-        if x > 0:
+    def walk_animation(index=0):
+        x = muneco_label.winfo_x()
+        y = muneco_label.winfo_y()
+        if direction == "left" and x > 0:
             muneco_label.place(x=x-10, y=y)
-            root.after(50, lambda: move_to_edge(direction))
-    elif direction == "right":
-        if x < root.winfo_width() - muneco_label.winfo_width():
+            root.after(100, walk_animation, index + 1)
+        elif direction == "right" and x < root.winfo_width() - muneco_label.winfo_width():
             muneco_label.place(x=x+10, y=y)
-            root.after(50, lambda: move_to_edge(direction))
+            root.after(100, walk_animation, index + 1)
+
+    walk_animation()
 
 def show_animation_menu(event):
     def select_animation(animation):
@@ -302,6 +316,9 @@ initial_y = (screen_height // 2) - (200 // 2)
 
 # Colocar el muñeco en el centro de la ventana
 muneco_label.place(x=initial_x, y=initial_y)
+
+# Ahora que la ventana principal está creada, cargar las imágenes de animación
+fall_images = [ImageTk.PhotoImage(Image.open(f'fall_{i}.png').resize((200, 200), Image.LANCZOS)) for i in range(1, 4)]
 
 # Aplicar gravedad al iniciar la aplicación
 root.after(100, apply_gravity)
