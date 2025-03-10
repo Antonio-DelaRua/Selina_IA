@@ -23,7 +23,7 @@ def chat_with_bot(prompt, update_callback, finish_callback):
                 "messages": [
                     {"role": "user", "content": prompt}
                 ],
-                "max_tokens": 650,
+                "max_tokens": 850,
                 "temperature": 0.5,
                 "stream": True,  # Habilitar la transmisión de respuestas
             }),
@@ -83,7 +83,7 @@ def on_muneco_double_click(event):
     send_button = Button(frame, text="Enviar", command=send_message, bg='blue', fg='white', font=("Comic Sans MS", 12))
     send_button.pack(side='left', padx=10, pady=10, fill='y')
 
-    text_widget = Text(frame, font=("Times New Roman", 14), wrap='word', height=1, spacing1=5, spacing3=10)  # Añadir espaciado adicional entre líneas y párrafos
+    text_widget = Text(frame, font=("Inter", 14), wrap='word', height=1, spacing1=5, spacing3=10)  # Añadir espaciado adicional entre líneas y párrafos
     text_widget.pack(side='left', fill='both', expand=True)
     text_widget.bind("<KeyRelease>", on_text_change)
     text_widget.bind("<Return>", send_message)
@@ -162,8 +162,8 @@ def show_response():
     frame = Frame(response_window, bg='white')
     frame.pack(expand=True, fill='both')
 
-    response_text_widget = Text(frame, bg='white', wrap='word', font=("Times New Roman", 14), padx=20, pady=20, spacing1=5, spacing3=10)  # Añadir espaciado adicional entre líneas y párrafos
-    response_text_widget.tag_configure("code", font=("Courier", 12), background="#f4f4f4", spacing3=10)
+    response_text_widget = Text(frame, bg='white', wrap='word', font=("Inter", 12), padx=20, pady=20, spacing1=5, spacing3=10)  # Añadir espaciado adicional entre líneas y párrafos
+    response_text_widget.tag_configure("code", font=("Courier", 12), background="#f4f4f4", spacing3=10, lmargin1=20, lmargin2=20)
     response_text_widget.tag_configure("bold", font=("Times New Roman", 14, "bold"))
 
     response_text_widget.pack(expand=True, fill='both')
@@ -219,6 +219,12 @@ root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(), root.winfo_screenhe
 root.attributes("-transparentcolor", "white")
 root.attributes("-topmost", True)
 root.overrideredirect(True)  # Hacer la ventana sin bordes
+
+# Intentar cargar la fuente "Inter" después de crear la ventana principal
+try:
+    root.option_add("*Font", "Inter 14")
+except Exception as e:
+    print(f"Error al cargar la fuente 'Inter': {e}")
 
 # Crear un canvas
 canvas = tk.Canvas(root, bg='white', highlightthickness=0)
