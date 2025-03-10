@@ -4,6 +4,7 @@ from PIL import Image, ImageTk
 import requests
 import json
 import threading
+import speech_recognition as sr
 import os
 
 # Direct API Key
@@ -64,6 +65,20 @@ def on_muneco_double_click(event):
         new_height = min(10, lines)  # Limitar a un máximo de 10 líneas visibles
         text_widget.config(height=new_height)
 
+    def recognize_speech():
+        recognizer = sr.Recognizer()
+        with sr.Microphone() as source:
+            try:
+                print("Listening...")
+                audio = recognizer.listen(source, timeout=5)
+                recognized_text = recognizer.recognize_google(audio, language='es-ES')
+                text_widget.delete("1.0", tk.END)
+                text_widget.insert(tk.END, recognized_text)
+            except sr.UnknownValueError:
+                print("Could not understand the audio")
+            except sr.RequestError as e:
+                print(f"Error with the speech recognition service: {e}")
+
     input_window = Toplevel(root)
     
     # Obtener las dimensiones de la pantalla
@@ -87,6 +102,9 @@ def on_muneco_double_click(event):
 
     send_button = Button(frame, text="Enviar", command=send_message, bg='grey', fg='white', font=("Comic Sans MS", 12))
     send_button.pack(side='left', padx=10, pady=10, fill='y')
+
+    voice_button = Button(frame, text="Hablar", command=recognize_speech, bg='grey', fg='white', font=("Comic Sans MS", 12))
+    voice_button.pack(side='left', padx=10, pady=10, fill='y')
 
     text_widget = Text(frame, font=("Comic Sans MS", 13), wrap='word', height=1, spacing1=5, spacing3=5,  padx=10)  # Añadir espaciado adicional entre líneas y párrafos
     text_widget.pack(side='left', fill='both', expand=True)
@@ -173,7 +191,7 @@ def show_response():
     response_frame = Frame(frame, bg='#ebe8e8', bd=0.5, relief='solid')
     response_frame.pack(expand=True, fill='both', padx=10, pady=10)
 
-    response_text_widget = Text(response_frame, bg='#ebe8e8', wrap='word', font=("Inter", 14), padx=20, pady=20, spacing1=5, spacing3=5, bd=0)  # Añadir espaciado adicional entre líneas y párrafos
+    response_text_widget = Text(response_frame, bg='#ebe8e8', wrap='word', font=("Verdana", 13), padx=20, pady=20, spacing1=5, spacing3=5, bd=0)  # Añadir espaciado adicional entre líneas y párrafos
     response_text_widget.tag_configure("code", font=("Courier", 12), background="#f4f4f4", spacing3=10, lmargin1=20, lmargin2=20)  # Añadir margen a la izquierda
     response_text_widget.tag_configure("bold", font=("Times New Roman", 14, "bold"))
 
@@ -262,14 +280,19 @@ def show_animation_menu(event):
     position_x = x + muneco_label.winfo_width()
     position_y = y
 
+    # Ajustar la posición del menú si el muñeco está cerca de la parte inferior de la pantalla
+    screen_height = root.winfo_screenheight()
+    if position_y + menu_height > screen_height:
+        position_y = screen_height - menu_height - 10  # Margen de 10 píxeles desde el borde inferior
+
     animation_menu.geometry(f"{menu_width}x{menu_height}+{position_x}+{position_y}")
     animation_menu.configure(bg='white')
 
     Frame(animation_menu, bg='white').pack(expand=True, fill='both')
 
-    Button(animation_menu, text="Gravedad", command=lambda: select_animation("Gravedad"), bg='grey', fg='white', font=("Calibri", 12)).pack(pady=10)
-    Button(animation_menu, text="Mover a la izquierda", command=lambda: select_animation("Mover a la izquierda"), bg='grey', fg='white', font=("Calibri", 12)).pack(pady=10)
-    Button(animation_menu, text="Mover a la derecha", command=lambda: select_animation("Mover a la derecha"), bg='grey', fg='white', font=("Calibri", 12)).pack(pady=10)
+    Button(animation_menu, text="Gravedad", command=lambda: select_animation("Gravedad"), bg='grey', fg='white', font=("Comic Sans MS", 12)).pack(pady=10)
+    Button(animation_menu, text="Mover a la izquierda", command=lambda: select_animation("Mover a la izquierda"), bg='grey', fg='white', font=("Comic Sans MS", 12)).pack(pady=10)
+    Button(animation_menu, text="Mover a la derecha", command=lambda: select_animation("Mover a la derecha"), bg='grey', fg='white', font=("Comic Sans MS", 12)).pack(pady=10)
 
 def on_right_click_release(event):
     show_animation_menu(event)
