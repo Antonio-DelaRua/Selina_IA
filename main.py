@@ -267,9 +267,9 @@ def show_animation_menu(event):
 
     Frame(animation_menu, bg='white').pack(expand=True, fill='both')
 
-    Button(animation_menu, text="Gravedad", command=lambda: select_animation("Gravedad"), bg='grey', fg='white', font=("Comic Sans MS", 12)).pack(pady=10)
-    Button(animation_menu, text="Mover a la izquierda", command=lambda: select_animation("Mover a la izquierda"), bg='grey', fg='white', font=("Comic Sans MS", 12)).pack(pady=10)
-    Button(animation_menu, text="Mover a la derecha", command=lambda: select_animation("Mover a la derecha"), bg='grey', fg='white', font=("Comic Sans MS", 12)).pack(pady=10)
+    Button(animation_menu, text="Gravedad", command=lambda: select_animation("Gravedad"), bg='grey', fg='white', font=("Calibri", 12)).pack(pady=10)
+    Button(animation_menu, text="Mover a la izquierda", command=lambda: select_animation("Mover a la izquierda"), bg='grey', fg='white', font=("Calibri", 12)).pack(pady=10)
+    Button(animation_menu, text="Mover a la derecha", command=lambda: select_animation("Mover a la derecha"), bg='grey', fg='white', font=("Calibri", 12)).pack(pady=10)
 
 def on_right_click_release(event):
     show_animation_menu(event)
