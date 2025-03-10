@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import Toplevel, Text, Button, Frame, simpledialog
+from tkinter import Toplevel, Text, Button, Frame
 from PIL import Image, ImageTk
 import requests
 import json
@@ -12,6 +12,11 @@ OPENROUTER_API_KEY = "sk-or-v1-48dc3baac2d286c938b960fbf8e57d9e5c4ac56d617dd6893
 
 # Historial de la conversación
 conversation_history = []
+
+# Variable de estado para el reconocimiento de voz
+is_recording = False
+recognizer = sr.Recognizer()
+audio_data = None
 
 def chat_with_bot(prompt, update_callback, finish_callback):
     global conversation_history
@@ -65,19 +70,43 @@ def on_muneco_double_click(event):
         new_height = min(10, lines)  # Limitar a un máximo de 10 líneas visibles
         text_widget.config(height=new_height)
 
+    def toggle_recording():
+        global is_recording
+
+        if is_recording:
+            # Stop recording
+            is_recording = False
+            status_label.config(text="Grabación detenida. Procesando...")
+        else:
+            # Start recording in a new thread
+            is_recording = True
+            status_label.config(text="Grabando...")
+            threading.Thread(target=recognize_speech).start()
+
     def recognize_speech():
-        recognizer = sr.Recognizer()
+        global is_recording, audio_data, recognizer
+
         with sr.Microphone() as source:
-            try:
-                print("Listening...")
-                audio = recognizer.listen(source, timeout=5)
-                recognized_text = recognizer.recognize_google(audio, language='es-ES')
-                text_widget.delete("1.0", tk.END)
-                text_widget.insert(tk.END, recognized_text)
-            except sr.UnknownValueError:
-                print("Could not understand the audio")
-            except sr.RequestError as e:
-                print(f"Error with the speech recognition service: {e}")
+            # Ajustar el nivel de energía para el reconocimiento de voz
+            recognizer.adjust_for_ambient_noise(source, duration=1)
+            while is_recording:
+                try:
+                    print("Listening...")
+                    audio = recognizer.listen(source, timeout=10)
+                    recognized_text = recognizer.recognize_google(audio, language='es-ES')
+                    text_widget.delete("1.0", tk.END)
+                    text_widget.insert(tk.END, recognized_text)
+                    send_message()
+                    is_recording = False
+                except sr.WaitTimeoutError:
+                    print("Tiempo de espera agotado para la escucha")
+                    is_recording = False
+                except sr.UnknownValueError:
+                    print("No se pudo entender el audio")
+                    is_recording = False
+                except sr.RequestError as e:
+                    print(f"Error con el servicio de reconocimiento de voz: {e}")
+                    is_recording = False
 
     input_window = Toplevel(root)
     
@@ -103,10 +132,19 @@ def on_muneco_double_click(event):
     send_button = Button(frame, text="Enviar", command=send_message, bg='grey', fg='white', font=("Comic Sans MS", 12))
     send_button.pack(side='left', padx=10, pady=10, fill='y')
 
-    voice_button = Button(frame, text="Hablar", command=recognize_speech, bg='grey', fg='white', font=("Comic Sans MS", 12))
+    # Cargar la imagen del micrófono
+    mic_image = Image.open("microphone.png")
+    mic_image = mic_image.resize((24, 24), Image.LANCZOS)  # Redimensionar la imagen si es necesario
+    mic_photo = ImageTk.PhotoImage(mic_image)
+
+    voice_button = Button(frame, image=mic_photo, command=toggle_recording, bg='grey', fg='white')
+    voice_button.image = mic_photo  # Guardar una referencia para evitar que la imagen sea recolectada por el garbage collector
     voice_button.pack(side='left', padx=10, pady=10, fill='y')
 
-    text_widget = Text(frame, font=("Comic Sans MS", 13), wrap='word', height=1, spacing1=5, spacing3=5,  padx=10)  # Añadir espaciado adicional entre líneas y párrafos
+    status_label = tk.Label(frame, text="", bg='white', fg='red', font=("Comic Sans MS", 12))
+    status_label.pack(side='left', padx=10)
+
+    text_widget = Text(frame, font=("Comic Sans MS", 13), wrap='word', height=1, spacing1=5, spacing3=5, padx=10, highlightthickness=0, bd=1, relief='solid')  # Borde completo
     text_widget.pack(side='left', fill='both', expand=True)
     text_widget.bind("<KeyRelease>", on_text_change)
     text_widget.bind("<Return>", send_message)
@@ -159,7 +197,7 @@ def show_response():
                 self.text_widget.insert(tk.END, self.complete_text)
 
         def insert_code_block(self, text):
-            self.text_widget.insert(tk.END, "\n```java\n", "code")
+            self.text_widget.insert(tk.END, "\n```\n", "code")
             self.text_widget.insert(tk.END, text, "code")
             self.text_widget.insert(tk.END, "\n```\n", "code")
             copy_button = Button(self.text_widget, text="Copiar", command=lambda: copy_to_clipboard(text), bg='grey', fg='white', font=("Comic Sans MS", 8))
@@ -191,7 +229,7 @@ def show_response():
     response_frame = Frame(frame, bg='#ebe8e8', bd=0.5, relief='solid')
     response_frame.pack(expand=True, fill='both', padx=10, pady=10)
 
-    response_text_widget = Text(response_frame, bg='#ebe8e8', wrap='word', font=("Verdana", 13), padx=20, pady=20, spacing1=5, spacing3=5, bd=0)  # Añadir espaciado adicional entre líneas y párrafos
+    response_text_widget = Text(response_frame, bg='#ebe8e8', wrap='word', font=("Inter", 14), padx=20, pady=20, spacing1=5, spacing3=5, bd=0)  # Añadir espaciado adicional entre líneas y párrafos
     response_text_widget.tag_configure("code", font=("Courier", 12), background="#f4f4f4", spacing3=10, lmargin1=20, lmargin2=20)  # Añadir margen a la izquierda
     response_text_widget.tag_configure("bold", font=("Times New Roman", 14, "bold"))
 
@@ -249,9 +287,11 @@ def move_to_edge(direction):
         x = muneco_label.winfo_x()
         y = muneco_label.winfo_y()
         if direction == "left" and x > 0:
+            muneco_label.config(image=walk_images[index % len(walk_images)])
             muneco_label.place(x=x-10, y=y)
             root.after(100, walk_animation, index + 1)
         elif direction == "right" and x < root.winfo_width() - muneco_label.winfo_width():
+            muneco_label.config(image=walk_images[index % len(walk_images)])
             muneco_label.place(x=x+10, y=y)
             root.after(100, walk_animation, index + 1)
 
@@ -342,6 +382,7 @@ muneco_label.place(x=initial_x, y=initial_y)
 
 # Ahora que la ventana principal está creada, cargar las imágenes de animación
 fall_images = [ImageTk.PhotoImage(Image.open(f'fall_{i}.png').resize((200, 200), Image.LANCZOS)) for i in range(1, 4)]
+walk_images = [ImageTk.PhotoImage(Image.open(f'walk_left_{i}.png').resize((200, 200), Image.LANCZOS)) for i in range(1, 4)]
 
 # Aplicar gravedad al iniciar la aplicación
 root.after(100, apply_gravity)
