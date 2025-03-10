@@ -3,48 +3,22 @@ from tkinter import Toplevel, Text, Button, Frame, simpledialog
 from PIL import Image, ImageTk
 import requests
 import json
-import os
-import configparser
 
-# Ruta del archivo de configuración
-CONFIG_FILE = "config.ini"
-
-# Función para obtener la clave de API
-def get_api_key():
-    config = configparser.ConfigParser()
-    if not os.path.exists(CONFIG_FILE):
-        return prompt_for_api_key(config)
-    else:
-        config.read(CONFIG_FILE)
-        if 'DEFAULT' in config and 'DeepSeekAPIKey' in config['DEFAULT']:
-            return config['DEFAULT']['DeepSeekAPIKey']
-        else:
-            return prompt_for_api_key(config)
-
-def prompt_for_api_key(config):
-    api_key = simpledialog.askstring("API Key", "Por favor, introduce tu clave de API de DeepSeek:")
-    if api_key:
-        config['DEFAULT'] = {'DeepSeekAPIKey': api_key}
-        with open(CONFIG_FILE, 'w') as configfile:
-            config.write(configfile)
-        return api_key
-    else:
-        return None
-
-DEEPSEEK_API_KEY = get_api_key()
+# Direct API Key
+OPENROUTER_API_KEY = "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"
 
 def chat_with_bot(prompt):
     try:
         response = requests.post(
             url="https://openrouter.ai/api/v1/chat/completions",
             headers={
-                "Authorization": f"Bearer {DEEPSEEK_API_KEY}",
+                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
                 "Content-Type": "application/json",
                 "HTTP-Referer": "<YOUR_SITE_URL>",  # Opcional. URL del sitio para rankings en openrouter.ai.
                 "X-Title": "<YOUR_SITE_NAME>",  # Opcional. Título del sitio para rankings en openrouter.ai.
             },
             data=json.dumps({
-                "model": "deepseek/deepseek-r1:free",
+                "model": "meta-llama/llama-3.3-70b-instruct:free",
                 "messages": [
                     {"role": "user", "content": prompt}
                 ],
@@ -55,7 +29,7 @@ def chat_with_bot(prompt):
         response_data = response.json()
         return response_data['choices'][0]['message']['content'].strip()
     except Exception as e:
-        print(f"Error al llamar a la API de DeepSeek: {e}")
+        print(f"Error al llamar a la API de OpenRouter: {e}")
         return "HA HA HA HA no ha dicho la palabra magica."
 
 def on_muneco_double_click(event):
@@ -141,10 +115,8 @@ def show_response(response_text):
     response_window.bind("<Control-space>", copy_to_clipboard)
 
 def reset_api_key(event=None):
-    if os.path.exists(CONFIG_FILE):
-        os.remove(CONFIG_FILE)
-    global DEEPSEEK_API_KEY
-    DEEPSEEK_API_KEY = get_api_key()
+    global OPENROUTER_API_KEY
+    OPENROUTER_API_KEY = simpledialog.askstring("API Key", "Por favor, introduce tu clave de API de OpenRouter:")
 
 def start_move(event):
     global startX, startY
