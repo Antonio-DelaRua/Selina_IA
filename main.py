@@ -3,11 +3,12 @@ from tkinter import Toplevel, Text, Button, Frame, simpledialog
 from PIL import Image, ImageTk
 import requests
 import json
+import threading
 
 # Direct API Key
 OPENROUTER_API_KEY = "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"
 
-def chat_with_bot(prompt):
+def chat_with_bot(prompt, update_callback, finish_callback):
     try:
         response = requests.post(
             url="https://openrouter.ai/api/v1/chat/completions",
@@ -22,22 +23,34 @@ def chat_with_bot(prompt):
                 "messages": [
                     {"role": "user", "content": prompt}
                 ],
-                "max_tokens": 150,
+                "max_tokens": 650,
                 "temperature": 0.5,
-            })
+                "stream": True,  # Habilitar la transmisión de respuestas
+            }),
+            stream=True
         )
-        response_data = response.json()
-        return response_data['choices'][0]['message']['content'].strip()
+        for line in response.iter_lines():
+            if line:
+                decoded_line = line.decode('utf-8')
+                if decoded_line.startswith("data: "):
+                    decoded_line = decoded_line[6:]
+                    if decoded_line != "[DONE]":
+                        response_data = json.loads(decoded_line)
+                        choice = response_data.get('choices', [{}])[0]
+                        message_content = choice.get('delta', {}).get('content', '')
+                        update_callback(message_content)
+        finish_callback()  # Indicar que el stream ha finalizado
     except Exception as e:
         print(f"Error al llamar a la API de OpenRouter: {e}")
-        return "HA HA HA HA no ha dicho la palabra magica."
+        update_callback("HA HA HA HA no ha dicho la palabra magica.")
+        finish_callback()
 
 def on_muneco_double_click(event):
     def send_message(event=None):
         user_text = text_widget.get("1.0", tk.END).strip()
         if user_text:
-            chatbot_response = chat_with_bot(user_text)
-            show_response(chatbot_response)
+            response_window = show_response()
+            threading.Thread(target=chat_with_bot, args=(user_text, response_window.update_response, response_window.finish_stream)).start()
         input_window.destroy()
 
     def on_text_change(event):
@@ -70,7 +83,7 @@ def on_muneco_double_click(event):
     send_button = Button(frame, text="Enviar", command=send_message, bg='blue', fg='white', font=("Comic Sans MS", 12))
     send_button.pack(side='left', padx=10, pady=10, fill='y')
 
-    text_widget = Text(frame, font=("Times New Roman", 14), wrap='word', height=1)
+    text_widget = Text(frame, font=("Times New Roman", 14), wrap='word', height=1, spacing1=5, spacing3=10)  # Añadir espaciado adicional entre líneas y párrafos
     text_widget.pack(side='left', fill='both', expand=True)
     text_widget.bind("<KeyRelease>", on_text_change)
     text_widget.bind("<Return>", send_message)
@@ -78,28 +91,58 @@ def on_muneco_double_click(event):
 
     text_widget.focus_set()  # Enfocar automáticamente el campo de entrada
 
-def show_response(response_text):
+def show_response():
     def copy_to_clipboard(text):
         root.clipboard_clear()
         root.clipboard_append(text)
         root.update()  # Actualizar el portapapeles
 
-    def insert_code_block(widget, text):
-        lines = text.split('\n')
-        widget.insert(tk.END, "\n```", "code")
-        for line in lines:
-            widget.insert(tk.END, f"\n    {line}", "code")
-        widget.insert(tk.END, "\n```", "code")
-        widget.insert(tk.END, "\n")
+    class ResponseWindow:
+        def __init__(self, text_widget):
+            self.text_widget = text_widget
+            self.stream_finished = False
+            self.complete_text = ""
 
-        # Crear un frame para el botón de copiar y colocarlo al final del bloque de código
-        copy_frame = Frame(widget, bg="#f4f4f4")
-        copy_frame.place(relx=0.98, rely=0.01, anchor='ne')
-        copy_button = Button(copy_frame, text="Copiar", command=lambda: copy_to_clipboard(text), bg='grey', fg='white', font=("Comic Sans MS", 8))
-        copy_button.pack()
+        def update_response(self, new_text):
+            self.complete_text += new_text
+            self.text_widget.insert(tk.END, new_text)
+            self.text_widget.yview(tk.END)  # Desplazar la vista hacia el final del texto
+            self.text_widget.update_idletasks()
+
+        def finish_stream(self):
+            self.stream_finished = True
+            self.apply_formatting()  # Aplicar formateo una vez finalizado el stream
+
+        def apply_formatting(self):
+            self.text_widget.delete("1.0", tk.END)
+            if "```" in self.complete_text or "**" in self.complete_text:
+                parts = self.complete_text.split("```")
+                for i, part in enumerate(parts):
+                    if i % 2 == 0:
+                        if "**" in part:
+                            bold_parts = part.split("**")
+                            for j, bold_part in enumerate(bold_parts):
+                                if j % 2 == 0:
+                                    self.text_widget.insert(tk.END, bold_part)
+                                else:
+                                    self.text_widget.insert(tk.END, bold_part, "bold")
+                        else:
+                            self.text_widget.insert(tk.END, part)
+                    else:
+                        self.insert_code_block(part)
+            else:
+                self.text_widget.insert(tk.END, self.complete_text)
+
+        def insert_code_block(self, text):
+            self.text_widget.insert(tk.END, "\n```java\n", "code")
+            self.text_widget.insert(tk.END, text, "code")
+            self.text_widget.insert(tk.END, "\n```\n", "code")
+            copy_button = Button(self.text_widget, text="Copiar", command=lambda: copy_to_clipboard(text), bg='grey', fg='white', font=("Comic Sans MS", 8))
+            self.text_widget.window_create(tk.END, window=copy_button)
+            self.text_widget.insert(tk.END, "\n\n")
 
     response_window = Toplevel(root)
-    response_window.title("Respuesta del Chatbot")
+    response_window.title("Shanks")
     
     # Obtener las dimensiones de la pantalla
     screen_width = root.winfo_screenwidth()
@@ -119,26 +162,20 @@ def show_response(response_text):
     frame = Frame(response_window, bg='white')
     frame.pack(expand=True, fill='both')
 
-    response_text_widget = Text(frame, bg='white', wrap='word', font=("Times New Roman", 14), padx=20, pady=20)
-    response_text_widget.tag_configure("code", font=("Courier", 12), background="#f4f4f4")
-    
-    if "```" in response_text:
-        parts = response_text.split("```")
-        for i, part in enumerate(parts):
-            if i % 2 == 0:
-                response_text_widget.insert(tk.END, part)
-            else:
-                insert_code_block(response_text_widget, part)
-    else:
-        response_text_widget.insert(tk.END, response_text)
-        
-    response_text_widget.config(state=tk.DISABLED)  # Hacer el widget de texto de solo lectura
+    response_text_widget = Text(frame, bg='white', wrap='word', font=("Times New Roman", 14), padx=20, pady=20, spacing1=5, spacing3=10)  # Añadir espaciado adicional entre líneas y párrafos
+    response_text_widget.tag_configure("code", font=("Courier", 12), background="#f4f4f4", spacing3=10)
+    response_text_widget.tag_configure("bold", font=("Times New Roman", 14, "bold"))
+
     response_text_widget.pack(expand=True, fill='both')
 
     # Vincular Ctrl+Espacio para copiar el texto
-    response_window.bind("<Control-space>", lambda event: copy_to_clipboard(response_text))
+    response_window.bind("<Control-space>", lambda event: copy_to_clipboard(response_text_widget.get("1.0", tk.END)))
 
+    return ResponseWindow(response_text_widget)
 
+def reset_api_key(event=None):
+    global OPENROUTER_API_KEY
+    OPENROUTER_API_KEY = simpledialog.askstring("API Key", "Por favor, introduce tu clave de API de OpenRouter:")
 
 def start_move(event):
     global startX, startY
@@ -218,7 +255,8 @@ muneco_label.bind("<B1-Motion>", do_move)
 muneco_label.bind("<Double-1>", on_muneco_double_click)
 muneco_label.bind("<ButtonRelease-3>", on_right_click_release)
 
-
+# Vincular Ctrl+1 para restablecer la clave de API
+root.bind("<Control-Key-1>", reset_api_key)
 
 # Ejecutar el bucle principal de Tkinter
 root.mainloop()
