@@ -79,11 +79,24 @@ def on_muneco_double_click(event):
     text_widget.focus_set()  # Enfocar automáticamente el campo de entrada
 
 def show_response(response_text):
-    def copy_to_clipboard(event=None):
-        response_text_widget.config(state=tk.NORMAL)
+    def copy_to_clipboard(text):
         root.clipboard_clear()
-        root.clipboard_append(response_text_widget.get("1.0", tk.END))
-        response_text_widget.config(state=tk.DISABLED)
+        root.clipboard_append(text)
+        root.update()  # Actualizar el portapapeles
+
+    def insert_code_block(widget, text):
+        lines = text.split('\n')
+        widget.insert(tk.END, "\n```", "code")
+        for line in lines:
+            widget.insert(tk.END, f"\n    {line}", "code")
+        widget.insert(tk.END, "\n```", "code")
+        widget.insert(tk.END, "\n")
+
+        # Crear un frame para el botón de copiar y colocarlo al final del bloque de código
+        copy_frame = Frame(widget, bg="#f4f4f4")
+        copy_frame.place(relx=0.98, rely=0.01, anchor='ne')
+        copy_button = Button(copy_frame, text="Copiar", command=lambda: copy_to_clipboard(text), bg='grey', fg='white', font=("Comic Sans MS", 8))
+        copy_button.pack()
 
     response_window = Toplevel(root)
     response_window.title("Respuesta del Chatbot")
@@ -93,8 +106,8 @@ def show_response(response_text):
     screen_height = root.winfo_screenheight()
     
     # Dimensiones de la ventana de respuesta
-    window_width = 400
-    window_height = 200
+    window_width = 800
+    window_height = 600
     
     # Calcular la posición para centrar la ventana en la pantalla
     position_x = (screen_width // 2) - (window_width // 2)
@@ -107,16 +120,25 @@ def show_response(response_text):
     frame.pack(expand=True, fill='both')
 
     response_text_widget = Text(frame, bg='white', wrap='word', font=("Times New Roman", 14), padx=20, pady=20)
-    response_text_widget.insert(tk.END, response_text)
+    response_text_widget.tag_configure("code", font=("Courier", 12), background="#f4f4f4")
+    
+    if "```" in response_text:
+        parts = response_text.split("```")
+        for i, part in enumerate(parts):
+            if i % 2 == 0:
+                response_text_widget.insert(tk.END, part)
+            else:
+                insert_code_block(response_text_widget, part)
+    else:
+        response_text_widget.insert(tk.END, response_text)
+        
     response_text_widget.config(state=tk.DISABLED)  # Hacer el widget de texto de solo lectura
     response_text_widget.pack(expand=True, fill='both')
 
     # Vincular Ctrl+Espacio para copiar el texto
-    response_window.bind("<Control-space>", copy_to_clipboard)
+    response_window.bind("<Control-space>", lambda event: copy_to_clipboard(response_text))
 
-def reset_api_key(event=None):
-    global OPENROUTER_API_KEY
-    OPENROUTER_API_KEY = simpledialog.askstring("API Key", "Por favor, introduce tu clave de API de OpenRouter:")
+
 
 def start_move(event):
     global startX, startY
@@ -196,8 +218,7 @@ muneco_label.bind("<B1-Motion>", do_move)
 muneco_label.bind("<Double-1>", on_muneco_double_click)
 muneco_label.bind("<ButtonRelease-3>", on_right_click_release)
 
-# Vincular Ctrl+1 para restablecer la clave de API
-root.bind("<Control-Key-1>", reset_api_key)
+
 
 # Ejecutar el bucle principal de Tkinter
 root.mainloop()
