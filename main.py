@@ -213,8 +213,52 @@ def apply_gravity():
         muneco_label.place(x=x, y=y+10)
         root.after(50, apply_gravity)  # Aplicar gravedad cada 50 ms
 
+def move_to_edge(direction):
+    x = muneco_label.winfo_x()
+    y = muneco_label.winfo_y()
+    if direction == "left":
+        if x > 0:
+            muneco_label.place(x=x-10, y=y)
+            root.after(50, lambda: move_to_edge(direction))
+    elif direction == "right":
+        if x < root.winfo_width() - muneco_label.winfo_width():
+            muneco_label.place(x=x+10, y=y)
+            root.after(50, lambda: move_to_edge(direction))
+
+def show_animation_menu(event):
+    def select_animation(animation):
+        if animation == "Gravedad":
+            apply_gravity()
+        elif animation == "Mover a la izquierda":
+            move_to_edge("left")
+        elif animation == "Mover a la derecha":
+            move_to_edge("right")
+        animation_menu.destroy()
+
+    animation_menu = Toplevel(root)
+    animation_menu.title("Seleccionar Animación")
+
+    # Obtener la posición del muñeco
+    x = muneco_label.winfo_x()
+    y = muneco_label.winfo_y()
+
+    # Calcular la posición del menú para que aparezca al lado del muñeco
+    menu_width = 200
+    menu_height = 150
+    position_x = x + muneco_label.winfo_width()
+    position_y = y
+
+    animation_menu.geometry(f"{menu_width}x{menu_height}+{position_x}+{position_y}")
+    animation_menu.configure(bg='white')
+
+    Frame(animation_menu, bg='white').pack(expand=True, fill='both')
+
+    Button(animation_menu, text="Gravedad", command=lambda: select_animation("Gravedad"), bg='grey', fg='white', font=("Comic Sans MS", 12)).pack(pady=10)
+    Button(animation_menu, text="Mover a la izquierda", command=lambda: select_animation("Mover a la izquierda"), bg='grey', fg='white', font=("Comic Sans MS", 12)).pack(pady=10)
+    Button(animation_menu, text="Mover a la derecha", command=lambda: select_animation("Mover a la derecha"), bg='grey', fg='white', font=("Comic Sans MS", 12)).pack(pady=10)
+
 def on_right_click_release(event):
-    apply_gravity()
+    show_animation_menu(event)
 
 # Crear la ventana principal de Tkinter
 root = tk.Tk()
@@ -267,8 +311,6 @@ muneco_label.bind("<Button-1>", start_move)
 muneco_label.bind("<B1-Motion>", do_move)
 muneco_label.bind("<Double-1>", on_muneco_double_click)
 muneco_label.bind("<ButtonRelease-3>", on_right_click_release)
-
-
 
 # Ejecutar el bucle principal de Tkinter
 root.mainloop()
