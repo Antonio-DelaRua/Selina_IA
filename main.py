@@ -8,7 +8,13 @@ import threading
 # Direct API Key
 OPENROUTER_API_KEY = "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"
 
+# Historial de la conversación
+conversation_history = []
+
 def chat_with_bot(prompt, update_callback, finish_callback):
+    global conversation_history
+    conversation_history.append({"role": "user", "content": prompt})
+    
     try:
         response = requests.post(
             url="https://openrouter.ai/api/v1/chat/completions",
@@ -20,12 +26,10 @@ def chat_with_bot(prompt, update_callback, finish_callback):
             },
             data=json.dumps({
                 "model": "meta-llama/llama-3.3-70b-instruct:free",
-                "messages": [
-                    {"role": "user", "content": prompt}
-                ],
-                "max_tokens": 850,
+                "messages": conversation_history,
+                "max_tokens": 750,
                 "temperature": 0.5,
-                "stream": True,  # Habilitar la transmisión de respuestas
+                "stream": True  # Habilitar la transmisión de respuestas
             }),
             stream=True
         )
@@ -80,10 +84,10 @@ def on_muneco_double_click(event):
     frame = Frame(input_window, bg='white')
     frame.pack(pady=10, padx=10, expand=True, fill='both')
 
-    send_button = Button(frame, text="Enviar", command=send_message, bg='blue', fg='white', font=("Comic Sans MS", 12))
+    send_button = Button(frame, text="Enviar", command=send_message, bg='grey', fg='white', font=("Comic Sans MS", 12))
     send_button.pack(side='left', padx=10, pady=10, fill='y')
 
-    text_widget = Text(frame, font=("Inter", 14), wrap='word', height=1, spacing1=5, spacing3=10)  # Añadir espaciado adicional entre líneas y párrafos
+    text_widget = Text(frame, font=("Comic Sans MS", 13), wrap='word', height=1, spacing1=5, spacing3=5,  padx=10)  # Añadir espaciado adicional entre líneas y párrafos
     text_widget.pack(side='left', fill='both', expand=True)
     text_widget.bind("<KeyRelease>", on_text_change)
     text_widget.bind("<Return>", send_message)
@@ -110,6 +114,8 @@ def show_response():
             self.text_widget.update_idletasks()
 
         def finish_stream(self):
+            global conversation_history
+            conversation_history.append({"role": "bot", "content": self.complete_text})
             self.stream_finished = True
             self.apply_formatting()  # Aplicar formateo una vez finalizado el stream
 
@@ -142,7 +148,7 @@ def show_response():
             self.text_widget.insert(tk.END, "\n\n")
 
     response_window = Toplevel(root)
-    response_window.title("Shanks")
+    response_window.title("Respuesta del Chatbot")
     
     # Obtener las dimensiones de la pantalla
     screen_width = root.winfo_screenwidth()
@@ -162,8 +168,12 @@ def show_response():
     frame = Frame(response_window, bg='white')
     frame.pack(expand=True, fill='both')
 
-    response_text_widget = Text(frame, bg='white', wrap='word', font=("Inter", 12), padx=20, pady=20, spacing1=5, spacing3=10)  # Añadir espaciado adicional entre líneas y párrafos
-    response_text_widget.tag_configure("code", font=("Courier", 12), background="#f4f4f4", spacing3=10, lmargin1=20, lmargin2=20)
+    # Crear un Frame para encapsular la respuesta con un fondo gris claro
+    response_frame = Frame(frame, bg='#ebe8e8', bd=0.5, relief='solid')
+    response_frame.pack(expand=True, fill='both', padx=10, pady=10)
+
+    response_text_widget = Text(response_frame, bg='#ebe8e8', wrap='word', font=("Inter", 14), padx=20, pady=20, spacing1=5, spacing3=5, bd=0)  # Añadir espaciado adicional entre líneas y párrafos
+    response_text_widget.tag_configure("code", font=("Courier", 12), background="#f4f4f4", spacing3=10, lmargin1=20, lmargin2=20)  # Añadir margen a la izquierda
     response_text_widget.tag_configure("bold", font=("Times New Roman", 14, "bold"))
 
     response_text_widget.pack(expand=True, fill='both')
@@ -173,9 +183,6 @@ def show_response():
 
     return ResponseWindow(response_text_widget)
 
-def reset_api_key(event=None):
-    global OPENROUTER_API_KEY
-    OPENROUTER_API_KEY = simpledialog.askstring("API Key", "Por favor, introduce tu clave de API de OpenRouter:")
 
 def start_move(event):
     global startX, startY
@@ -261,8 +268,7 @@ muneco_label.bind("<B1-Motion>", do_move)
 muneco_label.bind("<Double-1>", on_muneco_double_click)
 muneco_label.bind("<ButtonRelease-3>", on_right_click_release)
 
-# Vincular Ctrl+1 para restablecer la clave de API
-root.bind("<Control-Key-1>", reset_api_key)
+
 
 # Ejecutar el bucle principal de Tkinter
 root.mainloop()
