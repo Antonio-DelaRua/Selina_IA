@@ -279,6 +279,7 @@ def apply_gravity():
             root.after(100, fall_animation, 0)  # Cambiar a la imagen fall_1
         else:
             muneco_label.config(image=fall_images[0])
+            
 
     fall_animation()
 
@@ -297,14 +298,30 @@ def move_to_edge(direction):
 
     walk_animation()
 
+def climb_animation():
+    def climb(index=0):
+        x = root.winfo_width() - muneco_label.winfo_width()
+        y = muneco_label.winfo_y()
+        if y > 0:
+            muneco_label.config(image=climb_images[index % len(climb_images)])
+            muneco_label.place(x=x, y=y-10)
+            root.after(100, climb, index + 1)
+        else:
+            # Al llegar al tope superior, activar gravedad
+            apply_gravity()  # <- Aquí añadimos la llamada a la gravedad
+
+    climb()
+
 def show_animation_menu(event):
     def select_animation(animation):
         if animation == "Gravedad":
             apply_gravity()
         elif animation == "Mover a la izquierda":
-            move_to_edge("left")
+            move_to_edge("left")    
         elif animation == "Mover a la derecha":
             move_to_edge("right")
+        elif animation == "Escalar":
+            climb_animation()
         animation_menu.destroy()
 
     animation_menu = Toplevel(root)
@@ -316,7 +333,7 @@ def show_animation_menu(event):
 
     # Calcular la posición del menú para que aparezca al lado del muñeco
     menu_width = 200
-    menu_height = 150
+    menu_height = 250
     position_x = x + muneco_label.winfo_width()
     position_y = y
 
@@ -333,6 +350,7 @@ def show_animation_menu(event):
     Button(animation_menu, text="Gravedad", command=lambda: select_animation("Gravedad"), bg='grey', fg='white', font=("Comic Sans MS", 12)).pack(pady=10)
     Button(animation_menu, text="Mover a la izquierda", command=lambda: select_animation("Mover a la izquierda"), bg='grey', fg='white', font=("Comic Sans MS", 12)).pack(pady=10)
     Button(animation_menu, text="Mover a la derecha", command=lambda: select_animation("Mover a la derecha"), bg='grey', fg='white', font=("Comic Sans MS", 12)).pack(pady=10)
+    Button(animation_menu, text="Escalar", command=lambda: select_animation("Escalar"), bg='grey', fg='white', font=("Comic Sans MS", 12)).pack(pady=10)
 
 def on_right_click_release(event):
     show_animation_menu(event)
@@ -383,7 +401,7 @@ muneco_label.place(x=initial_x, y=initial_y)
 # Ahora que la ventana principal está creada, cargar las imágenes de animación
 fall_images = [ImageTk.PhotoImage(Image.open(f'fall_{i}.png').resize((200, 200), Image.LANCZOS)) for i in range(1, 4)]
 walk_images = [ImageTk.PhotoImage(Image.open(f'walk_left_{i}.png').resize((200, 200), Image.LANCZOS)) for i in range(1, 4)]
-
+climb_images = [tk.PhotoImage(file=f"climb_{i}.png") for i in range(1, 4)]
 # Aplicar gravedad al iniciar la aplicación
 root.after(100, apply_gravity)
 
