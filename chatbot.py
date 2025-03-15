@@ -3,7 +3,7 @@ import json
 import threading
 
 # Direct API Key
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY = "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"
 
 # Historial de la conversación
 conversation_history = []
@@ -22,7 +22,7 @@ def chat_with_bot(prompt, update_callback, finish_callback):
                 "X-Title": "<YOUR_SITE_NAME>",  # Opcional. Título del sitio para rankings en openrouter.ai.
             },
             data=json.dumps({
-                "model": "google/gemma-3-27b-it:free",
+                "model": "meta-llama/llama-3.3-70b-instruct:free",
                 "messages": conversation_history,
                 "max_tokens": 950,
                 "temperature": 0.5,
