@@ -39,12 +39,14 @@ class HistoryEntry:
             self.save()
 
     def save(self):
+        session = Session(engine)  # Crear sesión SQLAlchemy
+        history_entry = History(prompt=self.prompt, response=self.response)
         try:
-            session = Session(engine)  # Crear sesión SQLAlchemy
-            history_entry = History(prompt=self.prompt, response=self.response)
             session.add(history_entry)
             session.commit()
+            print(f"Historial guardado: {self.prompt} - {self.response}")
         except Exception as e:
+            session.rollback()
             print(f"Error al guardar el historial: {e}")
         finally:
             session.close()
@@ -75,12 +77,14 @@ class ApiKeyEntry:
             self.save()
 
     def save(self):
+        session = Session(engine)  # Crear sesión SQLAlchemy
+        api_key_entry = ApiKey(key=self.key)
         try:
-            session = Session(engine)  # Crear sesión SQLAlchemy
-            api_key_entry = ApiKey(key=self.key)
             session.add(api_key_entry)
             session.commit()
+            print(f"API Key guardada: {self.key}")
         except Exception as e:
+            session.rollback()
             print(f"Error al guardar la clave de API: {e}")
         finally:
             session.close()

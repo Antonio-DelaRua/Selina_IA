@@ -1,11 +1,17 @@
-
 import tkinter as tk
 from gui import setup_gui
 
 def main():
-    root = tk.Tk()
-    muneco_label, images = setup_gui(root)
-    root.mainloop()
+    try:
+        root = tk.Tk()
+        muneco_label, images = setup_gui(root)
+        root.mainloop()
+    except KeyboardInterrupt:
+        print("Programa interrumpido por el usuario")
+    except Exception as e:
+        print(f"Error durante la ejecución del programa: {e}")
+    finally:
+        print("Cerrando el programa")
 
 if __name__ == "__main__":
     main()
