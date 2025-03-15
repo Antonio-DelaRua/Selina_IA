@@ -51,6 +51,13 @@ class HistoryEntry:
         for history in historys:
             print(f"Prompt: {history.prompt} - Response: {history.response}")
         session.close()
+    # create a fuction that retieve all the history in a list of strings
+    def selectAllHistorie(self):
+        session = Session(engine)
+        query = session.query(History)
+        historys = query.all()
+        return historys
+
 
 
 # Crear una clase que maneja la inserción de datos en la tabla ApiKey

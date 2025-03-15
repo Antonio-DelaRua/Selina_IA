@@ -11,8 +11,9 @@ OPENROUTER_API_KEY = apiKey.selectApiKeys()
 conversation_history = []
 
 def chat_with_bot(prompt, update_callback, finish_callback):
-
-    conversation_history.append({"role": "user", "content": prompt})
+    historieList = HistoryEntry(prompt=prompt, response="").selectAllHistorie()
+    for historie in historieList:
+        conversation_history.append({"role": "user", "content": historie.prompt})
 
     try:
         response = requests.post(
@@ -60,8 +61,8 @@ def chat_with_bot(prompt, update_callback, finish_callback):
                         # print(f"Respuesta del modelo: {message_content}")
                         update_callback(message_content)
         finish_callback()  # Indicar que el stream ha finalizado
-        hist = HistoryEntry(prompt=prompt, response=msg)
-        hist.selectHistorie()
+        HistoryEntry(prompt=prompt, response=msg)
+
     except Exception as e:
         print(f"Error al llamar a la API de OpenRouter: {e}")
         update_callback(f"Error al llamar a la API de OpenRouter: {e}")
