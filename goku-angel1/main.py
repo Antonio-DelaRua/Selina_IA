@@ -7,7 +7,7 @@ import threading
 
 
 # Direct API Key
-OPENROUTER_API_KEY = "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" 
+OPENROUTER_API_KEY = "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" 
 
 # Historial de la conversación
 conversation_history = []
@@ -26,7 +26,7 @@ def chat_with_bot(prompt, update_callback, finish_callback):
                 "X-Title": "<YOUR_SITE_NAME>",  # Opcional. Título del sitio para rankings en openrouter.ai.
             },
             data=json.dumps({
-                "model": "meta-llama/llama-3.3-70b-instruct:free",
+                "model": "google/gemma-3-27b-it:free",
                 "messages": conversation_history,
                 "max_tokens": 950,
                 "temperature": 0.5,
@@ -235,12 +235,12 @@ def move_to_edge(direction):
             muneco_label.place(x=x-5, y=y)  # Move 10 pixels
             root.after(40, walk_animation, index + 1)  # Reduce delay to 40 milliseconds
         elif direction == "right" and x < root.winfo_width() - muneco_label.winfo_width():
-            muneco_label.config(image=walk_images[2])  # Set to walk_left_2
+            muneco_label.config(image=walk_images[1])  # Set to walk_left_2
             muneco_label.place(x=x+5, y=y)  # Move 10 pixels
             root.after(40, walk_animation, index + 1)  # Reduce delay to 40 milliseconds
         else:
             # Cuando se llega al final, cambia a la imagen original del muñeco
-            muneco_label.config(image=fall_images[0])  # Cambia a la imagen fall_1
+            muneco_label.config(image=muneco_photo)  # Cambia a la imagen original
 
     walk_animation()
 
@@ -270,7 +270,7 @@ def climb_animation():
             root.after(20, descend_zigzag)  # Aumentar la frecuencia de actualización
         else:
             # When reaching the bottom, set the final image
-            muneco_label.config(image=fall_images[0])
+            muneco_label.config(image=muneco_photo)
 
     climb()
 
@@ -317,12 +317,11 @@ def show_animation_menu(event):
 def on_right_click_release(event):
     show_animation_menu(event)
 
-
 def load_images():
     image_paths = {
         "muneco": "muneco.png",
         "fall": ["fall_1.png", "fall_2.png", "fall_3.png"],
-        "walk_left": ["walk_left_1.png", "walk_left_2.png","walk_left_3.png"],
+        "walk_left": ["walk_left_1.png", "walk_left_2.png"],
         "climb": ["climb_1.png", "climb_2.png", "climb_3.png"],
         "fly": "volar.png"
     }
@@ -355,7 +354,7 @@ except Exception as e:
     print(f"Error al cargar la fuente 'Inter': {e}")
 
 # Crear un canvas
-canvas = tk.Canvas(root, bg='white', borderwidth=0, highlightthickness=0)
+canvas = tk.Canvas(root, bg='white', highlightthickness=0)
 canvas.pack(fill="both", expand=True)
 
 # Cargar las imágenes
@@ -367,9 +366,7 @@ climb_images = images["climb"]
 fly_image = images["fly"]
 
 # Crear un label para el muñeco y colocar en el canvas
-muneco_label = tk.Label(canvas, image=muneco_photo, bg='white', borderwidth=0, highlightthickness=0)
-muneco_label.image = muneco_photo  # Mantener la referencia a la imagen
-muneco_label.pack(fill="both", expand=True)
+muneco_label = tk.Label(root, image=muneco_photo, bg='white')
 
 # Obtener las dimensiones de la pantalla y calcular la posición inicial del muñeco
 screen_width = root.winfo_screenwidth()

@@ -1,0 +1,9 @@
+pillow
+request
+numpy
+olefile
+defusedxml
+cryptography
+simplejson
+brotli
+chardet

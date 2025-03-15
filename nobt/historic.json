@@ -1,0 +1,13 @@
+{
+    "converascion": [
+        {
+            "question": "hola como vas",
+            "response": "Hola, estoy aquí para ayudarte. ¿En qué puedo ayudarte hoy?"
+        },
+        {
+            "question": "que tiempo enemos en malaga",
+            "response": "Actualmente en Málaga, España, el tiempo es soleado con una temperatura de alrededor de 22 grados Celsius. Se espera que el cielo se mantenga despejado durante el día con vientos suaves."
+        }
+    ],
+    "usuarios": "ejemplo user"
+}
