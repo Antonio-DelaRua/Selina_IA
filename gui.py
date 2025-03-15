@@ -5,6 +5,10 @@ import threading
 from chatbot import chat_with_bot
 from movimientos import apply_gravity, move_to_edge, climb_animation
 from chatbot import conversation_history
+from model import HistoryEntry  # Importar la clase HistoryEntry
+
+response_window = None
+response_text_widget = None
 
 def on_muneco_double_click(event, root):
     print("Doble clic detectado")  # Depuración
@@ -32,11 +36,11 @@ def on_muneco_double_click(event, root):
     send_button = tk.Button(frame, text="Enviar", command=lambda: send_message(input_window, root, text_widget), bg='orange', fg='white', font=("Comic Sans MS", 12))
     send_button.pack(side='left', padx=10, pady=10, fill='y')
 
-    text_widget = tk.Text(frame, font=("Comic Sans MS", 13), wrap='word', height=1, spacing1=5, spacing3=5, padx=10, highlightthickness=0, bd=1, relief='solid')  # Borde completo
+    text_widget = tk.Text(frame, font=("Comic Sans MS", 13), wrap='word', height=1, spacing1=5, spacing3=5, padx=10, highlightthickness=0, bd=1, relief='solid')
     text_widget.pack(side='left', fill='both', expand=True)
     text_widget.bind("<KeyRelease>", lambda event: on_text_change(event, text_widget))
     text_widget.bind("<Return>", lambda event: send_message(input_window, root, text_widget))
-    text_widget.bind("<Shift-Return>", lambda event: None)  # Permitir Shift+Enter para nueva línea
+    text_widget.bind("<Shift-Return>", lambda event: None)
 
     text_widget.focus_set()  # Enfocar automáticamente el campo de entrada
     print("Ventana de entrada creada")  # Depuración
@@ -45,8 +49,8 @@ def send_message(input_window, root, text_widget):
     user_text = text_widget.get("1.0", tk.END).strip()
     if user_text:
         print(f"Mensaje enviado: {user_text}")  # Depuración
-        response_window = show_response(root)
-        threading.Thread(target=chat_with_bot, args=(user_text, response_window.update_response, response_window.finish_stream)).start()
+        response_window_instance = show_response(root)
+        threading.Thread(target=chat_with_bot, args=(user_text, response_window_instance.update_response, response_window_instance.finish_stream)).start()
     input_window.destroy()
     
 def on_text_change(event, text_widget):
@@ -56,6 +60,8 @@ def on_text_change(event, text_widget):
     text_widget.config(height=new_height)
 
 def show_response(root):
+    global response_window, response_text_widget
+
     def copy_to_clipboard(text):
         root.clipboard_clear()
         root.clipboard_append(text)
@@ -74,10 +80,11 @@ def show_response(root):
             self.text_widget.update_idletasks()
 
         def finish_stream(self):
-            conversation_history
             conversation_history.append({"role": "bot", "content": self.complete_text})
             self.stream_finished = True
             self.apply_formatting()  # Aplicar formateo una vez finalizado el stream
+            # Guardar en la base de datos
+            HistoryEntry(prompt=conversation_history[-2]['content'], response=self.complete_text)
 
         def apply_formatting(self):
             self.text_widget.delete("1.0", tk.END)
@@ -100,46 +107,47 @@ def show_response(root):
                 self.text_widget.insert(tk.END, self.complete_text)
 
         def insert_code_block(self, text):
-            self.text_widget.insert(tk.END, "\n```\n", "code")
+            self.text_widget.insert(tk.END, "\n\n", "code")
             self.text_widget.insert(tk.END, text, "code")
-            self.text_widget.insert(tk.END, "\n```\n", "code")
+            self.text_widget.insert(tk.END, "\n\n", "code")
             copy_button = tk.Button(self.text_widget, text="Copiar", command=lambda: copy_to_clipboard(text), bg='grey', fg='white', font=("Comic Sans MS", 8))
             self.text_widget.window_create(tk.END, window=copy_button)
             self.text_widget.insert(tk.END, "\n\n")
 
-    response_window = tk.Toplevel(root)
-    response_window.title("Son Goku    孫 悟空")
+    if response_window is None or not response_window.winfo_exists():
+        response_window = tk.Toplevel(root)
+        response_window.title("Son Goku    孫 悟空")
 
-    # Obtener las dimensiones de la pantalla
-    screen_width = root.winfo_screenwidth()
-    screen_height = root.winfo_screenheight()
+        # Obtener las dimensiones de la pantalla
+        screen_width = root.winfo_screenwidth()
+        screen_height = root.winfo_screenheight()
 
-    # Dimensiones de la ventana de respuesta
-    window_width = 800
-    window_height = 600
+        # Dimensiones de la ventana de respuesta
+        window_width = 800
+        window_height = 600
 
-    # Calcular la posición para centrar la ventana en la pantalla
-    position_x = (screen_width // 2) - (window_width // 2)
-    position_y = (screen_height // 2) - (window_height // 2)
+        # Calcular la posición para centrar la ventana en la pantalla
+        position_x = (screen_width // 2) - (window_width // 2)
+        position_y = (screen_height // 2) - (window_height // 2)
 
-    response_window.geometry(f"{window_width}x{window_height}+{position_x}+{position_y}")
-    response_window.configure(bg='white')
+        response_window.geometry(f"{window_width}x{window_height}+{position_x}+{position_y}")
+        response_window.configure(bg='white')
 
-    frame = tk.Frame(response_window, bg='white')
-    frame.pack(expand=True, fill='both')
+        frame = tk.Frame(response_window, bg='white')
+        frame.pack(expand=True, fill='both')
 
-    # Crear un Frame para encapsular la respuesta con un fondo gris claro
-    response_frame = tk.Frame(frame, bg='#ebe8e8', bd=0.5, relief='solid')
-    response_frame.pack(expand=True, fill='both', padx=10, pady=10)
+        # Crear un Frame para encapsular la respuesta con un fondo gris claro
+        response_frame = tk.Frame(frame, bg='#ebe8e8', bd=0.5, relief='solid')
+        response_frame.pack(expand=True, fill='both', padx=10, pady=10)
 
-    response_text_widget = tk.Text(response_frame, bg='#ebe8e8', wrap='word', font=("Inter", 14), padx=20, pady=20, spacing1=5, spacing3=5, bd=0)  # Añadir espaciado adicional entre líneas y párrafos
-    response_text_widget.tag_configure("code", font=("Courier", 12), background="#f4f4f4", spacing3=10, lmargin1=20, lmargin2=20)  # Añadir margen a la izquierda
-    response_text_widget.tag_configure("bold", font=("Times New Roman", 14, "bold"))
+        response_text_widget = tk.Text(response_frame, bg='#ebe8e8', wrap='word', font=("Inter", 14), padx=20, pady=20, spacing1=5, spacing3=5, bd=0)
+        response_text_widget.tag_configure("code", font=("Courier", 12), background="#f4f4f4", spacing3=10, lmargin1=20, lmargin2=20)
+        response_text_widget.tag_configure("bold", font=("Times New Roman", 14, "bold"))
 
-    response_text_widget.pack(expand=True, fill='both')
+        response_text_widget.pack(expand=True, fill='both')
 
-    # Vincular Ctrl+Espacio para copiar el texto
-    response_window.bind("<Control-space>", lambda event: copy_to_clipboard(response_text_widget.get("1.0", tk.END)))
+        # Vincular Ctrl+Espacio para copiar el texto
+        response_window.bind("<Control-space>", lambda event: copy_to_clipboard(response_text_widget.get("1.0", tk.END)))
 
     return ResponseWindow(response_text_widget)
 
