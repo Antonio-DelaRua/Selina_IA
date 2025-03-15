@@ -79,6 +79,8 @@ class ApiKeyEntry:
         print(f"API Key: {api_key.key}")
         session.close()
         return api_key.key
-
-apiKey = ApiKeyEntry(key="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")
-apiKey.selectApiKeys()
+# is api key in the database do not create
+if len(ApiKeyEntry.selectApiKeys(ApiKeyEntry)) == 0:
+    # Insertar una clave de API en la tabla ApiKey
+    apiKey = ApiKeyEntry(key="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")
+    apiKey.selectApiKeys()
