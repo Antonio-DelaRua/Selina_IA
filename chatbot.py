@@ -1,6 +1,8 @@
 import requests
 import json
 import threading
+from model import *
+
 
 # Direct API Key
 OPENROUTER_API_KEY = "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"
@@ -9,7 +11,7 @@ OPENROUTER_API_KEY = "sk-or-v1-05613a6f61626dc9df0e26844e87e16f4457c42980ef3e6b3
 conversation_history = []
 
 def chat_with_bot(prompt, update_callback, finish_callback):
-    global conversation_history
+
     conversation_history.append({"role": "user", "content": prompt})
 
     try:
@@ -39,23 +41,27 @@ def chat_with_bot(prompt, update_callback, finish_callback):
             finish_callback()
             return
         elif response.status_code != 200:
-            print(f"Error en la respuesta de la API: {response.status_code} - {response.text}")
+            # print(f"Error en la respuesta de la API: {response.status_code} - {response.text}")
             update_callback(f"Error en la respuesta de la API: {response.status_code} - {response.text}")
             finish_callback()
             return
-
+        msg = ""
         for line in response.iter_lines():
             if line:
                 decoded_line = line.decode('utf-8')
-                print(f"Línea recibida: {decoded_line}")  # Depuración
+                # print(f"Línea recibida: {decoded_line}")  # Depuración
                 if decoded_line.startswith("data: "):
                     decoded_line = decoded_line[6:]
                     if decoded_line != "[DONE]":
                         response_data = json.loads(decoded_line)
                         choice = response_data.get('choices', [{}])[0]
                         message_content = choice.get('delta', {}).get('content', '')
+                        msg += message_content
+                        # print(f"Respuesta del modelo: {message_content}")
                         update_callback(message_content)
         finish_callback()  # Indicar que el stream ha finalizado
+        hist = HistoryEntry(prompt=prompt, response=msg)
+        hist.selectHistorie()
     except Exception as e:
         print(f"Error al llamar a la API de OpenRouter: {e}")
         update_callback(f"Error al llamar a la API de OpenRouter: {e}")

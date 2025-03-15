@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import Toplevel, Text, Button, Frame
 from PIL import Image, ImageTk
-import threading
+import threading, platform
 from chatbot import chat_with_bot
 from movimientos import apply_gravity, move_to_edge, climb_animation
 from chatbot import conversation_history
@@ -48,7 +48,7 @@ def send_message(input_window, root, text_widget):
         response_window = show_response(root)
         threading.Thread(target=chat_with_bot, args=(user_text, response_window.update_response, response_window.finish_stream)).start()
     input_window.destroy()
-    
+
 def on_text_change(event, text_widget):
     content = text_widget.get("1.0", tk.END)
     lines = content.count('\n') + 1
@@ -229,11 +229,20 @@ def setup_gui(root):
     root.title("Angel GPT Goku")
     root.configure(bg='white')  # Fondo blanco para la ventana
 
+
     # Configuración para ocupar toda la pantalla
     root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(), root.winfo_screenheight()))
-    root.attributes("-transparentcolor", "white")
-    root.attributes("-topmost", True)
-    root.overrideredirect(True)  # Hacer la ventana sin bordes
+
+    if platform.system() == "Windows":
+        root.attributes("-transparentcolor", "white")
+        root.attributes("-topmost", True)
+        root.overrideredirect(True)  # Hacer la ventana sin bordes
+    else:
+        root.attributes("-alpha", 0.9) # Hacer la ventana transparente
+        root.wait_visibility(root)  # Esperar a que la ventana sea visible
+        root.lift() # Traer la ventana al frente
+
+
 
     # Intentar cargar la fuente "Inter" después de crear la ventana principal
     try:
