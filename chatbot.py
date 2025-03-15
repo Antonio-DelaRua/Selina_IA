@@ -1,6 +1,7 @@
 import requests
 import json
 import threading
+from model import HistoryEntry, ApiKeyEntry, engine
 
 # Direct API Key
 OPENROUTER_API_KEY = "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"
@@ -60,3 +61,4 @@ def chat_with_bot(prompt, update_callback, finish_callback):
         print(f"Error al llamar a la API de OpenRouter: {e}")
         update_callback(f"Error al llamar a la API de OpenRouter: {e}")
         finish_callback()
+

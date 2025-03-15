@@ -2,16 +2,13 @@ import tkinter as tk
 from tkinter import Toplevel, Text, Button, Frame
 from PIL import Image, ImageTk
 import threading
-from chatbot import chat_with_bot
+from agent import agent
 from movimientos import apply_gravity, move_to_edge, climb_animation
-from chatbot import conversation_history
-from model import HistoryEntry  # Importar la clase HistoryEntry
 
 response_window = None
 response_text_widget = None
 
 def on_muneco_double_click(event, root):
-    print("Doble clic detectado")  # Depuración
     input_window = tk.Toplevel(root)
 
     # Obtener las dimensiones de la pantalla
@@ -19,8 +16,8 @@ def on_muneco_double_click(event, root):
     screen_height = root.winfo_screenheight()
 
     # Dimensiones de la ventana de entrada
-    window_width = 600  # Aumentar el ancho
-    window_height = 80  # Reducir la altura
+    window_width = 600
+    window_height = 80
 
     # Calcular la posición para centrar la ventana en la parte inferior con un margen
     margin_bottom = 50
@@ -42,17 +39,24 @@ def on_muneco_double_click(event, root):
     text_widget.bind("<Return>", lambda event: send_message(input_window, root, text_widget))
     text_widget.bind("<Shift-Return>", lambda event: None)
 
-    text_widget.focus_set()  # Enfocar automáticamente el campo de entrada
-    print("Ventana de entrada creada")  # Depuración
+    text_widget.focus_set()
 
 def send_message(input_window, root, text_widget):
     user_text = text_widget.get("1.0", tk.END).strip()
     if user_text:
-        print(f"Mensaje enviado: {user_text}")  # Depuración
         response_window_instance = show_response(root)
-        threading.Thread(target=chat_with_bot, args=(user_text, response_window_instance.update_response, response_window_instance.finish_stream)).start()
+        response_window_instance.update_response("Consultando...")  # Mostrar mensaje de espera
+
+        # Usar el agente para obtener una respuesta en un hilo separado
+        threading.Thread(target=fetch_response, args=(user_text, response_window_instance)).start()
     input_window.destroy()
-    
+
+def fetch_response(user_text, response_window_instance):
+    response = agent(user_text)
+    if response is None:
+        response = "Lo siento, no pude obtener una respuesta en este momento."
+    response_window_instance.update_response(response)
+
 def on_text_change(event, text_widget):
     content = text_widget.get("1.0", tk.END)
     lines = content.count('\n') + 1
@@ -70,41 +74,16 @@ def show_response(root):
     class ResponseWindow:
         def __init__(self, text_widget):
             self.text_widget = text_widget
-            self.stream_finished = False
             self.complete_text = ""
 
         def update_response(self, new_text):
+            if "Consultando..." in self.complete_text:
+                self.complete_text = self.complete_text.replace("Consultando...", "")
             self.complete_text += new_text
-            self.text_widget.insert(tk.END, new_text)
+            self.text_widget.delete("1.0", tk.END)  # Eliminar el texto existente
+            self.text_widget.insert(tk.END, self.complete_text)
             self.text_widget.yview(tk.END)  # Desplazar la vista hacia el final del texto
             self.text_widget.update_idletasks()
-
-        def finish_stream(self):
-            conversation_history.append({"role": "bot", "content": self.complete_text})
-            self.stream_finished = True
-            self.apply_formatting()  # Aplicar formateo una vez finalizado el stream
-            # Guardar en la base de datos
-            HistoryEntry(prompt=conversation_history[-2]['content'], response=self.complete_text)
-
-        def apply_formatting(self):
-            self.text_widget.delete("1.0", tk.END)
-            if "```" in self.complete_text or "**" in self.complete_text:
-                parts = self.complete_text.split("```")
-                for i, part in enumerate(parts):
-                    if i % 2 == 0:
-                        if "**" in part:
-                            bold_parts = part.split("**")
-                            for j, bold_part in enumerate(bold_parts):
-                                if j % 2 == 0:
-                                    self.text_widget.insert(tk.END, bold_part)
-                                else:
-                                    self.text_widget.insert(tk.END, bold_part, "bold")
-                        else:
-                            self.text_widget.insert(tk.END, part)
-                    else:
-                        self.insert_code_block(part)
-            else:
-                self.text_widget.insert(tk.END, self.complete_text)
 
         def insert_code_block(self, text):
             self.text_widget.insert(tk.END, "\n\n", "code")
@@ -118,25 +97,18 @@ def show_response(root):
         response_window = tk.Toplevel(root)
         response_window.title("Son Goku    孫 悟空")
 
-        # Obtener las dimensiones de la pantalla
         screen_width = root.winfo_screenwidth()
         screen_height = root.winfo_screenheight()
-
-        # Dimensiones de la ventana de respuesta
         window_width = 800
         window_height = 600
-
-        # Calcular la posición para centrar la ventana en la pantalla
         position_x = (screen_width // 2) - (window_width // 2)
         position_y = (screen_height // 2) - (window_height // 2)
-
         response_window.geometry(f"{window_width}x{window_height}+{position_x}+{position_y}")
         response_window.configure(bg='white')
 
         frame = tk.Frame(response_window, bg='white')
         frame.pack(expand=True, fill='both')
 
-        # Crear un Frame para encapsular la respuesta con un fondo gris claro
         response_frame = tk.Frame(frame, bg='#ebe8e8', bd=0.5, relief='solid')
         response_frame.pack(expand=True, fill='both', padx=10, pady=10)
 
@@ -146,11 +118,9 @@ def show_response(root):
 
         response_text_widget.pack(expand=True, fill='both')
 
-        # Vincular Ctrl+Espacio para copiar el texto
         response_window.bind("<Control-space>", lambda event: copy_to_clipboard(response_text_widget.get("1.0", tk.END)))
 
     return ResponseWindow(response_text_widget)
-
 
 def start_move(event):
     global startX, startY
@@ -161,7 +131,6 @@ def do_move(event, muneco_label, root):
     x = muneco_label.winfo_x() + event.x - startX
     y = muneco_label.winfo_y() + event.y - startY
 
-    # Limitar el movimiento dentro de los límites de la ventana
     if x < 0:
         x = 0
     elif x > root.winfo_width() - muneco_label.winfo_width():
@@ -189,20 +158,16 @@ def show_animation_menu(event, root, muneco_label, fall_images, walk_images, cli
     animation_menu = Toplevel(root)
     animation_menu.title("Seleccionar Animación")
 
-    # Obtener la posición del muñeco
     x = muneco_label.winfo_x()
     y = muneco_label.winfo_y()
-
-    # Calcular la posición del menú para que aparezca al lado del muñeco
     menu_width = 200
     menu_height = 250
     position_x = x + muneco_label.winfo_width()
     position_y = y
 
-    # Ajustar la posición del menú si el muñeco está cerca de la parte inferior de la pantalla
     screen_height = root.winfo_screenheight()
     if position_y + menu_height > screen_height:
-        position_y = screen_height - menu_height - 10  # Margen de 10 píxeles desde el borde inferior
+        position_y = screen_height - menu_height - 10
 
     animation_menu.geometry(f"{menu_width}x{menu_height}+{position_x}+{position_y}")
     animation_menu.configure(bg='white')
@@ -235,25 +200,21 @@ def load_images():
 
 def setup_gui(root):
     root.title("Angel GPT Goku")
-    root.configure(bg='white')  # Fondo blanco para la ventana
+    root.configure(bg='white')
 
-    # Configuración para ocupar toda la pantalla
     root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(), root.winfo_screenheight()))
     root.attributes("-transparentcolor", "white")
     root.attributes("-topmost", True)
-    root.overrideredirect(True)  # Hacer la ventana sin bordes
+    root.overrideredirect(True)
 
-    # Intentar cargar la fuente "Inter" después de crear la ventana principal
     try:
         root.option_add("*Font", "Inter 14")
     except Exception as e:
         print(f"Error al cargar la fuente 'Inter': {e}")
 
-    # Crear un canvas
     canvas = tk.Canvas(root, bg='white', highlightthickness=0)
     canvas.pack(fill="both", expand=True)
 
-    # Cargar las imágenes
     images = load_images()
     muneco_photo = images["muneco"]
     fall_images = images["fall"]
@@ -261,22 +222,17 @@ def setup_gui(root):
     climb_images = images["climb"]
     fly_image = images["fly"]
 
-    # Crear un label para el muñeco y colocar en el canvas
     muneco_label = tk.Label(root, image=muneco_photo, bg='white')
 
-    # Obtener las dimensiones de la pantalla y calcular la posición inicial del muñeco
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
     initial_x = (screen_width // 2) - (200 // 2)
     initial_y = (screen_height // 2) - (200 // 2)
 
-    # Colocar el muñeco en el centro de la ventana
     muneco_label.place(x=initial_x, y=initial_y)
 
-    # Aplicar gravedad al iniciar la aplicación
     root.after(100, apply_gravity, muneco_label, root, fall_images, muneco_photo)
 
-    # Asociar eventos para arrastrar el muñeco y doble clic para el input
     muneco_label.bind("<Button-1>", start_move)
     muneco_label.bind("<B1-Motion>", lambda event: do_move(event, muneco_label, root))
     muneco_label.bind("<Double-1>", lambda event: on_muneco_double_click(event, root))
