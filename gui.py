@@ -251,7 +251,8 @@ def setup_gui(root):
         print(f"Error al cargar la fuente 'Inter': {e}")
 
     # Crear un canvas
-    canvas = tk.Canvas(root, bg='white', highlightthickness=0)
+    canvas = tk.Canvas(root,bg="white",  highlightthickness=0)
+
     canvas.pack(fill="both", expand=True)
 
     # Cargar las imágenes

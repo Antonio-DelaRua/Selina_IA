@@ -1,8 +1,0 @@
-requests
-tk
-pillow
-pandas>=2.2.0
-Cython
-imagetk
-testresources
-SQLAlchemy
