@@ -1,0 +1,7 @@
+setuptools
+Pillow
+tk
+requests
+SQLAlchemy
+testresources
+imagetk
