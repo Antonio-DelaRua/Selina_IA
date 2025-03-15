@@ -5,3 +5,4 @@ requests
 SQLAlchemy
 testresources
 imagetk
+PyQt5

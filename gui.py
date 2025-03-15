@@ -1,90 +1,183 @@
-import tkinter as tk
-from PIL import Image, ImageTk
-import platform
-import ctypes
-import ctypes.util
+import sys
+from PyQt5.QtWidgets import (QApplication, QLabel, QWidget, QVBoxLayout, QPushButton,
+                             QDialog, QTextEdit, QLineEdit)
+from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtGui import QPixmap
+from chatbot import chat_with_bot
 
-# Función para configurar la transparencia según el SO
+# Configurar transparencia (sin click-through para permitir interacción)
+def configure_transparency(window):
+    window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
+    window.setAttribute(Qt.WA_TranslucentBackground, True)
 
-def configure_transparency(root):
-    system = platform.system()
-    if system == "Windows":
-        root.overrideredirect(True)
-        root.attributes("-transparentcolor", "white")
-        root.attributes("-topmost", True)
-    elif system == "Linux":
-        root.overrideredirect(True)
-        root.attributes("-alpha", 0.0)
-        root.attributes("-topmost", True)
+# Método original adaptado correctamente a PyQt5
+def load_images():
+    image_paths = {
+        "muneco": "img/muneco.png",
+        "fall": [f"img/fall_{i}.png" for i in range(1, 4)],
+        "walk_left": [f"img/walk_left_{i}.png" for i in range(1, 4)],
+        "climb": [f"img/climb_{i}.png" for i in range(1, 4)],
+        "fly": "img/volar.png"
+    }
 
-        # Hack para click-through en Linux (X11)
-        import ctypes
-        x11 = ctypes.cdll.LoadLibrary(ctypes.util.find_library("X11"))
-        xfixes = ctypes.cdll.LoadLibrary(ctypes.util.find_library("Xfixes"))
+    images = {}
 
-        display = x11.XOpenDisplay(None)
-        window_id = root.winfo_id()
+    for key, paths in image_paths.items():
+        if isinstance(paths, list):
+            images[key] = [QPixmap(path).scaled(200, 200, Qt.KeepAspectRatio, Qt.SmoothTransformation) for path in paths]
+        else:
+            images[key] = QPixmap(paths).scaled(200, 200, Qt.KeepAspectRatio, Qt.SmoothTransformation)
 
-        ShapeInput = 2
-        ShapeSet = 0
+    return images
 
-        xfixes.XFixesSetWindowShapeRegion(display,
-                                          window_id,
-                                          ShapeInput,
-                                          0, 0,
-                                          ctypes.c_void_p(0),
-                                          ShapeSet)
+# Aplicar gravedad al muñeco hasta llegar al borde inferior
+def apply_gravity(window, screen_geometry, timer):
+    y = window.y()
+    if y < screen_geometry.height() - window.height():
+        window.move(window.x(), y + 5)
+    else:
+        timer.stop()
 
-# --- Setup GUI completo ---
-def setup_gui(root):
-    configure_transparency(root)
+# Animaciones de movimiento lateral
+def animate_move(window, target_x, timer):
+    step = 10 if window.x() < target_x else -10
+
+    def move_step():
+        current_x = window.x()
+        if (step > 0 and current_x < target_x) or (step < 0 and current_x > target_x):
+            window.move(current_x + step, window.y())
+        else:
+            timer.stop()
+
+    timer.timeout.connect(move_step)
+    timer.start(30)
+# Mantener referencias globales
+open_windows = []
+
+# Ventana de chat
+def open_chat_window():
+    input_dialog = QDialog()
+    input_dialog.setWindowTitle("Chat")
+    input_dialog.setGeometry(100, 100, 400, 300)
+
+    layout = QVBoxLayout()
+
+    entry = QLineEdit()
+    response_display = QTextEdit()
+    response_display.setReadOnly(True)
+
+    def update_callback(new_text):
+        response_display.insertPlainText(new_text)
+
+    def finish_callback():
+        response_display.append("\n-----------------------")
+
+    def send_message():
+        user_message = entry.text()
+        response_display.append(f"Tú: {user_message}")
+        chat_with_bot(user_message, update_callback, finish_callback)
+        entry.clear()
+
+    send_button = QPushButton("Enviar")
+    send_button.clicked.connect(send_message)
+
+    layout.addWidget(entry)
+    layout.addWidget(send_button)
+    layout.addWidget(response_display)
+
+    input_dialog.setLayout(layout)
+    input_dialog.show()
+
+    # Guardar referencia para evitar cierre inesperado
+    open_windows.append(input_dialog)
+# Ventana de controles
+def open_control_window(window, screen_geometry):
+    menu = QDialog()
+    menu.setWindowTitle("Seleccionar Animación")
+
+    # Calcular posición de la ventana al lado del muñeco
+    x = window.x() + window.width()
+    y = window.y()
+
+    menu_width, menu_height = 200, 250
+    if y + menu.height() > screen_geometry.height():
+        y = screen_geometry.height() - menu.height() - 10
+
+    menu.setGeometry(x, y, menu_width, menu_height)
+
+    layout = QVBoxLayout()
+
+    btn_gravity = QPushButton("Gravedad")
+    btn_left = QPushButton("Mover a la izquierda")
+    btn_right = QPushButton("Mover a la derecha")
+    btn_climb = QPushButton("Escalar")
+
+    gravity_timer = QTimer()
+    gravity_timer.timeout.connect(lambda: apply_gravity(window, screen_geometry, gravity_timer))
+    btn_gravity.clicked.connect(lambda: gravity_timer.start(30))
+
+    move_timer = QTimer()
+    btn_left.clicked.connect(lambda: animate_move(window, 0, move_timer))
+    btn_right.clicked.connect(lambda: animate_move(window, screen_geometry.width() - window.width(), move_timer))
+    # Puedes implementar la animación escalar aquí
+    btn_climb.clicked.connect(lambda: print("Animación escalar no implementada aún."))
+
+    for btn in [btn_gravity, btn_left, btn_right, btn_climb]:
+        menu.layout().addWidget(btn) if menu.layout() else menu.setLayout(QVBoxLayout())
+        menu.layout().addWidget(btn)
+
+    menu.setGeometry(x, y, menu.sizeHint().width(), menu.sizeHint().height())
+    menu.exec_()
+
+
+# Setup GUI
+def setup_gui():
+    app = QApplication(sys.argv)
 
     images = load_images()
     muneco_photo = images["muneco"]
 
-    # Crear Canvas transparente
-    canvas = tk.Canvas(root, bg='white', highlightthickness=0)
-    canvas.pack(fill="both", expand=True)
+    window = QLabel()
+    window.setPixmap(muneco_photo)
+    window.resize(muneco_photo.size())
 
-    # Label del muñeco
-    muneco_label = tk.Label(canvas, image=muneco_photo, bg='white')
-    muneco_label_window = canvas.create_window(100, 100, window=muneco_label)
+    configure_transparency(window)
 
-    # Eventos
-    muneco_label.bind("<Button-1>", start_move)
-    muneco_label.bind("<B1-Motion>", lambda e: do_move(e, muneco_label, root))
-    muneco_label.bind("<Double-Button-1>", lambda e: on_muneco_double_click(e, root))
+    screen_geometry = QApplication.primaryScreen().geometry()
+    initial_x = (screen_geometry.width() - muneco_photo.width()) // 2
+    window.move(initial_x, 0)
 
-    return muneco_label, images
+    start_pos = None
 
+    def mousePressEvent(event): # Abrir ventana de controles al hacer clic derecho
+        global start_pos
+        if event.button() == Qt.RightButton:
+            print("Abrir ventana de controles")
+            open_control_window(window, screen_geometry)
+        elif event.button() == Qt.LeftButton:
+            print("Iniciar movimiento")
+            start_pos = event.globalPos()
 
-def load_images():
-    images = {
-        "muneco": ImageTk.PhotoImage(Image.open("img/muneco.png").resize((200, 200), Image.LANCZOS)),
-        "fall": [ImageTk.PhotoImage(Image.open(f"img/fall_{i}.png").resize((200, 200), Image.LANCZOS)) for i in range(1,4)],
-        # Añadir aquí otras imágenes si las tienes
-    }
-    return images
+    def mouseMoveEvent(event): # Mover la ventana al arrastrar
+        global start_pos
+        if start_pos:
+            print("Mover ventana")
+            delta = event.globalPos() - start_pos
+            window.move(window.pos() + delta)
+            start_pos = event.globalPos()
 
-# Para mover el muñeco
-startX, startY = 0, 0
+    def mouseDoubleClickEvent(event): # Abrir ventana de chat al hacer doble clic
+        if event.button() == Qt.LeftButton:
+           print("Abrir ventana de chat")
+           open_chat_window()
 
-def start_move(event):
-    global startX, startY
-    startX, startY = event.x, event.y
+    window.mouseDoubleClickEvent = mouseDoubleClickEvent
+    window.mousePressEvent = mousePressEvent
+    window.mouseMoveEvent = mouseMoveEvent
 
-def do_move(event, muneco_label, root):
-    x = event.x_root - startX
-    y = event.y_root - startY
-    muneco_label.place(x=x, y=y)
+    gravity_timer = QTimer()
+    gravity_timer.timeout.connect(lambda: apply_gravity(window, screen_geometry, gravity_timer))
+    gravity_timer.start(30)
 
-# Para manejar doble clic (mostrar input)
-def on_muneco_double_click(event, root):
-    input_window = tk.Toplevel(root)
-    input_window.geometry("400x100")
-
-    entry = tk.Entry(input_window, font=("Arial", 14))
-    entry.pack(fill="both", expand=True, padx=20, pady=20)
-
-    send_button = tk.Button(input_window, text="Enviar", command=lambda: print("Enviar mensaje"))
-    send_button.pack()
+    window.show()
+    sys.exit(app.exec_())

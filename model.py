@@ -49,8 +49,8 @@ class HistoryEntry:
         query = session.query(History)
         historys = query.all()
 
-        for history in historys:
-            print(f"Prompt: {history.prompt} - Response: {history.response}")
+        # for history in historys:
+        #     print(f"Prompt: {history.prompt} - Response: {history.response}")
         session.close()
     # create a fuction that retieve all the history in a list of strings
     def selectAllHistorie(self):
