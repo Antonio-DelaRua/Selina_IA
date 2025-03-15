@@ -46,8 +46,32 @@ class HistoryEntry:
     def selectHistorie(self):
         session = Session(engine)
         query = session.query(History)
-        histrys = query.all()
+        historys = query.all()
 
-        for histry in histrys:
-            print(f"Prompt: {histry.prompt} - Response: {histry.response}")
+        for history in historys:
+            print(f"Prompt: {history.prompt} - Response: {history.response}")
         session.close()
+
+
+# Crear una clase que maneja la inserción de datos en la tabla ApiKey
+class ApiKeyEntry:
+    def __init__(self, key):
+        self.key = key
+        self.save()
+
+    def save(self):
+        session = Session(engine)  # Crear sesión SQLAlchemy
+        api_key_entry = ApiKey(key=self.key)
+        session.add(api_key_entry)
+        session.commit()
+        session.close()
+    def selectApiKeys(self):
+        session = Session(engine)
+        query = session.query(ApiKey)
+        api_key = query.all()[0]  # Obtener todas las filas de la tabla
+        print(f"API Key: {api_key.key}")
+        session.close()
+        return api_key.key
+
+apiKey = ApiKeyEntry(key="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")
+apiKey.selectApiKeys()
