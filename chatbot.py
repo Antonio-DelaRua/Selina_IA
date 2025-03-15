@@ -11,7 +11,7 @@ OPENROUTER_API_KEY = apiKey.selectApiKeys()
 conversation_history = []
 
 def chat_with_bot(prompt, update_callback, finish_callback):
-    historieList = HistoryEntry(prompt=prompt, response="").selectAllHistorie()
+    historieList = HistoryEntry(False,False).selectAllHistorie()
     for historie in historieList:
         conversation_history.append({"role": "user", "content": historie.prompt})
 

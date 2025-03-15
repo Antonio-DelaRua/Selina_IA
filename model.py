@@ -33,9 +33,10 @@ Base.metadata.create_all(engine)  # <-- Esto debe ejecutarse aquí, después de 
 # Crear una clase que maneja la inserción de datos en la tabla History
 class HistoryEntry:
     def __init__(self, prompt, response):
-        self.prompt = prompt
-        self.response = response
-        self.save()
+        if prompt and response:
+            self.prompt = prompt
+            self.response = response
+            self.save()
 
     def save(self):
         session = Session(engine)  # Crear sesión SQLAlchemy
@@ -64,7 +65,8 @@ class HistoryEntry:
 class ApiKeyEntry:
     def __init__(self, key):
         self.key = key
-        self.save()
+        if key:
+            self.save()
 
     def save(self):
         session = Session(engine)  # Crear sesión SQLAlchemy
@@ -75,12 +77,20 @@ class ApiKeyEntry:
     def selectApiKeys(self):
         session = Session(engine)
         query = session.query(ApiKey)
-        api_key = query.all()[0]  # Obtener todas las filas de la tabla
-        print(f"API Key: {api_key.key}")
-        session.close()
-        return api_key.key
+        try:
+            api_key = query.all()[0]  # Obtener todas las filas de la tabla
+            print(f"API Key: {api_key.key}")
+            session.close()
+            return api_key.key
+        except IndexError:
+            print("No se encontraron claves de API en la base de datos.")
+            session.close()
+            return None
+
 # is api key in the database do not create
-if len(ApiKeyEntry.selectApiKeys(ApiKeyEntry)) == 0:
+apiKeys = ApiKeyEntry(None).selectApiKeys()
+if apiKeys is None:
     # Insertar una clave de API en la tabla ApiKey
     apiKey = ApiKeyEntry(key="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")
-    apiKey.selectApiKeys()
+else:
+    apiKey = ApiKeyEntry(None)
