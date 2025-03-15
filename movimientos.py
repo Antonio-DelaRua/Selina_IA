@@ -13,7 +13,7 @@ def apply_gravity(muneco_label, root, fall_images, muneco_photo):
             muneco_label.config(image=fall_images[2])
             root.after(100, fall_animation, 0)  # Cambiar a la imagen fall_1
         else:
-            muneco_label.config(image=fall_images[0])
+            muneco_label.config(image=muneco_photo) # Cambiar a la imagen muneco
             # Puedes agregar un after aquí para que el muñeco siga cayendo
 
     fall_animation()
