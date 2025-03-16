@@ -5,6 +5,9 @@ from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QPixmap
 from chatbot import chat_with_bot
 
+
+
+open_windows = []
 # Configurar transparencia (sin click-through para permitir interacción)
 def configure_transparency(window):
     window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
@@ -39,26 +42,27 @@ def apply_gravity(window, screen_geometry, timer):
         timer.stop()
 
 # Animaciones de movimiento lateral
-def animate_move(window, target_x, timer):
-    step = 10 if window.x() < target_x else -10
+def animate_move(window, target_x):
+    move_timer = QTimer()
+    step = 10 if target_x > window.x() else -10  # corregido aquí
 
     def move_step():
         current_x = window.x()
         if (step > 0 and current_x < target_x) or (step < 0 and current_x > target_x):
             window.move(current_x + step, window.y())
         else:
-            timer.stop()
+            move_timer.stop()
 
-    timer.timeout.connect(move_step)
-    timer.start(30)
-# Mantener referencias globales
-open_windows = []
+    move_timer.timeout.connect(move_step)
+    move_timer.start(30)
+
 
 # Ventana de chat
 def open_chat_window():
     input_dialog = QDialog()
     input_dialog.setWindowTitle("Chat")
     input_dialog.setGeometry(100, 100, 400, 300)
+    input_dialog.setWindowFlags(Qt.Window | Qt.WindowStaysOnTopHint  | Qt.Tool)
 
     layout = QVBoxLayout()
 
@@ -70,7 +74,7 @@ def open_chat_window():
         response_display.insertPlainText(new_text)
 
     def finish_callback():
-        response_display.append("\n-----------------------")
+        response_display.append("\n--- Fin del mensaje ---")
 
     def send_message():
         user_message = entry.text()
@@ -87,94 +91,133 @@ def open_chat_window():
 
     input_dialog.setLayout(layout)
     input_dialog.show()
-
-    # Guardar referencia para evitar cierre inesperado
+    # Guardar referencia global
     open_windows.append(input_dialog)
-# Ventana de controles
-def open_control_window(window, screen_geometry):
-    menu = QDialog()
-    menu.setWindowTitle("Seleccionar Animación")
 
-    # Calcular posición de la ventana al lado del muñeco
+
+# Animación para escalar
+def climb_animation(window, screen_geometry, climb_images, fly_image):
+    climb_timer = QTimer()
+    current_frame = [0]  # Para mantener la referencia del frame actual
+    climb_step = 8  # Velocidad vertical de la escalada
+    frame_count = 2
+
+    def climbing_step():
+        if window.y() > 0:
+            window.setPixmap(climb_images[current_frame[0] % frame_count])
+            window.move(window.x(), window.y() - climb_step)
+            current_frame[0] += 1
+        else:
+            window.setPixmap(fly_image)
+            climb_timer.stop()
+
+    climb_timer.timeout.connect(climbing_step)
+    climb_timer.start(100)  # intervalo en milisegundos entre frames
+
+
+# Ventana de controles
+def show_animation_menu(window, screen_geometry, images):
+    animation_menu = QDialog()
+    animation_menu_width, animation_menu_height = 200, 250
     x = window.x() + window.width()
     y = window.y()
+    if y + animation_menu_height > screen_geometry.height():
+        y = screen_geometry.height() - animation_menu_height - 10
+    animation_menu_position = f"{animation_menu_width}x{animation_menu_height}+{x}+{y}"
 
-    menu_width, menu_height = 200, 250
-    if y + menu.height() > screen_geometry.height():
-        y = screen_geometry.height() - menu.height() - 10
-
-    menu.setGeometry(x, y, menu_width, menu_height)
+    animation_menu = QDialog()
+    animation_menu.setWindowTitle("Seleccionar Animación")
+    animation_menu.setGeometry(x, y, animation_menu_width, animation_menu_height)
+    animation_menu.setWindowFlags(Qt.Window | Qt.WindowStaysOnTopHint | Qt.Tool)
 
     layout = QVBoxLayout()
 
+    def select_animation(animation):
+        if animation == "Gravedad":
+            gravity_timer = QTimer()
+            gravity_timer.timeout.connect(lambda: apply_gravity(window, screen_geometry, gravity_timer))
+            gravity_timer.start(30)
+        elif animation == "Mover a la izquierda":
+
+            animate_move(window, 0)
+        elif animation == "Mover a la derecha":
+
+            animate_move(window, screen_geometry.width() - window.width())
+        elif animation == "Escalar":
+             climb_animation(window, screen_geometry, images["climb"], images["muneco"])
+
+
+
+
     btn_gravity = QPushButton("Gravedad")
+    btn_gravity.clicked.connect(lambda: select_animation("Gravedad"))
+
     btn_left = QPushButton("Mover a la izquierda")
+    btn_left.clicked.connect(lambda: select_animation("Mover a la izquierda"))
+
     btn_right = QPushButton("Mover a la derecha")
+    btn_right.clicked.connect(lambda: select_animation("Mover a la derecha"))
+
     btn_climb = QPushButton("Escalar")
+    btn_climb.clicked.connect(lambda: select_animation("Escalar"))
 
-    gravity_timer = QTimer()
-    gravity_timer.timeout.connect(lambda: apply_gravity(window, screen_geometry, gravity_timer))
-    btn_gravity.clicked.connect(lambda: gravity_timer.start(30))
+    layout.addWidget(btn_gravity)
+    layout.addWidget(btn_left)
+    layout.addWidget(btn_right)
+    layout.addWidget(btn_climb)
 
-    move_timer = QTimer()
-    btn_left.clicked.connect(lambda: animate_move(window, 0, move_timer))
-    btn_right.clicked.connect(lambda: animate_move(window, screen_geometry.width() - window.width(), move_timer))
-    # Puedes implementar la animación escalar aquí
-    btn_climb.clicked.connect(lambda: print("Animación escalar no implementada aún."))
-
-    for btn in [btn_gravity, btn_left, btn_right, btn_climb]:
-        menu.layout().addWidget(btn) if menu.layout() else menu.setLayout(QVBoxLayout())
-        menu.layout().addWidget(btn)
-
-    menu.setGeometry(x, y, menu.sizeHint().width(), menu.sizeHint().height())
-    menu.exec_()
-
+    animation_menu.setLayout(layout)
+    animation_menu.exec_()
+    # Guardar referencia global
+    open_windows.append(animation_menu)
 
 # Setup GUI
+
+app = QApplication(sys.argv)
+window = QLabel()
+
 def setup_gui():
-    app = QApplication(sys.argv)
-
-    images = load_images()
+    images = load_images() # Cargar imágenes
     muneco_photo = images["muneco"]
-
-    window = QLabel()
-    window.setPixmap(muneco_photo)
-    window.resize(muneco_photo.size())
+    window.setPixmap(muneco_photo) # Establecer imagen de muñeco
+    window.resize(muneco_photo.size()) # Establecer tamaño de la ventana
 
     configure_transparency(window)
 
-    screen_geometry = QApplication.primaryScreen().geometry()
+    screen_geometry = app.primaryScreen().geometry()
     initial_x = (screen_geometry.width() - muneco_photo.width()) // 2
     window.move(initial_x, 0)
 
+    gravity_timer = QTimer()
+    gravity_timer.timeout.connect(lambda: apply_gravity(window, screen_geometry, gravity_timer))
+    gravity_timer.start(30)
+
+    # Variables para mover muñeco arrastrando
     start_pos = None
 
-    def mousePressEvent(event): # Abrir ventana de controles al hacer clic derecho
-        global start_pos
+    def mousePressEvent(event):
+        nonlocal start_pos
         if event.button() == Qt.RightButton:
-            print("Abrir ventana de controles")
-            open_control_window(window, screen_geometry)
+            show_animation_menu(window, screen_geometry, images)
         elif event.button() == Qt.LeftButton:
-            print("Iniciar movimiento")
             start_pos = event.globalPos()
 
-    def mouseMoveEvent(event): # Mover la ventana al arrastrar
-        global start_pos
+    def mouseMoveEvent(event):
+        nonlocal start_pos
         if start_pos:
-            print("Mover ventana")
             delta = event.globalPos() - start_pos
             window.move(window.pos() + delta)
             start_pos = event.globalPos()
 
-    def mouseDoubleClickEvent(event): # Abrir ventana de chat al hacer doble clic
+    def mouseDoubleClickEvent(event):
         if event.button() == Qt.LeftButton:
-           print("Abrir ventana de chat")
-           open_chat_window()
+            open_chat_window()
 
-    window.mouseDoubleClickEvent = mouseDoubleClickEvent
     window.mousePressEvent = mousePressEvent
+    window.mouseDoubleClickEvent = mouseDoubleClickEvent
     window.mouseMoveEvent = mouseMoveEvent
 
+    # Gravedad automática al iniciar
     gravity_timer = QTimer()
     gravity_timer.timeout.connect(lambda: apply_gravity(window, screen_geometry, gravity_timer))
     gravity_timer.start(30)
