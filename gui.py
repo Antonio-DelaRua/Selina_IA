@@ -62,6 +62,7 @@ def on_text_change(event, text_widget):
     lines = content.count('\n') + 1
     new_height = min(10, lines)  # Limitar a un máximo de 10 líneas visibles
     text_widget.config(height=new_height)
+    
 
 def show_response(root):
     global response_window, response_text_widget
@@ -81,9 +82,30 @@ def show_response(root):
                 self.complete_text = self.complete_text.replace("Consultando...", "")
             self.complete_text += new_text
             self.text_widget.delete("1.0", tk.END)  # Eliminar el texto existente
-            self.text_widget.insert(tk.END, self.complete_text)
+            self.insert_formatted_text(self.complete_text)
             self.text_widget.yview(tk.END)  # Desplazar la vista hacia el final del texto
             self.text_widget.update_idletasks()
+
+        def insert_formatted_text(self, text):
+            self.text_widget.delete("1.0", tk.END)  # Eliminar el texto existente
+            lines = text.split('\n')
+            in_code_block = False
+            code_block_text = ""
+
+            for line in lines:
+                if line.startswith("```"):
+                    if in_code_block:
+                        # End of code block
+                        self.insert_code_block(code_block_text)
+                        in_code_block = False
+                        code_block_text = ""
+                    else:
+                        # Start of code block
+                        in_code_block = True
+                elif in_code_block:
+                    code_block_text += line + "\n"
+                else:
+                    self.text_widget.insert(tk.END, line + "\n")
 
         def insert_code_block(self, text):
             self.text_widget.insert(tk.END, "\n\n", "code")
