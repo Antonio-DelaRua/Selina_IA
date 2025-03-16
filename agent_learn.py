@@ -40,7 +40,25 @@ if __name__ == "__main__":
         "- **Administración de sistemas**: Para gestionar servidores y redes.\n"
         "- **Aplicaciones de escritorio**: Usando Tkinter o PyQt.\n"
         "- **Internet de las Cosas (IoT)**: Para programar dispositivos inteligentes."
-    )
+    ),
+
+            (
+        "como instalar python en windows?",
+        "Para instalar Python en Windows, sigue estos pasos:\n\n"
+        "**Descarga Python**\n"
+        "- Ve al sitio web oficial de Python: https://www.python.org/downloads/ \n\n"
+        "**Instala Python**\n"
+        "- Abre el archivo descargado (python-xxx.exe).\n"
+        "- IMPORTANTE: Marca la casilla 'Add Python to PATH' (Agregar Python al PATH).\n"
+        "- Haz clic en 'Install Now' y espera a que termine la instalación.\n\n"
+        "**Verifica la instalación**\n"
+        "- Presiona Win + R, escribe cmd y presiona Enter.\n"
+        "```\npython --version\n"
+        "or python -V\n```\n\n"
+        "**(OPCIONAL) Instalar pip y probarlo**\n"
+        "```\npip --version\n```\n"
+        "```\npip install numpy pandas\n```"
+    ),
 
         
     ]

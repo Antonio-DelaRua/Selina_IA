@@ -2,17 +2,11 @@ import requests
 import json
 import threading
 from model import HistoryEntry, ApiKeyEntry, PythonDB
+from alias_dic import predefined_answers
 
 # Direct API Key
 OPENROUTER_API_KEY = ApiKeyEntry.select_api_key()
 
-# Lista de preguntas y respuestas predeterminadas
-predefined_answers = {
-    "¿Qué es Python?": "Python es un lenguaje de programación de alto nivel, interpretado, con una sintaxis muy clara y fácil de leer y escribir. Fue creado en el año 1991 por Guido van Rossum y su nombre se inspira en el grupo de comedia británico 'Monty Python's Flying Circus'.",
-    "¿Qué es una API?": "Una API (Interfaz de Programación de Aplicaciones) es un conjunto de reglas y definiciones que permiten a las aplicaciones comunicarse entre sí.",
-    "¿Quién es Guido van Rossum?": "Guido van Rossum es el creador del lenguaje de programación Python.",
-    "hola": "pulsa ESC para destruir el mundo"
-}
 
 # Historial de la conversación
 conversation_history = []

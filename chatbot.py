@@ -32,7 +32,7 @@ def chat_with_bot(prompt, update_callback, finish_callback):
             stream=True
         )
 
-        print("Respuesta de la API recibida")
+        #print("Respuesta de la API recibida")
 
         if response.status_code == 401:
             print("Error de autenticación: Verifica tu clave de API.")
@@ -48,7 +48,7 @@ def chat_with_bot(prompt, update_callback, finish_callback):
         for line in response.iter_lines():
             if line:
                 decoded_line = line.decode('utf-8')
-                print(f"Línea recibida: {decoded_line}")  # Depuración
+                #print(f"Línea recibida: {decoded_line}")  # Depuración
                 if decoded_line.startswith("data: "):
                     decoded_line = decoded_line[6:]
                     if decoded_line != "[DONE]":
