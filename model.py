@@ -25,6 +25,39 @@ class History(Base):
     response = Column(String(255), nullable=False)
     date = Column(DateTime, default=datetime.datetime.now)
 
+# Crear la tabla PythonDB
+class PythonDB(Base):
+    __tablename__ = 'python_db'
+
+    id = Column(Integer, primary_key=True)
+    prompt = Column(String(255), nullable=False)
+    response = Column(String(255), nullable=False)
+    date = Column(DateTime, default=datetime.datetime.now)
+
+    def save(self):
+        Session = sessionmaker(bind=engine)
+        session = Session()
+        try:
+            session.add(self)
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            print(f"Error al guardar el prompt predefinido: {e}")
+        finally:
+            session.close()
+
+    @staticmethod
+    def get_by_prompt(prompt):
+        Session = sessionmaker(bind=engine)
+        session = Session()
+        try:
+            return session.query(PythonDB).filter(PythonDB.prompt == prompt).first()
+        except Exception as e:
+            session.rollback()
+            print(f"Error al consultar el prompt predefinido: {e}")
+        finally:
+            session.close()
+
 # Crear las tablas en la base de datos
 Base.metadata.create_all(engine)
 
