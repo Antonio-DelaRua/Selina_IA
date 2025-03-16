@@ -8,6 +8,8 @@ engine = create_engine("sqlite:///my_database.sqlite", echo=True)
 # Definir la base declarativa
 Base = declarative_base()
 
+
+
 # Crear la tabla ApiKey
 class ApiKey(Base):
     __tablename__ = 'api_key'
@@ -25,6 +27,15 @@ class History(Base):
     response = Column(String(255), nullable=False)
     date = Column(DateTime, default=datetime.datetime.now)
 
+
+# Crear la tabla History
+class PythonDb(Base):
+    __tablename__ = 'python_answers'
+
+    id = Column(Integer, primary_key=True)
+    prompt = Column(String(255), nullable=False)
+    response = Column(String(255), nullable=False)
+    date = Column(DateTime, default=datetime.datetime.now)
 # Crear las tablas en la base de datos
 Base.metadata.create_all(engine)
 
@@ -60,6 +71,49 @@ class HistoryEntry:
             print(f"Error al consultar el historial: {e}")
         finally:
             session.close()
+
+class PythonDbEntry:
+    def __init__(self, prompt, response):
+        if prompt and response:
+            self.prompt = prompt
+            self.response = response
+            self.save()
+
+    def save(self):
+        Session = sessionmaker(bind=engine)
+        session = Session()
+        python_entry = PythonDb(prompt=self.prompt, response=self.response)
+        try:
+            session.add(python_entry)
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            print(f"Error al guardar en los python db: {e}")
+        finally:
+            session.close()
+
+    @staticmethod
+    def get_all_python_db():
+        Session = sessionmaker(bind=engine)
+        session = Session()
+        try:
+            return session.query(PythonDb).all()
+        except Exception as e:
+            session.rollback()
+            print(f"Error al consultar el historial: {e}")
+        finally:
+            session.close()     
+    @staticmethod
+    def get_by_prompt(prompt):
+        Session = sessionmaker(bind=engine)
+        session = Session()
+        try:
+            return session.query(PythonDb).filter(PythonDb.prompt == prompt).first()
+        except Exception as e:
+            session.rollback()
+            print(f"Error al consultar el historial: {e}")
+        finally:
+            session.close()                   
 
 # Crear una clase que maneja la inserción de datos en la tabla ApiKey
 class ApiKeyEntry:

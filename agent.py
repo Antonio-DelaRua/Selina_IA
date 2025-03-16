@@ -1,17 +1,48 @@
 import requests
-import json
-from model import HistoryEntry, ApiKeyEntry
+import json, csv
+from model import HistoryEntry, ApiKeyEntry, PythonDbEntry, PythonDb
 
 # Direct API Key
 OPENROUTER_API_KEY = ApiKeyEntry.select_api_key()
 
 # Lista de preguntas y respuestas predeterminadas
+def cargar_csv_a_db(archivo_csv):
+    with open(archivo_csv, 'r', encoding='utf-8') as file:
+        lector_csv = csv.DictReader(file)
+        
+        actuals_prompts = PythonDbEntry.get_all_python_db()
+        
+        if len(actuals_prompts) == 0:
+            for fila in lector_csv:
+               PythonDbEntry(
+                    prompt=fila['prompt'],
+                    response=fila['response'],
+                    # date se autogenera por el default
+                )
+        else:               
+            for fila in lector_csv:                
+                isExist = False  
+                for item in actuals_prompts:
+                    if  PythonDbEntry.get_by_prompt(fila["prompt"]) is not None: 
+                        isExist = True
+                        continue
+    
+                if isExist == False:
+                    PythonDbEntry(
+                        prompt=fila['prompt'],
+                        response=fila['response'],
+                        # date se autogenera por el default
+                    )
+
+cargar_csv_a_db("python.csv")
+
+
 predefined_answers = {
     "¿Qué es Python?": "Python es un lenguaje de programación de alto nivel, interpretado, con una sintaxis muy clara y fácil de leer y escribir. Fue creado en el año 1991 por Guido van Rossum y su nombre se inspira en el grupo de comedia británico 'Monty Python's Flying Circus'.",
     "¿Qué es una API?": "Una API (Interfaz de Programación de Aplicaciones) es un conjunto de reglas y definiciones que permiten a las aplicaciones comunicarse entre sí.",
     "¿Quién es Guido van Rossum?": "Guido van Rossum es el creador del lenguaje de programación Python, y era un poco moñas.",
     "hola": "pulsa ESC para destruir el mundo"
-
+    
 }
 
 # Función para consultar el modelo de IA
@@ -38,19 +69,24 @@ def query_ai_model(prompt):
 
 # Agente que busca en las preguntas predeterminadas, la base de datos y consulta al modelo de IA si no encuentra la información
 def agent(prompt):
-    # Verificar si la pregunta está en las preguntas predeterminadas
-    if prompt in predefined_answers:
-        return predefined_answers[prompt]
-
     # Buscar en la base de datos
     try:
+            # Verificar si la pregunta está en las preguntas predeterminadas
+            
+        if prompt in predefined_answers:
+            return predefined_answers[prompt]
+        
+        query = PythonDbEntry.get_by_prompt(prompt)
+        if query:
+            return query.response
+            
         query = HistoryEntry.get_by_prompt(prompt)
         if query:
             return query.response
         else:
             # Consultar el modelo de IA
             response = query_ai_model(prompt)
-            history_entry = HistoryEntry(prompt=prompt, response=response)
+            HistoryEntry(prompt=prompt, response=response)
             return response
     except Exception as e:
         print(f"Error al consultar el modelo de IA: {e}")
