@@ -1,8 +1,9 @@
+Cython
 setuptools
+wheel
 Pillow
 tk
 requests
 SQLAlchemy
 testresources
-imagetk
 PyQt5
