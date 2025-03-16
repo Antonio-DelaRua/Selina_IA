@@ -26,10 +26,21 @@ if __name__ == "__main__":
     
     # Agregar más prompts predefinidos según sea necesario
     prompts_responses = [
-        ("¿Qué es SQL?", "SQL es un lenguaje de programación utilizado para gestionar y manipular bases de datos relacionales."),
-        ("¿Qué es NoSQL?", "NoSQL es un enfoque de diseño de base de datos que proporciona un mecanismo para el almacenamiento y recuperación de datos, que está modelado de formas distintas a las tablas relacionales."),
-        # Agrega más pares de prompt y response aquí
-        ("me cuentas un chiste?", "Doctor me tiemblan muchos las manos. -¿no sera que bebe demasiado alcohol? - que va si lo tiro casi todo"),
+            (
+        "que es python y para que se utiliza?",
+        "Python es un lenguaje de programación de alto nivel, interpretado y de propósito general. "
+        "Es conocido por su sintaxis sencilla y legible, lo que facilita su aprendizaje y uso.\n\n"
+        "¿Para qué se utiliza Python?\n"
+        "Python es muy versátil y se usa en diversos campos, como:\n\n"
+        "- **Desarrollo web**: Con frameworks como Django y Flask.\n"
+        "- **Ciencia de datos y Machine Learning**: Con bibliotecas como NumPy, Pandas, TensorFlow y Scikit-learn.\n"
+        "- **Automatización y scripting**: Para escribir scripts que automatizan tareas repetitivas.\n"
+        "- **Ciberseguridad**: Para análisis forense y pruebas de penetración.\n"
+        "- **Desarrollo de videojuegos**: Con motores como Pygame.\n"
+        "- **Administración de sistemas**: Para gestionar servidores y redes.\n"
+        "- **Aplicaciones de escritorio**: Usando Tkinter o PyQt.\n"
+        "- **Internet de las Cosas (IoT)**: Para programar dispositivos inteligentes."
+    )
 
         
     ]

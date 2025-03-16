@@ -105,7 +105,16 @@ def show_response(root):
                 elif in_code_block:
                     code_block_text += line + "\n"
                 else:
-                    self.text_widget.insert(tk.END, line + "\n")
+                    parts = line.split('**')
+                    for i, part in enumerate(parts):
+                        if i % 2 == 0:
+                            # Texto normal
+                            self.text_widget.insert(tk.END, part)
+                        else:
+                            # Texto en negrita
+                            self.text_widget.insert(tk.END, part, "bold")
+                    self.text_widget.insert(tk.END, "\n")
+
 
         def insert_code_block(self, text):
             self.text_widget.insert(tk.END, "\n\n", "code")
