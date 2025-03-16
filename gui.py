@@ -62,7 +62,6 @@ def on_text_change(event, text_widget):
     lines = content.count('\n') + 1
     new_height = min(10, lines)  # Limitar a un máximo de 10 líneas visibles
     text_widget.config(height=new_height)
-    
 
 def show_response(root):
     global response_window, response_text_widget
@@ -85,6 +84,7 @@ def show_response(root):
             self.insert_formatted_text(self.complete_text)
             self.text_widget.yview(tk.END)  # Desplazar la vista hacia el final del texto
             self.text_widget.update_idletasks()
+            self.text_widget.see("1.0")  # Asegurar que el texto comience desde el principio
 
         def insert_formatted_text(self, text):
             self.text_widget.delete("1.0", tk.END)  # Eliminar el texto existente
@@ -115,7 +115,6 @@ def show_response(root):
                             self.text_widget.insert(tk.END, part, "bold")
                     self.text_widget.insert(tk.END, "\n")
 
-
         def insert_code_block(self, text):
             self.text_widget.insert(tk.END, "\n\n", "code")
             self.text_widget.insert(tk.END, text, "code")
@@ -136,6 +135,7 @@ def show_response(root):
         position_y = (screen_height // 2) - (window_height // 2)
         response_window.geometry(f"{window_width}x{window_height}+{position_x}+{position_y}")
         response_window.configure(bg='white')
+        response_window.attributes("-topmost", True)  # Asegurar que la ventana esté siempre en la parte superior
 
         frame = tk.Frame(response_window, bg='white')
         frame.pack(expand=True, fill='both')
@@ -230,7 +230,7 @@ def load_images():
     return images
 
 def setup_gui(root):
-    root.title("Angel GPT Goku")
+    root.title("NoBt GPT Goku")
     root.configure(bg='white')
 
     root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(), root.winfo_screenheight()))
@@ -270,3 +270,8 @@ def setup_gui(root):
     muneco_label.bind("<ButtonRelease-3>", lambda event: show_animation_menu(event, root, muneco_label, fall_images, walk_images, climb_images, fly_image, muneco_photo))
 
     return muneco_label, images
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    setup_gui(root)
+    root.mainloop()

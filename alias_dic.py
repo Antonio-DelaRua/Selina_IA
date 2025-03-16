@@ -44,5 +44,18 @@ predefined_answers = {
         "```\ngit stash pop  # Restaura los cambios guardados\n```\n\n"
     ),
 
+    "react": (
+        "Instalar Create React App\n"
+        "Create React App es una herramienta oficial para crear aplicaciones React.\n"
+        "```\nnpm install -g create-react-app\n```\n\n"
+        " Crear un nuevo proyecto React\n"
+        "```\nnpx create-react-app my-app\n```\n"
+        "```\nnpm start\n```\n"
+    ),
+
+
+
+    
+
     
 }

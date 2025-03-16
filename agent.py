@@ -3,10 +3,10 @@ import json
 import threading
 from model import HistoryEntry, ApiKeyEntry, PythonDB
 from alias_dic import predefined_answers
+from fuzzywuzzy import process
 
 # Direct API Key
 OPENROUTER_API_KEY = ApiKeyEntry.select_api_key()
-
 
 # Historial de la conversación
 conversation_history = []
@@ -50,12 +50,19 @@ def chat_with_bot(prompt):
         print(f"Error al llamar a la API de OpenRouter: {e}")
         return f"Error al llamar a la API de OpenRouter: {e}"
 
+def find_closest_match(prompt):
+    match, score = process.extractOne(prompt, predefined_answers.keys())
+    if score > 80:  # Umbral de similitud
+        return match
+    return None
+
 def agent(prompt):
-    # Verificar si la pregunta está en las preguntas predeterminadas
-    if prompt in predefined_answers:
-        response = predefined_answers[prompt]
-        if not HistoryEntry.get_by_prompt(prompt):
-            HistoryEntry(prompt=prompt, response=response)
+    # Buscar el prompt más cercano en las respuestas predefinidas
+    closest_match = find_closest_match(prompt)
+    if closest_match:
+        response = predefined_answers[closest_match]
+        if not HistoryEntry.get_by_prompt(closest_match):
+            HistoryEntry(prompt=closest_match, response=response)
         return response
 
     # Buscar en la tabla de prompts predefinidos (PythonDB)
