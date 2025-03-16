@@ -9,7 +9,9 @@ OPENROUTER_API_KEY = ApiKeyEntry.select_api_key()
 predefined_answers = {
     "¿Qué es Python?": "Python es un lenguaje de programación de alto nivel, interpretado, con una sintaxis muy clara y fácil de leer y escribir. Fue creado en el año 1991 por Guido van Rossum y su nombre se inspira en el grupo de comedia británico 'Monty Python's Flying Circus'.",
     "¿Qué es una API?": "Una API (Interfaz de Programación de Aplicaciones) es un conjunto de reglas y definiciones que permiten a las aplicaciones comunicarse entre sí.",
-    "¿Quién es Guido van Rossum?": "Guido van Rossum es el creador del lenguaje de programación Python, y era un poco moñas."
+    "¿Quién es Guido van Rossum?": "Guido van Rossum es el creador del lenguaje de programación Python, y era un poco moñas.",
+    "hola": "pulsa ESC para destruir el mundo"
+
 }
 
 # Función para consultar el modelo de IA
@@ -65,5 +67,9 @@ if __name__ == "__main__":
     print(f"Respuesta: {response}")
 
     prompt = "¿Quién es Guido van Rossum?"
+    response = agent(prompt)
+    print(f"Respuesta: {response}")
+
+    prompt ="hola"
     response = agent(prompt)
     print(f"Respuesta: {response}")
