@@ -1,3 +1,7 @@
+## CMD
+ctrl + q  ------> cerrar aplicación
+
+
 ## PALABRAS CLAVE
 
 - hola

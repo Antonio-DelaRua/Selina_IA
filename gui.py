@@ -268,7 +268,10 @@ def setup_gui(root):
     muneco_label.bind("<B1-Motion>", lambda event: do_move(event, muneco_label, root))
     muneco_label.bind("<Double-1>", lambda event: on_muneco_double_click(event, root))
     muneco_label.bind("<ButtonRelease-3>", lambda event: show_animation_menu(event, root, muneco_label, fall_images, walk_images, climb_images, fly_image, muneco_photo))
-
+    
+    # Bind Ctrl+Q to close the application
+    root.bind("<Control-q>", lambda event: root.quit())
+    
     return muneco_label, images
 
 if __name__ == "__main__":
