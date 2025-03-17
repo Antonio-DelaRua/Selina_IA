@@ -162,15 +162,19 @@ def do_move(event, muneco_label, root):
     x = muneco_label.winfo_x() + event.x - startX
     y = muneco_label.winfo_y() + event.y - startY
 
+    # Usar dimensiones del escritorio virtual
+    virtual_width = root.winfo_vrootwidth()
+    virtual_height = root.winfo_vrootheight()
+
     if x < 0:
         x = 0
-    elif x > root.winfo_width() - muneco_label.winfo_width():
-        x = root.winfo_width() - muneco_label.winfo_width()
+    elif x > virtual_width - muneco_label.winfo_width():
+        x = virtual_width - muneco_label.winfo_width()
 
     if y < 0:
         y = 0
-    elif y > root.winfo_height() - muneco_label.winfo_height():
-        y = root.winfo_height() - muneco_label.winfo_height()
+    elif y > virtual_height - muneco_label.winfo_height():
+        y = virtual_height - muneco_label.winfo_height()
 
     muneco_label.place(x=x, y=y)
 
@@ -233,11 +237,13 @@ def setup_gui(root):
     root.title("NoBt GPT Goku")
     root.configure(bg='white')
 
-    root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(), root.winfo_screenheight()))
+    # Obtener dimensiones del escritorio virtual (todas las pantallas)
+    virtual_width = root.winfo_vrootwidth()
+    virtual_height = root.winfo_vrootheight()
+    root.geometry(f"{virtual_width}x{virtual_height}+0+0")  # Cubrir todas las pantallas
     root.attributes("-transparentcolor", "white")
     root.attributes("-topmost", True)
     root.overrideredirect(True)
-
     try:
         root.option_add("*Font", "Inter 14")
     except Exception as e:
@@ -259,8 +265,8 @@ def setup_gui(root):
     screen_height = root.winfo_screenheight()
     initial_x = (screen_width // 2) - (200 // 2)
     initial_y = (screen_height // 2) - (200 // 2)
-
     muneco_label.place(x=initial_x, y=initial_y)
+
 
     root.after(100, apply_gravity, muneco_label, root, fall_images, muneco_photo)
 
@@ -271,7 +277,7 @@ def setup_gui(root):
     
     # Bind Ctrl+Q to close the application
     root.bind("<Control-q>", lambda event: root.quit())
-    
+
     return muneco_label, images
 
 if __name__ == "__main__":
