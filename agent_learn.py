@@ -133,6 +133,461 @@ if __name__ == "__main__":
         "**Operaciones con Listas: **Acceso, modificación, adición y eliminación de elementos.\n"
         "```\ndiccionario = {\"nombre\": \"Antonio\", \"edad\": 30}\ndiccionario[\"edad\"] = 31\ndiccionario[\"ciudad\"] = \"Madrid\"\ndel diccionario[\"edad\"]\n```\n"
     ),
+            (
+        "enteros",
+        "**Ejemplos de enteros (int) en Python**\n\n"
+        "**Asignación básica:**\n"
+        "```python\n"
+        "# Números positivos\n"
+        "edad = 25\n"
+        "cantidad_productos = 1000\n"
+        "año_actual = 2024\n\n"
+        "# Números negativos\n"
+        "temperatura_bajo_cero = -15\n"
+        "deuda = -5000\n\n"
+        "# Cero\n"
+        "puntos_iniciales = 0\n"
+        "```"
+        "**Operaciones aritméticas:**\n"
+        "```python\n"
+        "# Suma\n"
+        "resultado_suma = 15 + 10  # 25\n\n"
+        "# Resta\n"
+        "resultado_resta = 50 - 30  # 20\n\n"
+        "# Multiplicación\n"
+        "resultado_mult = 7 * 3  # 21\n\n"
+        "# División entera (//)\n"
+        "resultado_div_entera = 20 // 6  # 3 (descarta decimales)\n\n"
+        "# Módulo (%)\n"
+        "residuo = 20 % 6  # 2 (resto de la división)\n\n"
+        "# Potencia (**)\n"
+        "cubo = 3 ** 3  # 27\n\n"
+        "```\n"
+        "**Uso en contexto real:**\n"
+        "```python\n"
+        "# Calcular días vividos (aproximado)\n"
+        "años = 30\n"
+        "días_por_año = 365\n"
+        "días_vividos = años * días_por_año  # 10,950\n\n"
+        "# Controlar inventario"
+        "stock_inicial = 150\n"
+        "ventas = 47\n"
+        "reposición = 60\n"
+        "stock_actual = stock_inicial - ventas + reposición  # 163\n\n"
+        "# Conversión de unidades\n"
+        "kilómetros = 5\n"
+        "metros = kilómetros * 1000  # 5000\n\n"
+        "```\n"
+        "**Conversión a entero:**\n"
+        "```python\n"
+        "# Desde string numérico\n"
+        'numero_str = "45"\n'
+        "numero_int = int(numero_str)  # 45 (ahora es tipo int)\n\n"
+        "# Desde float"
+        "numero_float = 12.99\n"
+        "numero_int = int(numero_float)  # 12 (trunca decimales)\n\n"
+        '# Error común (evitar) --> # int("Hola") → ValueError\n'
+        "```\n"
+        "**Casos especiales:**\n"
+        "```python\n"
+        "# Notación científica (se almacena como int si no hay decimales)\n"
+        "gran_numero = 2e3  # 2000 (tipo int)\n\n"
+        "# Sistemas numéricos\n"
+        "hexadecimal = 0xFF  # 255 en decimal\n"
+        "binario = 0b1010  # 10 en decimal\n"
+        "octal = 0o77  # 63 en decimal\n"
+        "```\n"
+),
+            (
+        "int",
+        "**Ejemplos de enteros (int) en Python**\n\n"
+        "**Asignación básica:**\n"
+        "```python\n"
+        "# Números positivos\n"
+        "edad = 25\n"
+        "cantidad_productos = 1000\n"
+        "año_actual = 2024\n\n"
+        "# Números negativos\n"
+        "temperatura_bajo_cero = -15\n"
+        "deuda = -5000\n\n"
+        "# Cero\n"
+        "puntos_iniciales = 0\n"
+        "```"
+        "**Operaciones aritméticas:**\n"
+        "```python\n"
+        "# Suma\n"
+        "resultado_suma = 15 + 10  # 25\n\n"
+        "# Resta\n"
+        "resultado_resta = 50 - 30  # 20\n\n"
+        "# Multiplicación\n"
+        "resultado_mult = 7 * 3  # 21\n\n"
+        "# División entera (//)\n"
+        "resultado_div_entera = 20 // 6  # 3 (descarta decimales)\n\n"
+        "# Módulo (%)\n"
+        "residuo = 20 % 6  # 2 (resto de la división)\n\n"
+        "# Potencia (**)\n"
+        "cubo = 3 ** 3  # 27\n\n"
+        "```\n"
+        "**Uso en contexto real:**\n"
+        "```python\n"
+        "# Calcular días vividos (aproximado)\n"
+        "años = 30\n"
+        "días_por_año = 365\n"
+        "días_vividos = años * días_por_año  # 10,950\n\n"
+        "# Controlar inventario"
+        "stock_inicial = 150\n"
+        "ventas = 47\n"
+        "reposición = 60\n"
+        "stock_actual = stock_inicial - ventas + reposición  # 163\n\n"
+        "# Conversión de unidades\n"
+        "kilómetros = 5\n"
+        "metros = kilómetros * 1000  # 5000\n\n"
+        "```\n"
+        "**Conversión a entero:**\n"
+        "```python\n"
+        "# Desde string numérico\n"
+        'numero_str = "45"\n'
+        "numero_int = int(numero_str)  # 45 (ahora es tipo int)\n\n"
+        "# Desde float"
+        "numero_float = 12.99\n"
+        "numero_int = int(numero_float)  # 12 (trunca decimales)\n\n"
+        '# Error común (evitar) --> # int("Hola") → ValueError\n'
+        "```\n"
+        "**Casos especiales:**\n"
+        "```python\n"
+        "# Notación científica (se almacena como int si no hay decimales)\n"
+        "gran_numero = 2e3  # 2000 (tipo int)\n\n"
+        "# Sistemas numéricos\n"
+        "hexadecimal = 0xFF  # 255 en decimal\n"
+        "binario = 0b1010  # 10 en decimal\n"
+        "octal = 0o77  # 63 en decimal\n"
+        "```\n"
+),
+
+            (
+        "float",
+        "**¿Qué es un float en Python?**\n\n"
+        "Los float son números de punto flotante (decimales) que permiten representar valores reales con parte fraccionaria.\n\n"
+        "**Ejemplo de uso práctico**\n"
+        "```python\n"
+        "# 1. Asignación básica\n"
+        "temperatura = 23.5\n"       
+        "pi = 3.1415926535\n"
+        "presupuesto = 1500.75\n\n"
+        "# 2. Notación científica\n"
+        "velocidad_luz = 3e8      # 300000000.0\n"
+        "micro_metro = 1e-6       # 0.000001\n\n"
+        "# 3. Operaciones matemáticas\n"
+        "radio = 5.0\n"
+        "area_circulo = pi * (radio ** 2)  # 78.5398163375\n\n"
+        "# 4. Conversiones\n"
+        "entero_a_float = float(42)        # 42.0\n"
+        'texto_a_float = float("15.75")    # 15.75\n\n'
+        "# 5. Resultados de división\n"
+        "division = 10 / 3  # 3.3333333333333335 (automáticamente float)\n\n"
+        "**Casos especiales**\n"
+        "infinito_positivo = float('inf')   # Representa infinito\n"
+        "infinito_negativo = -float('inf')  # -infinito\n"
+        "no_es_numero = float('nan')        # NaN (Not a Number)\n\n"
+        "```\n"
+        "**¿Cuándo usar floats?**\n"
+        "- Cálculos científicos/ingeniería\n"
+        "- Manejo de dinero (aunque mejor usar decimal para precisión absoluta)\n"
+        "- Mediciones físicas (peso, temperatura, tiempo)\n"
+        "- Gráficos y modelado 3D"
+),
+
+            (
+        "numeros complejos",
+        "**¿Qué es un complex en Python?**\n\n"
+        "Los números complejos tienen una parte real y una parte imaginaria (múltiplo de j, la unidad imaginaria).\n\n"
+        "**Ejemplo de uso práctico**\n"
+        "```python\n"
+        "# 1. Asignación directa\n"
+        "z1 = 3 + 4j        # Parte real: 3 | Parte imaginaria: 4\n"       
+        "z2 = -2.5 - 1.7j   # Números negativos\n"
+        "z3 = 0j            # Complejo puramente imaginario (real=0)\n\n"
+        "# 2. Usando complex()\n"
+        "z4 = complex(2, 5)   # 2 + 5j\n"
+        "z5 = complex(1.5)    # 1.5 + 0j (si solo se especifica real)\n\n"
+        "```\n"
+        "**Operaciones comunes**\n"
+        "```python\n"
+        "# Suma\n"
+        "resultado_suma = (2 + 3j) + (1 - 2j)  # 3 + 1j\n\n"
+        "# Multiplicación\n"
+        "resultado_mult = (1 + 2j) * (3 - 4j)  # 11 + 2j (3 + 6j -4j -8j² → j²=-1)\n\n"
+        '# Conjugado complejo\n'
+        "conjugado = (5 - 3j).conjugate()  # 5 + 3j\n\n"
+        "# Acceso a partes\n"
+        "real = z1.real     # 3.0 (siempre retorna float)\n"
+        "imag = z1.imag     # 4.0\n"
+        "```\n"
+
+        "**Casos especiales**\n"
+        "```python\n"
+        "# Desde strings\n"
+        'z6 = complex("5+3j")      # 5 + 3j (sin espacios)\n'
+        'z7 = complex("2.7")       # 2.7 + 0j\n\n'
+        "# Magnitud y fase (módulo y argumento)\n"
+        "import cmath\n"
+        "modulo = abs(3 + 4j)      # 5.0 (√(3² +4²))\n"
+        "fase = cmath.phase(1 + 1j) # 0.785 rad (45°)\n\n"
+        "```\n"
+        "**Aplicaciones prácticas**\n"
+        "```python\n"
+        "# 1. Resolver ecuaciones cuadráticas con raíces complejas\n"
+        'a, b, c = 1, 2, 5\n'
+        "discriminante = b**2 - 4*a*c\n"
+        "raiz1 = (-b + cmath.sqrt(discriminante)) / (2*a)  # -1 + 2j\n"
+        "raiz2 = (-b - cmath.sqrt(discriminante)) / (2*a)  # -1 - 2j\n\n"
+        "# 2. Ingeniería eléctrica (impedancia)\n"
+        "resistencia = 4.7  # Ohms (real)\n"
+        "reactancia = 3.2j  # Ohms (imaginario)\n"
+        "impedancia_total = resistencia + reactancia  # 4.7 + 3.2j\n\n"
+        "# 3. Transformadas de Fourier (procesamiento de señales)\n"
+        "muestra = [0.5 + 0j, 1j, -0.3 + 0.4j]  # Datos complejos típicos\n\n"
+        "```\n"
+        "**Precauciones importantes**\n"
+        "```python\n"
+        "# 1. La 'j' debe ir pegado al número imaginario\n"
+        'incorrecto = 3 + j4     # Error (NameError: j4 no existe)\n'
+        "correcto = 3 + 4j       # ✓\n\n"
+        "# 2. Precisión en representación\n"
+        "operacion = (0.1 + 0.2j) * 3  # 0.3 + 0.6j (precisión float)\n\n"
+        "```\n"
+        "**¿Cuándo usar complex?**\n"
+        "- Análisis de circuitos AC\n"
+        "- Procesamiento de señales digitales\n"
+        "- Mecánica cuántica (funciones de onda)\n"
+        "- Gráficos fractales (como el conjunto de Mandelbrot)"
+),
+            (
+        "complex",
+        "**¿Qué es un complex en Python?**\n\n"
+        "Los números complejos tienen una parte real y una parte imaginaria (múltiplo de j, la unidad imaginaria).\n\n"
+        "**Ejemplo de uso práctico**\n"
+        "```python\n"
+        "# 1. Asignación directa\n"
+        "z1 = 3 + 4j        # Parte real: 3 | Parte imaginaria: 4\n"       
+        "z2 = -2.5 - 1.7j   # Números negativos\n"
+        "z3 = 0j            # Complejo puramente imaginario (real=0)\n\n"
+        "# 2. Usando complex()\n"
+        "z4 = complex(2, 5)   # 2 + 5j\n"
+        "z5 = complex(1.5)    # 1.5 + 0j (si solo se especifica real)\n\n"
+        "```\n"
+        "**Operaciones comunes**\n"
+        "```python\n"
+        "# Suma\n"
+        "resultado_suma = (2 + 3j) + (1 - 2j)  # 3 + 1j\n\n"
+        "# Multiplicación\n"
+        "resultado_mult = (1 + 2j) * (3 - 4j)  # 11 + 2j (3 + 6j -4j -8j² → j²=-1)\n\n"
+        '# Conjugado complejo\n'
+        "conjugado = (5 - 3j).conjugate()  # 5 + 3j\n\n"
+        "# Acceso a partes\n"
+        "real = z1.real     # 3.0 (siempre retorna float)\n"
+        "imag = z1.imag     # 4.0\n"
+        "```\n"
+
+        "**Casos especiales**\n"
+        "```python\n"
+        "# Desde strings\n"
+        'z6 = complex("5+3j")      # 5 + 3j (sin espacios)\n'
+        'z7 = complex("2.7")       # 2.7 + 0j\n\n'
+        "# Magnitud y fase (módulo y argumento)\n"
+        "import cmath\n"
+        "modulo = abs(3 + 4j)      # 5.0 (√(3² +4²))\n"
+        "fase = cmath.phase(1 + 1j) # 0.785 rad (45°)\n\n"
+        "```\n"
+        "**Aplicaciones prácticas**\n"
+        "```python\n"
+        "# 1. Resolver ecuaciones cuadráticas con raíces complejas\n"
+        'a, b, c = 1, 2, 5\n'
+        "discriminante = b**2 - 4*a*c\n"
+        "raiz1 = (-b + cmath.sqrt(discriminante)) / (2*a)  # -1 + 2j\n"
+        "raiz2 = (-b - cmath.sqrt(discriminante)) / (2*a)  # -1 - 2j\n\n"
+        "# 2. Ingeniería eléctrica (impedancia)\n"
+        "resistencia = 4.7  # Ohms (real)\n"
+        "reactancia = 3.2j  # Ohms (imaginario)\n"
+        "impedancia_total = resistencia + reactancia  # 4.7 + 3.2j\n\n"
+        "# 3. Transformadas de Fourier (procesamiento de señales)\n"
+        "muestra = [0.5 + 0j, 1j, -0.3 + 0.4j]  # Datos complejos típicos\n\n"
+        "```\n"
+        "**Precauciones importantes**\n"
+        "```python\n"
+        "# 1. La 'j' debe ir pegado al número imaginario\n"
+        'incorrecto = 3 + j4     # Error (NameError: j4 no existe)\n'
+        "correcto = 3 + 4j       # ✓\n\n"
+        "# 2. Precisión en representación\n"
+        "operacion = (0.1 + 0.2j) * 3  # 0.3 + 0.6j (precisión float)\n\n"
+        "```\n"
+        "**¿Cuándo usar complex?**\n"
+        "- Análisis de circuitos AC\n"
+        "- Procesamiento de señales digitales\n"
+        "- Mecánica cuántica (funciones de onda)\n"
+        "- Gráficos fractales (como el conjunto de Mandelbrot)"
+),
+
+            (
+        "cadena de texto",
+        "**¿Qué es una cadena de texto en Python?**\n\n"
+        "Las cadenas son secuencias inmutables de caracteres (letras, números, símbolos) encerradas entre comillas.\n\n"
+        "**Ejemplo de uso básico**\n"
+        "```python\n"
+        "# 1. Creación de cadenas\n"
+        'saludo = "¡Hola, mundo!"\n'       
+        "direccion = 'Calle Falsa 123'\n"
+        "poema = '''Roses are red,\n"
+        "Violets are blue...'''  # Multilínea\n\n"
+        "# 2. Caracteres especiales con escape\n"
+        'texto = "Texto con \"comillas\" y \\barra\\"  # Usa \ para escapar\n\n'
+        "# 3. Acceso a caracteres\n"
+        "primera_letra = saludo[0]  # '¡' (índice 0)\n"
+        "ultimo_caracter = saludo[-1]  # '!')\n"
+        "subcadena = saludo[1:5]  # 'Hola' (slicing)\n\n"
+        "```\n"
+        "**Operaciones comunes**\n"
+        "```python\n"
+        "# Concatenación\n"
+        'nombre = "Ana"\n'
+        'bienvenida = "Hola, " + nombre + "!"  # "Hola, Ana!"\n\n'
+        "# Repetición\n"
+        'eco = "ja" * 3  # "jajaja"\n\n'
+        "# Formateo con f-strings (Python 3.6+)\n"
+        "edad = 25\n"
+        'mensaje = f"{nombre} tiene {edad} años"  # "Ana tiene 25 años"\n\n'
+        "# Métodos útiles\n"
+        'texto = "  Python es Genial  "\n'
+        'limpio = texto.strip()  # "Python es Genial" (elimina espacios)\n'
+        'mayusculas = texto.upper()  # "  PYTHON ES GENIAL  ")\n'
+        'reemplazo = texto.replace("Genial", "Increíble")  # "  Python es Increíble  "\n\n'
+        "```\n"
+        "**Casos especiales**\n"
+        "```python\n"
+        "# Unicode y emojis\n"
+        'emoji = "Python 🐍"  # Soporta caracteres Unicode\n'
+        'hex_code = "\u00A1Hola!"  # ¡Hola! (código hexadecimal)\n\n'
+        "# Conversiones\n"
+        'numero_str = str(42)  # "42" (entero a cadena)\n'
+        'lista = "-".join(["a", "b", "c"])  # "a-b-c" (unión con separador)\n\n'
+        "# Comprobaciones\n"
+        'es_alfanumerico = "abc123".isalnum()  # True\n'
+        'es_digito = "50".isdigit()  # True\n\n'
+        "```\n"
+        "**Aplicaciones prácticas**\n"
+        "```python\n"
+        "# 1. Procesamiento de texto\n"
+        'frase = "Python es un lenguaje poderoso"\n'
+        'palabras = frase.split()  # ["Python", "es", ..., "poderoso"]\n'
+        "longitud = len(frase)  # 28 caracteres (incluyendo espacios)\n\n"
+        "# 2. Validación de entrada de usuario\n"
+        'email = "usuario@dominio.com"\n'
+        'if "@" in email and "." in email.split("@")[1]:\n'
+        '              print("Email válido")\n\n'
+        "# 3. Generación de HTML/XML\n"
+        "etiqueta = f'<a href=`{url}`>{texto}</a>'  # Plantillas simples\n\n"
+        "# 4. Palíndromos\n"
+        'es_palindromo = "anilina" == "anilina"[::-1]  # True (reversa)\n\n'
+        "```\n"
+        "**Precauciones importantes**\n"
+        "```python\n"
+        "# 1. Inmutabilidad: No se pueden modificar caracteres individuales\n"
+        'cadena = "Hola"\n'
+        '# cadena[0] = "M"  # Error: TypeError\n\n'
+        "# 2. Codificación de caracteres\n"
+        'texto = "Añadir carácter ñ"  # Usar codificación UTF-8 al guardar archivos\n\n'
+        "# 3. Performance en concatenaciones grandes\n"
+        "# Mejor usar listas y str.join():\n"
+        'resultado = "\n".join(partes)  # Eficiente para muchas operaciones\n\n'
+        "```\n"
+        "**¿Cuándo usar str?**\n"
+        "- Manipulación de texto (limpieza, análisis)\n"
+        "- Interfaz de usuario y mensajes\n"
+        "- Procesamiento de archivos (CSV, JSON, XML)\n"
+        "- Generación de contenido dinámico (plantillas web)\n"
+        "- Expresiones regulares (búsqueda de patrones)"
+),
+
+            (
+        "str",
+        "**¿Qué es una cadena de texto en Python?**\n\n"
+        "Las cadenas son secuencias inmutables de caracteres (letras, números, símbolos) encerradas entre comillas.\n\n"
+        "**Ejemplo de uso básico**\n"
+        "```python\n"
+        "# 1. Creación de cadenas\n"
+        'saludo = "¡Hola, mundo!"\n'       
+        "direccion = 'Calle Falsa 123'\n"
+        "poema = '''Roses are red,\n"
+        "Violets are blue...'''  # Multilínea\n\n"
+        "# 2. Caracteres especiales con escape\n"
+        'texto = "Texto con \"comillas\" y \\barra\\"  # Usa \ para escapar\n\n'
+        "# 3. Acceso a caracteres\n"
+        "primera_letra = saludo[0]  # '¡' (índice 0)\n"
+        "ultimo_caracter = saludo[-1]  # '!')\n"
+        "subcadena = saludo[1:5]  # 'Hola' (slicing)\n\n"
+        "```\n"
+        "**Operaciones comunes**\n"
+        "```python\n"
+        "# Concatenación\n"
+        'nombre = "Ana"\n'
+        'bienvenida = "Hola, " + nombre + "!"  # "Hola, Ana!"\n\n'
+        "# Repetición\n"
+        'eco = "ja" * 3  # "jajaja"\n\n'
+        "# Formateo con f-strings (Python 3.6+)\n"
+        "edad = 25\n"
+        'mensaje = f"{nombre} tiene {edad} años"  # "Ana tiene 25 años"\n\n'
+        "# Métodos útiles\n"
+        'texto = "  Python es Genial  "\n'
+        'limpio = texto.strip()  # "Python es Genial" (elimina espacios)\n'
+        'mayusculas = texto.upper()  # "  PYTHON ES GENIAL  ")\n'
+        'reemplazo = texto.replace("Genial", "Increíble")  # "  Python es Increíble  "\n\n'
+        "```\n"
+        "**Casos especiales**\n"
+        "```python\n"
+        "# Unicode y emojis\n"
+        'emoji = "Python 🐍"  # Soporta caracteres Unicode\n'
+        'hex_code = "\u00A1Hola!"  # ¡Hola! (código hexadecimal)\n\n'
+        "# Conversiones\n"
+        'numero_str = str(42)  # "42" (entero a cadena)\n'
+        'lista = "-".join(["a", "b", "c"])  # "a-b-c" (unión con separador)\n\n'
+        "# Comprobaciones\n"
+        'es_alfanumerico = "abc123".isalnum()  # True\n'
+        'es_digito = "50".isdigit()  # True\n\n'
+        "```\n"
+        "**Aplicaciones prácticas**\n"
+        "```python\n"
+        "# 1. Procesamiento de texto\n"
+        'frase = "Python es un lenguaje poderoso"\n'
+        'palabras = frase.split()  # ["Python", "es", ..., "poderoso"]\n'
+        "longitud = len(frase)  # 28 caracteres (incluyendo espacios)\n\n"
+        "# 2. Validación de entrada de usuario\n"
+        'email = "usuario@dominio.com"\n'
+        'if "@" in email and "." in email.split("@")[1]:\n'
+        '              print("Email válido")\n\n'
+        "# 3. Generación de HTML/XML\n"
+        "etiqueta = f'<a href=`{url}`>{texto}</a>'  # Plantillas simples\n\n"
+        "# 4. Palíndromos\n"
+        'es_palindromo = "anilina" == "anilina"[::-1]  # True (reversa)\n\n'
+        "```\n"
+        "**Precauciones importantes**\n"
+        "```python\n"
+        "# 1. Inmutabilidad: No se pueden modificar caracteres individuales\n"
+        'cadena = "Hola"\n'
+        '# cadena[0] = "M"  # Error: TypeError\n\n'
+        "# 2. Codificación de caracteres\n"
+        'texto = "Añadir carácter ñ"  # Usar codificación UTF-8 al guardar archivos\n\n'
+        "# 3. Performance en concatenaciones grandes\n"
+        "# Mejor usar listas y str.join():\n"
+        'resultado = "\n".join(partes)  # Eficiente para muchas operaciones\n\n'
+        "```\n"
+        "**¿Cuándo usar str?**\n"
+        "- Manipulación de texto (limpieza, análisis)\n"
+        "- Interfaz de usuario y mensajes\n"
+        "- Procesamiento de archivos (CSV, JSON, XML)\n"
+        "- Generación de contenido dinámico (plantillas web)\n"
+        "- Expresiones regulares (búsqueda de patrones)"
+),
+
 
     ]
 
