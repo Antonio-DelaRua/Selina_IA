@@ -1,3 +1,54 @@
+<div id="header" align="center">
+
+<img src="/img/muneco.png" width="300" />
+
+<h1 align="center"> Hi 👋, I´m Antonio DelaRua</h1>
+
+<h3 aling="center">A passionate web fullstack developer from Spain. learning every day, eager to move forward and continue learning in the world of programming.</h3>
+
+</div>
+
+
+
+### 👦 About Me :
+
+- 💻 Freelancer.
+
+- ✔  Ask me about **Angular, Javascript, Java, Spring, Html, CSS**
+
+- 📭 How to reach me **ruxxdeveloper@gmail.com**
+
+- 🏋️‍♂️ I´m currently learning **React, testing with JUNIT, Laravel, Symfony,Python...**
+
+- 🌍 Website [ruxxdev.site](ruxxdev.site)
+
+
+
+
+
+<div align="center">
+<h3>🔨 Languages and Tools:</h3>
+<br>
+<div>
+<img src="https://upload.wikimedia.org/wikipedia/commons/c/cf/Angular_full_color_logo.svg" title="Angular" alt="Angular" width="45" height="45"/>&nbsp;
+<img src="https://github.com/devicons/devicon/blob/master/icons/html5/html5-original.svg" title="HTML5" alt="HTML" width="40" height="40"/>&nbsp;
+<img src="https://github.com/devicons/devicon/blob/master/icons/css3/css3-plain-wordmark.svg" title="CSS3" alt="CSS" width="40" height="40"/>&nbsp;
+<img src="https://github.com/devicons/devicon/blob/master/icons/javascript/javascript-original.svg" title="Javascript" alt="Javascript" width="40" height="40"/>&nbsp;
+<img src="https://github.com/devicons/devicon/blob/master/icons/sass/sass-original.svg" title="SASS" alt="Sass" width="40" height="40"/>&nbsp;
+<img src="https://github.com/devicons/devicon/blob/master/icons/mysql/mysql-original-wordmark.svg" title="CSS3" alt="CSS" width="40" height="40"/>&nbsp;
+<img src="https://github.com/devicons/devicon/blob/master/icons/git/git-original-wordmark.svg" title="GIT" alt="Git" width="40" height="40"/>&nbsp;
+<img src="https://github.com/devicons/devicon/blob/master/icons/python/python-original.svg" title="PYTHON" alt="python" width="40" height="40"/>&nbsp;
+<img src="https://github.com/devicons/devicon/blob/master/icons/docker/docker-original-wordmark.svg" title="docker" alt="docker" width="40" height="40"/>&nbsp;
+<img src="https://github.com/devicons/devicon/blob/master/icons/firebase/firebase-plain-wordmark.svg" title="firebase" alt="firebase" width="40" height="40"/>&nbsp;
+<img src="https://github.com/devicons/devicon/blob/master/icons/java/java-original-wordmark.svg" title="java" alt="java" width="40" height="40"/>&nbsp;
+
+---
+
+
+
+
+
+
 ## CMD
 ctrl + q  ------> cerrar aplicación
 
@@ -39,5 +90,7 @@ ctrl + q  ------> cerrar aplicación
 - funcion python
 - palindromo
 - calculadora
+
+
 
 
