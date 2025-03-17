@@ -1359,6 +1359,190 @@ if __name__ == "__main__":
         "Eres mayor de edad\n"
         "```\n"
     ),
+    (
+        "for",
+        "**Bucle for**\n\n"
+        "Se usa cuando queremos recorrer una secuencia de elementos (listas, cadenas, rangos, etc.).\n"
+        "```python\n"
+        "for i in range(1, 6):  # Recorre los números del 1 al 5\n"
+        '    print(f"Número: {i}")\n'
+        "```\n"
+        "Explicación Paso a Paso\n\n"
+        "- range(1, 6) genera los números 1, 2, 3, 4, 5 (el 6 no se incluye).\n"
+        "- En cada iteración, la variable i toma un valor de la secuencia.\n"
+        '- print(f"Número: {i}") muestra cada número en la consola.\n\n'
+        "Salida esperada:\n"
+        "```python\n"
+        "Número: 1\n"
+        "Número: 2\n"
+        "Número: 3\n"
+        "Número: 4\n"
+        "Número: 5\n"
+        "```\n"
+    ),
+       (
+        "while",
+        "**Bucle while**\n\n"
+        "Se usa cuando queremos repetir un bloque mientras una condición sea verdadera.\n"
+        "```python\n"
+        "contador = 1\n\n"
+        'while contador <= 5:  # Se repite mientras contador sea menor o igual a 5\n'
+        '    print(f"Contador: {contador}")\n'
+        '    contador += 1  # Incrementamos el contador en 1\n'
+        "```\n"
+        "Explicación Paso a Paso\n\n"
+        "- Definimos contador = 1.\n"
+        "- Se verifica contador <= 5, si es verdadero, se ejecuta el bloque dentro del while.\n"
+        '- Se imprime el valor de contador y luego se incrementa en 1.\n'
+        "- Cuando contador = 6, la condición es falsa y el bucle se detiene.\n\n"
+        "Salida esperada:\n"
+        "```python\n"
+        "Contador: 1\n"
+        "Contador: 2\n"
+        "Contador: 3\n"
+        "Contador: 4\n"
+        "Contador: 5\n"
+        "```\n"
+    ),
+
+           (
+        "break",
+        "**Control de flujo en bucles | break**\n\n"
+        "Se usa cuando queremos Salir del bucle antes de tiempo.\n"
+        "```python\n"
+        "for num in range(1, 10):\n"
+        '    if num == 5:\n'
+        '        print("Se encontró el 5, saliendo del bucle...")\n'
+        '        break  # Sale del bucle cuando num es 5\n'
+        '    print(f"Número: {num}")\n'
+        "```\n"
+        "Salida esperada:\n"
+        "```python\n"
+        "Número: 1\n"
+        "Número: 2\n"
+        "Número: 3\n"
+        "Número: 4\n"
+        "Se encontró el 5, saliendo del bucle... \n"
+        "```\n"
+    ),
+           (
+        "continue",
+        "**Control de flujo en bucles | continue**\n\n"
+        "Se usa cuando queremosSaltar una iteración y seguir con la siguiente.\n"
+        "```python\n"
+        "for num in range(1, 6):\n"
+        '    if num == 3:\n'
+        '        print("Saltando el número 3...")\n'
+        '        continue  # Salta esta iteración y sigue con la siguiente\n'
+        '    print(f"Número: {num}")\n'
+        "```\n"
+        "Salida esperada:\n"
+        "```python\n"
+        "Número: 1\n"
+        "Número: 2\n"
+        "Saltando el número 3...\n"
+        "Número: 4\n"
+        "Número: 5\n"
+        "```\n"
+    ),
+               (
+        "pass",
+        "**Control de flujo en bucles | pass**\n\n"
+        "Marcador de posición, no hace nada\n"
+        "```python\n"
+        "for num in range(1, 6):\n"
+        '    if num == 3:\n'
+        '        pass  # No hace nada, solo mantiene la estructura válida\n'
+        '    print(f"Número: {num}")\n'
+        "```\n"
+        "Salida esperada:\n"
+        "```python\n"
+        "Número: 1\n"
+        "Número: 2\n"
+        "Número: 3\n"
+        "Número: 4\n"
+        "Número: 5\n"
+        "```\n"
+    ),
+    (
+        "funcion python",
+        "La función calculará el factorial de un número usando un bucle for.\n"
+        "```python\n"
+        "# Definimos una función llamada factorial que recibe un número n como parámetro\n"
+        "def factorial(n):\n"
+        '    """\n\n'
+        "    Calcula el factorial de un número entero positivo.\n\n"
+        "    Parámetros:\n"
+        "    n (int): El número del que queremos calcular el factorial.\n\n"
+        "    Retorna:\n"
+        "    int: El factorial del número n.\n"
+        '     """\n\n'
+        "    # Verificamos si el número es negativo\n"
+        "    if n < 0:\n"
+        '        return "No se puede calcular el factorial de un número negativo"\n\n'
+        "    # Caso especial: el factorial de 0 es 1\n"
+        "    if n == 0:\n"
+        "        return 1\n\n"
+        " # Inicializamos una variable para almacenar el resultado del factorial\n"
+        "    resultado = 1\n\n"
+        "    # Usamos un bucle for para multiplicar los números desde 1 hasta n\n"
+        '  for i in range(1, n + 1):  # El rango va de 1 a n (incluyendo n)\n'
+        "        resultado *= i  # Multiplicamos el resultado por el valor de i\n\n"
+        "    # Retornamos el resultado final\n"
+        "    return resultado\n\n"
+        "# Solicitamos un número al usuario\n"
+        'numero = int(input("Ingrese un número para calcular su factorial: "))\n\n'
+        "# Llamamos a la función factorial y mostramos el resultado\n"
+        'print(f"El factorial de {numero} es: {factorial(numero)}")\n'
+        "```\n"
+        "**Explicación paso a paso**\n\n"
+        "- Definimos la función factorial(n) con un parámetro n.\n"
+        "- Verificamos si n es negativo. Si lo es, devolvemos un mensaje de error.\n"
+        "- Manejamos el caso especial n == 0, devolviendo 1.\n"
+        "- Inicializamos resultado = 1 para almacenar el cálculo.\n"
+        "- Iteramos con for i in range(1, n + 1) para multiplicar todos los números desde 1 hasta n.\n"
+        "- Multiplicamos resultado *= i en cada iteración.\n"
+        "- Retornamos el valor final después de completar el bucle.\n"
+        "- Pedimos al usuario un número y mostramos el resultado usando print().\n\n"
+        "Ejemplo de ejecución:\n"
+        "```python\n"
+        "Ingrese un número para calcular su factorial: 5\n"
+        "El factorial de 5 es: 120\n"
+        "```\n"
+    ),
+        (
+        "palindromo",
+        "Función para verificar si un número es palíndromo\n"
+        "```python\n"
+        "def es_palindromo(numero):\n\n"
+        '    # Convertimos el número a cadena para poder invertirlo\n'
+        "    numero_str = str(numero) \n\n"
+        "    Invertimos la cadena y la comparamos con la original\n"
+        "    if numero_str == numero_str[::-1]: \n"
+        "        return True  # Es palíndromo\n"
+        "    int: El factorial del número n.\n"
+        '    else:\n'
+        "        return False  # No es palíndromo\n\n"
+        "**# Solicitamos un número al usuario**\n"
+        'num = int(input("Ingrese un número: "))\n\n'
+        "# Verificamos si es palíndromo e imprimimos el resultado\n"
+        "if es_palindromo(num):\n"
+        '    print(f"El número {num} es un palíndromo.")\n'
+        "else:\n"
+        '    print(f"El número {num} no es un palíndromo.")\n'
+        "```\n"
+        "**Explicación paso a paso**\n\n"
+        "- Convertimos el número a cadena con str(numero), para poder manipularlo.\n"
+        "- Invertimos la cadena usando [::-1] y la comparamos con la original.\n"
+        "- Si son iguales, el número es un palíndromo y la función retorna True.\n"
+        "- Si no son iguales, retorna False.\n"
+        "- Pedimos al usuario un número, llamamos la función y mostramos el resultado.\n\n"
+        "Ejemplo de ejecución:\n"
+        "```python\n"
+        "Ingrese un número: 12321\n"
+        "El número 12321 es un palíndromo.\n"
+        "```\n"
+    ),
 
     ]
 

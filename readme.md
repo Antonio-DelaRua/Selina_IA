@@ -27,3 +27,11 @@
 - estructuras de control
 - condicionales
 - if
+- for
+- while
+- continue
+- pass
+- break
+- funcion python
+- palindromo
+
