@@ -200,7 +200,18 @@ def show_animation_menu(event, root, muneco_label, fall_images, walk_images, cli
     position_x = x + muneco_label.winfo_width()
     position_y = y
 
+    screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
+
+    # Ajustar la posición horizontal del menú si está cerca del borde derecho de la pantalla
+    if position_x + menu_width > screen_width:
+        position_x = x - menu_width
+
+    # Ajustar la posición horizontal del menú si está cerca del borde izquierdo de la pantalla
+    if position_x < 0:
+        position_x = x + muneco_label.winfo_width()
+
+    # Ajustar la posición vertical del menú si está cerca del borde inferior de la pantalla
     if position_y + menu_height > screen_height:
         position_y = screen_height - menu_height - 10
 
@@ -210,10 +221,11 @@ def show_animation_menu(event, root, muneco_label, fall_images, walk_images, cli
     Frame(animation_menu, bg='white').pack(expand=True, fill='both')
 
     Button(animation_menu, text="Gravedad", command=lambda: select_animation("Gravedad"), bg='orange', fg='white', font=("Comic Sans MS", 12)).pack(pady=10)
-    Button(animation_menu, text="izquierda", command=lambda: select_animation("Mover a la izquierda"), bg='orange', fg='white', font=("Comic Sans MS", 12)).pack(pady=10)
-    Button(animation_menu, text="derecha", command=lambda: select_animation("Mover a la derecha"), bg='orange', fg='white', font=("Comic Sans MS", 12)).pack(pady=10)
+    Button(animation_menu, text="Mover a la izquierda", command=lambda: select_animation("Mover a la izquierda"), bg='orange', fg='white', font=("Comic Sans MS", 12)).pack(pady=10)
+    Button(animation_menu, text="Mover a la derecha", command=lambda: select_animation("Mover a la derecha"), bg='orange', fg='white', font=("Comic Sans MS", 12)).pack(pady=10)
     Button(animation_menu, text="Escalar", command=lambda: select_animation("Escalar"), bg='orange', fg='white', font=("Comic Sans MS", 12)).pack(pady=10)
 
+    
 def load_images():
     image_paths = {
         "muneco": "img/muneco.png",
