@@ -2,9 +2,9 @@
 
 <img src="/img/muneco.png" width="300" />
 
-<h1 align="center"> Hi 👋, I´m Antonio DelaRua</h1>
+<h1 align="center">👋 SeliNa Python</h1>
 
-<h3 aling="center">A passionate web fullstack developer from Spain. learning every day, eager to move forward and continue learning in the world of programming.</h3>
+<h3 aling="center">Un chat gpt con mejoras para personas que utilizen python o desarrolladores en general</h3>
 
 </div>
 
@@ -24,8 +24,6 @@
 
 
 
-
-
 <div align="center">
 <h3>🔨 Languages and Tools:</h3>
 <br>
@@ -41,12 +39,9 @@
 <img src="https://github.com/devicons/devicon/blob/master/icons/docker/docker-original-wordmark.svg" title="docker" alt="docker" width="40" height="40"/>&nbsp;
 <img src="https://github.com/devicons/devicon/blob/master/icons/firebase/firebase-plain-wordmark.svg" title="firebase" alt="firebase" width="40" height="40"/>&nbsp;
 <img src="https://github.com/devicons/devicon/blob/master/icons/java/java-original-wordmark.svg" title="java" alt="java" width="40" height="40"/>&nbsp;
-
+</div>
+</div>
 ---
-
-
-
-
 
 
 ## CMD
