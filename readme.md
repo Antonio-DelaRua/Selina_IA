@@ -16,15 +16,16 @@
 
 
 
-- 💻 Freelancer.
+ 💻 Freelancer.
 
-- ✔  Te puedo ayudar con **Python,Angular, Javascript, Java, Spring, Html, CSS**
+ ✔  Te puedo ayudar con **Python,Angular, Javascript, Java, Spring, Html, CSS**
 
-- 📭 Contacta conmigo **ruxxdeveloper@gmail.com**
+ 📭 Contacta conmigo **ruxxdeveloper@gmail.com**
 
-- 🏋️‍♂️ Sigo aprendiendo **React, testing with JUNIT, Laravel, Symfony,Python...**
+ 🏋️‍♂️ Sigo aprendiendo **React, testing with JUNIT, Laravel, Symfony,Python...**
 
-- 🌍 Website [ruxxdev.site]
+ 🌍 Website [ruxxdev.site]
+ 
 </div>
 
 
@@ -45,7 +46,7 @@
 <img src="https://github.com/devicons/devicon/blob/master/icons/java/java-original-wordmark.svg" title="java" alt="java" width="40" height="40"/>&nbsp;
 </div>
 </div>
----
+
 
 
 ## CMD
