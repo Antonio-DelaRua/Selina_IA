@@ -63,6 +63,7 @@ def on_text_change(event, text_widget):
     new_height = min(10, lines)  # Limitar a un máximo de 10 líneas visibles
     text_widget.config(height=new_height)
 
+
 def show_response(root):
     global response_window, response_text_widget
 
@@ -125,7 +126,7 @@ def show_response(root):
 
     if response_window is None or not response_window.winfo_exists():
         response_window = tk.Toplevel(root)
-        response_window.title("Son Goku    孫 悟空")
+        response_window.title("NoBt GPT  \U0001F4BB")   #\U0001F4BB = icono pc
 
         screen_width = root.winfo_screenwidth()
         screen_height = root.winfo_screenheight()
@@ -196,7 +197,7 @@ def show_animation_menu(event, root, muneco_label, fall_images, walk_images, cli
     x = muneco_label.winfo_x()
     y = muneco_label.winfo_y()
     menu_width = 200
-    menu_height = 250
+    menu_height = 240
     position_x = x + muneco_label.winfo_width()
     position_y = y
 
@@ -220,11 +221,10 @@ def show_animation_menu(event, root, muneco_label, fall_images, walk_images, cli
 
     Frame(animation_menu, bg='white').pack(expand=True, fill='both')
 
-    Button(animation_menu, text="Gravedad", command=lambda: select_animation("Gravedad"), bg='orange', fg='white', font=("Comic Sans MS", 12)).pack(pady=10)
-    Button(animation_menu, text="Mover a la izquierda", command=lambda: select_animation("Mover a la izquierda"), bg='orange', fg='white', font=("Comic Sans MS", 12)).pack(pady=10)
-    Button(animation_menu, text="Mover a la derecha", command=lambda: select_animation("Mover a la derecha"), bg='orange', fg='white', font=("Comic Sans MS", 12)).pack(pady=10)
-    Button(animation_menu, text="Escalar", command=lambda: select_animation("Escalar"), bg='orange', fg='white', font=("Comic Sans MS", 12)).pack(pady=10)
-
+    Button(animation_menu, text="Gravedad", command=lambda: select_animation("Gravedad"), bg='orange', fg='white', font=("Microsoft Sans Serif", 12)).pack(pady=10)
+    Button(animation_menu, text="Mover a la izquierda", command=lambda: select_animation("Mover a la izquierda"), bg='orange', fg='white', font=("Microsoft Sans Serif", 12)).pack(pady=10)
+    Button(animation_menu, text="Mover a la derecha", command=lambda: select_animation("Mover a la derecha"), bg='orange', fg='white', font=("Microsoft Sans Serif", 12)).pack(pady=10)
+    Button(animation_menu, text="Escalar", command=lambda: select_animation("Escalar"), bg='orange', fg='white', font=("Microsoft Sans Serif", 12)).pack(pady=10)
     
 def load_images():
     image_paths = {
@@ -246,7 +246,7 @@ def load_images():
     return images
 
 def setup_gui(root):
-    root.title("NoBt GPT Goku")
+    root.title("NoBt GPT  \U0001F40D")
     root.configure(bg='white')
 
     # Obtener dimensiones del escritorio virtual (todas las pantallas)
@@ -272,6 +272,7 @@ def setup_gui(root):
     fly_image = images["fly"]
 
     muneco_label = tk.Label(root, image=muneco_photo, bg='white')
+    muneco_label.current_after_id = None  # Nuevo atributo para controlar las animaciones
 
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
@@ -289,6 +290,7 @@ def setup_gui(root):
     
     # Bind Ctrl+Q to close the application
     root.bind("<Control-q>", lambda event: root.quit())
+    
 
     return muneco_label, images
 
