@@ -5,12 +5,16 @@
 <h1 align="center">👋 SeliNa Python</h1>
 
 <h3 aling="center">Un chat gpt dentro de un avatar3d con animaciones y mucho más.</h3>
+<br>
 
 </div>
 
+---
+<div align="center">
+<h3>🔨 👦 About Me :</h3>
+<br>
 
 
-### 👦 About Me :
 
 - 💻 Freelancer.
 
@@ -21,7 +25,7 @@
 - 🏋️‍♂️ Sigo aprendiendo **React, testing with JUNIT, Laravel, Symfony,Python...**
 
 - 🌍 Website [ruxxdev.site]
-
+</div>
 
 
 <div align="center">
