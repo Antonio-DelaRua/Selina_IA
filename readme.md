@@ -38,4 +38,6 @@ ctrl + q  ------> cerrar aplicación
 - break
 - funcion python
 - palindromo
+- calculadora
+
 
