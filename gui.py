@@ -63,6 +63,7 @@ def on_text_change(event, text_widget):
     new_height = min(10, lines)  # Limitar a un máximo de 10 líneas visibles
     text_widget.config(height=new_height)
 
+
 def show_response(root):
     global response_window, response_text_widget
 
@@ -125,7 +126,7 @@ def show_response(root):
 
     if response_window is None or not response_window.winfo_exists():
         response_window = tk.Toplevel(root)
-        response_window.title("Son Goku    孫 悟空")
+        response_window.title("NoBt GPT  \U0001F4BB")   #\U0001F4BB = icono pc
 
         screen_width = root.winfo_screenwidth()
         screen_height = root.winfo_screenheight()
@@ -162,15 +163,19 @@ def do_move(event, muneco_label, root):
     x = muneco_label.winfo_x() + event.x - startX
     y = muneco_label.winfo_y() + event.y - startY
 
+    # Usar dimensiones del escritorio virtual
+    virtual_width = root.winfo_vrootwidth()
+    virtual_height = root.winfo_vrootheight()
+
     if x < 0:
         x = 0
-    elif x > root.winfo_width() - muneco_label.winfo_width():
-        x = root.winfo_width() - muneco_label.winfo_width()
+    elif x > virtual_width - muneco_label.winfo_width():
+        x = virtual_width - muneco_label.winfo_width()
 
     if y < 0:
         y = 0
-    elif y > root.winfo_height() - muneco_label.winfo_height():
-        y = root.winfo_height() - muneco_label.winfo_height()
+    elif y > virtual_height - muneco_label.winfo_height():
+        y = virtual_height - muneco_label.winfo_height()
 
     muneco_label.place(x=x, y=y)
 
@@ -192,11 +197,22 @@ def show_animation_menu(event, root, muneco_label, fall_images, walk_images, cli
     x = muneco_label.winfo_x()
     y = muneco_label.winfo_y()
     menu_width = 200
-    menu_height = 250
+    menu_height = 240
     position_x = x + muneco_label.winfo_width()
     position_y = y
 
+    screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
+
+    # Ajustar la posición horizontal del menú si está cerca del borde derecho de la pantalla
+    if position_x + menu_width > screen_width:
+        position_x = x - menu_width
+
+    # Ajustar la posición horizontal del menú si está cerca del borde izquierdo de la pantalla
+    if position_x < 0:
+        position_x = x + muneco_label.winfo_width()
+
+    # Ajustar la posición vertical del menú si está cerca del borde inferior de la pantalla
     if position_y + menu_height > screen_height:
         position_y = screen_height - menu_height - 10
 
@@ -205,11 +221,11 @@ def show_animation_menu(event, root, muneco_label, fall_images, walk_images, cli
 
     Frame(animation_menu, bg='white').pack(expand=True, fill='both')
 
-    Button(animation_menu, text="Gravedad", command=lambda: select_animation("Gravedad"), bg='orange', fg='white', font=("Comic Sans MS", 12)).pack(pady=10)
-    Button(animation_menu, text="izquierda", command=lambda: select_animation("Mover a la izquierda"), bg='orange', fg='white', font=("Comic Sans MS", 12)).pack(pady=10)
-    Button(animation_menu, text="derecha", command=lambda: select_animation("Mover a la derecha"), bg='orange', fg='white', font=("Comic Sans MS", 12)).pack(pady=10)
-    Button(animation_menu, text="Escalar", command=lambda: select_animation("Escalar"), bg='orange', fg='white', font=("Comic Sans MS", 12)).pack(pady=10)
-
+    Button(animation_menu, text="Gravedad", command=lambda: select_animation("Gravedad"), bg='orange', fg='white', font=("Microsoft Sans Serif", 12)).pack(pady=10)
+    Button(animation_menu, text="Mover a la izquierda", command=lambda: select_animation("Mover a la izquierda"), bg='orange', fg='white', font=("Microsoft Sans Serif", 12)).pack(pady=10)
+    Button(animation_menu, text="Mover a la derecha", command=lambda: select_animation("Mover a la derecha"), bg='orange', fg='white', font=("Microsoft Sans Serif", 12)).pack(pady=10)
+    Button(animation_menu, text="Escalar", command=lambda: select_animation("Escalar"), bg='orange', fg='white', font=("Microsoft Sans Serif", 12)).pack(pady=10)
+    
 def load_images():
     image_paths = {
         "muneco": "img/muneco.png",
@@ -230,14 +246,16 @@ def load_images():
     return images
 
 def setup_gui(root):
-    root.title("NoBt GPT Goku")
+    root.title("NoBt GPT  \U0001F40D")
     root.configure(bg='white')
 
-    root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(), root.winfo_screenheight()))
+    # Obtener dimensiones del escritorio virtual (todas las pantallas)
+    virtual_width = root.winfo_vrootwidth()
+    virtual_height = root.winfo_vrootheight()
+    root.geometry(f"{virtual_width}x{virtual_height}+0+0")  # Cubrir todas las pantallas
     root.attributes("-transparentcolor", "white")
     root.attributes("-topmost", True)
     root.overrideredirect(True)
-
     try:
         root.option_add("*Font", "Inter 14")
     except Exception as e:
@@ -254,13 +272,14 @@ def setup_gui(root):
     fly_image = images["fly"]
 
     muneco_label = tk.Label(root, image=muneco_photo, bg='white')
+    muneco_label.current_after_id = None  # Nuevo atributo para controlar las animaciones
 
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
     initial_x = (screen_width // 2) - (200 // 2)
     initial_y = (screen_height // 2) - (200 // 2)
-
     muneco_label.place(x=initial_x, y=initial_y)
+
 
     root.after(100, apply_gravity, muneco_label, root, fall_images, muneco_photo)
 
@@ -268,6 +287,10 @@ def setup_gui(root):
     muneco_label.bind("<B1-Motion>", lambda event: do_move(event, muneco_label, root))
     muneco_label.bind("<Double-1>", lambda event: on_muneco_double_click(event, root))
     muneco_label.bind("<ButtonRelease-3>", lambda event: show_animation_menu(event, root, muneco_label, fall_images, walk_images, climb_images, fly_image, muneco_photo))
+    
+    # Bind Ctrl+Q to close the application
+    root.bind("<Control-q>", lambda event: root.quit())
+    
 
     return muneco_label, images
 
