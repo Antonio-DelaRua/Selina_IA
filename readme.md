@@ -4,7 +4,7 @@
 
 <h1 align="center">👋 SeliNa Python</h1>
 
-<h3 aling="center">Un chat gpt con mejoras para personas que utilizen python o desarrolladores en general</h3>
+<h3 aling="center">Un chat gpt dentro de un avatar3d con animaciones y mucho más.</h3>
 
 </div>
 
@@ -14,13 +14,13 @@
 
 - 💻 Freelancer.
 
-- ✔  Ask me about **Angular, Javascript, Java, Spring, Html, CSS**
+- ✔  Te puedo ayudar con **Python,Angular, Javascript, Java, Spring, Html, CSS**
 
-- 📭 How to reach me **ruxxdeveloper@gmail.com**
+- 📭 Contacta conmigo **ruxxdeveloper@gmail.com**
 
-- 🏋️‍♂️ I´m currently learning **React, testing with JUNIT, Laravel, Symfony,Python...**
+- 🏋️‍♂️ Sigo aprendiendo **React, testing with JUNIT, Laravel, Symfony,Python...**
 
-- 🌍 Website [ruxxdev.site](ruxxdev.site)
+- 🌍 Website [ruxxdev.site]
 
 
 
