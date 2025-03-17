@@ -16,3 +16,14 @@
 - complex
 - cadena de texto
 - str
+- boolean
+- listas
+- set
+- diccionarios
+- operadores aritmeticos
+- operadores logicos
+- operadores de comparacion
+- operadores de asignacion
+- estructuras de control
+- condicionales
+- if
