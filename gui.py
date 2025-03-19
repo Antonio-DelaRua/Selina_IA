@@ -146,7 +146,13 @@ def show_response(root):
         # Configure tags on the actual Text widget
         response_text_widget.tag_configure("bold", font=("Helvetica", 14, "bold"))
         response_text_widget.tag_configure("custom_font", font=("Courier New", 12, "italic"), foreground="#3B5998") # dentro de *
-        response_text_widget.tag_configure("code", font=("Courier", 12), background="#f4f4f4")
+        response_text_widget.tag_configure("code", 
+                font=("Courier", 12), 
+                background="#f4f4f4",
+                lmargin1=30,   # 30 píxeles de margen izquierdo
+                lmargin2=10,   # 30 píxeles para líneas que se parten
+                rmargin=30     # 30 píxeles de margen derecho
+            )
 
         response_text_widget.pack(expand=True, fill='both')
 
