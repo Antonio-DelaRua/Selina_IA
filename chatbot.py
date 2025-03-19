@@ -25,7 +25,7 @@ def chat_with_bot(prompt, update_callback, finish_callback):
             data=json.dumps({
                 "model": "meta-llama/llama-3.3-70b-instruct:free",
                 "messages": conversation_history,
-                "max_tokens": 950,
+                "max_tokens": 1550,
                 "temperature": 0.5,
                 "stream": True  # Habilitar la transmisión de respuestas
             }),
