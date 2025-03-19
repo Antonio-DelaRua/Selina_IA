@@ -41,7 +41,7 @@
 
 ## CMD
 ctrl + q  ------> cerrar aplicación
-
+kiv para moviles y tablet ( tactil )
 
 ## PALABRAS CLAVE
 

@@ -2076,6 +2076,63 @@ if __name__ == "__main__":
         "```\n"
 
         ),
+    
+    (
+    "node",
+    "\n"
+    "Para instalar **Node.js** en Windows, sigue estos pasos:\n"
+
+    "✅ **Paso 1: Descargar el instalador de Node.js**\n\n"
+    "1. Ve al sitio oficial de Node.js: [https://nodejs.org/](https://nodejs.org/)\n\n"
+    "2. Elige la versión:\n\n"
+    "   - **LTS (Long-Term Support)**: Recomendado para la mayoría de los usuarios (más estable para proyectos).\n\n"
+    "   - **Current**: Última versión con las características más recientes (menos estable).\n"
+    "✅ **Paso 2: Ejecutar el instalador**\n\n"
+    "1. Haz doble clic en el archivo `.msi` que descargaste.\n\n"
+    "2. Sigue las instrucciones del asistente:\n\n"
+    "   - Acepta los términos de la licencia.\n\n"
+    "   - Deja las opciones predeterminadas (recomendado).\n\n"
+    '   - Asegúrate de marcar la opción **"Automatically install the necessary tools"** si aparece.\n'
+
+    " ✅ **Paso 3: Verificar la instalación**\n\n"
+    "1. Abre **Símbolo del sistema** (CMD) o **PowerShell**:\n\n"
+    "   - Presiona `Win + R`, escribe `cmd` y presiona **Enter**.\n\n"
+    "2. Escribe los siguientes comandos para verificar la instalación:\n"
+    "\n"
+    "```bash\n\n"
+    "node -v\n"
+    "```\n\n"
+    "✅ Te mostrará la versión de Node.js instalada.\n"
+    "\n"
+    "```bash\n\n"
+    "npm -v\n"
+    "```\n\n"
+    "✅ Te mostrará la versión de npm (Node Package Manager).\n"
+
+    "✅ **Paso 4: (Opcional) Actualizar Node.js**\n\n"
+    "En el futuro, puedes actualizar Node.js usando el siguiente comando en PowerShell:\n"
+    "\n"
+    "```bash\n\n"
+    "npm install -g n\n\n"
+    "n latest\n"
+    "```\n"
+    "\n"
+    "¿Necesitas ayuda con algún paso más? 🚀\n"
+    "\n"
+    "\n"
+    ),
+
+        (
+        "f",
+        "**Abstracción**\n"
+        "*Abstracción*\n"       
+        "```python\n\n"
+        "chupamela\n"
+        "```\n"
+
+        ),
+
+ 
     ]
 
     for prompt, response in prompts_responses:

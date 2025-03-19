@@ -4,6 +4,7 @@ from PIL import Image, ImageTk
 import threading
 from agent import agent
 from movimientos import apply_gravity, move_to_edge, climb_animation
+import re
 
 response_window = None
 response_text_widget = None
@@ -70,7 +71,7 @@ def show_response(root):
     def copy_to_clipboard(text):
         root.clipboard_clear()
         root.clipboard_append(text)
-        root.update()  # Actualizar el portapapeles
+        root.update()
 
     class ResponseWindow:
         def __init__(self, text_widget):
@@ -81,14 +82,14 @@ def show_response(root):
             if "Consultando..." in self.complete_text:
                 self.complete_text = self.complete_text.replace("Consultando...", "")
             self.complete_text += new_text
-            self.text_widget.delete("1.0", tk.END)  # Eliminar el texto existente
+            self.text_widget.delete("1.0", tk.END)
             self.insert_formatted_text(self.complete_text)
-            self.text_widget.yview(tk.END)  # Desplazar la vista hacia el final del texto
+            self.text_widget.yview(tk.END)
             self.text_widget.update_idletasks()
-            self.text_widget.see("1.0")  # Asegurar que el texto comience desde el principio
+            self.text_widget.see("1.0")
 
         def insert_formatted_text(self, text):
-            self.text_widget.delete("1.0", tk.END)  # Eliminar el texto existente
+            self.text_widget.delete("1.0", tk.END)
             lines = text.split('\n')
             in_code_block = False
             code_block_text = ""
@@ -96,37 +97,33 @@ def show_response(root):
             for line in lines:
                 if line.startswith("```"):
                     if in_code_block:
-                        # End of code block
                         self.insert_code_block(code_block_text)
                         in_code_block = False
                         code_block_text = ""
                     else:
-                        # Start of code block
                         in_code_block = True
                 elif in_code_block:
                     code_block_text += line + "\n"
                 else:
-                    parts = line.split('**')
-                    for i, part in enumerate(parts):
-                        if i % 2 == 0:
-                            # Texto normal
-                            self.text_widget.insert(tk.END, part)
-                        else:
-                            # Texto en negrita
-                            self.text_widget.insert(tk.END, part, "bold")
+                    parts = re.split(r'(\*\*.*?\*\*|\*.*?\*)', line)
+                    for part in parts:
+                        if part:
+                            if part.startswith("**") and part.endswith("**"):
+                                self.text_widget.insert(tk.END, part[2:-2], "bold")
+                            elif part.startswith("*") and part.endswith("*"):
+                                self.text_widget.insert(tk.END, part[1:-1], "custom_font")
+                            else:
+                                self.text_widget.insert(tk.END, part)
                     self.text_widget.insert(tk.END, "\n")
 
         def insert_code_block(self, text):
             self.text_widget.insert(tk.END, "\n\n", "code")
             self.text_widget.insert(tk.END, text, "code")
             self.text_widget.insert(tk.END, "\n\n", "code")
-            copy_button = tk.Button(self.text_widget, text="Copiar", command=lambda: copy_to_clipboard(text), bg='grey', fg='white', font=("Comic Sans MS", 8))
-            self.text_widget.window_create(tk.END, window=copy_button)
-            self.text_widget.insert(tk.END, "\n\n")
 
     if response_window is None or not response_window.winfo_exists():
         response_window = tk.Toplevel(root)
-        response_window.title("NoBt GPT  \U0001F4BB")   #\U0001F4BB = icono pc
+        response_window.title("NoBt GPT  \U0001F4BB")
 
         screen_width = root.winfo_screenwidth()
         screen_height = root.winfo_screenheight()
@@ -136,7 +133,7 @@ def show_response(root):
         position_y = (screen_height // 2) - (window_height // 2)
         response_window.geometry(f"{window_width}x{window_height}+{position_x}+{position_y}")
         response_window.configure(bg='white')
-        response_window.attributes("-topmost", True)  # Asegurar que la ventana esté siempre en la parte superior
+        response_window.attributes("-topmost", True)
 
         frame = tk.Frame(response_window, bg='white')
         frame.pack(expand=True, fill='both')
@@ -145,13 +142,11 @@ def show_response(root):
         response_frame.pack(expand=True, fill='both', padx=20, pady=20)
 
         response_text_widget = tk.Text(response_frame, bg='#ebe8e8', wrap='word', font=("Inter", 14), padx=20, pady=20, 
-                                                        spacing1=10,  # Espaciado antes de cada línea
-                                                        spacing2=12,   # Espaciado entre líneas del mismo párrafo
-                                                        spacing3=15,  # Espaciado después de un párrafo
-                                                        bd=0
-                                                    )
-        response_text_widget.tag_configure("code", font=("Courier", 12), background="#f4f4f4", spacing3=10, lmargin1=20, lmargin2=20)
-        response_text_widget.tag_configure("bold", font=("Times New Roman", 20, "bold"))
+                                      spacing1=10, spacing2=12, spacing3=15, bd=0)
+        # Configure tags on the actual Text widget
+        response_text_widget.tag_configure("bold", font=("Helvetica", 14, "bold"))
+        response_text_widget.tag_configure("custom_font", font=("Courier New", 12, "italic"), foreground="#3B5998") # dentro de *
+        response_text_widget.tag_configure("code", font=("Courier", 12), background="#f4f4f4")
 
         response_text_widget.pack(expand=True, fill='both')
 
