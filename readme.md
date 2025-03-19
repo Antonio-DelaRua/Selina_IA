@@ -14,18 +14,8 @@
 <h3>🔨 👦 About Me :</h3>
 <br>
 
+ 💻 RuXx .
 
-
- 💻 Freelancer.
-
- ✔  Te puedo ayudar con **Python,Angular, Javascript, Java, Spring, Html, CSS**
-
- 📭 Contacta conmigo **ruxxdeveloper@gmail.com**
-
- 🏋️‍♂️ Sigo aprendiendo **React, testing with JUNIT, Laravel, Symfony,Python...**
-
- 🌍 Website [ruxxdev.site]
- 
 </div>
 
 
