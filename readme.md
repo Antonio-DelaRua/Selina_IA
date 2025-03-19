@@ -55,11 +55,16 @@ ctrl + q  ------> cerrar aplicación
 
 ## PALABRAS CLAVE
 
+
+# predefinidos alias_dic
 - hola
 - entorno virtual
 - git 
 - react
 - ruxx
+- angular
+
+ # bd_python
 - que es python y para que se utiliza?
 - como instalar python en windows?
 - fundamentos de python
@@ -95,6 +100,10 @@ ctrl + q  ------> cerrar aplicación
 - excepciones anidadas
 - finally
 - else
+- POO
+- herencia
+- polimorfismo
+- abstraccion
 
 
 

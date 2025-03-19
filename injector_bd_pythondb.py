@@ -1888,6 +1888,194 @@ if __name__ == "__main__":
         "    archivo.close()  # Importante cerrar el archivo\n"
         "```\n"
         ),
+
+        (
+        "POO",
+        "**¿Qué es la Programación Orientada a Objetos (POO)?**\n"
+        "La POO es un paradigma de programación basado en la creación y manipulación de\n"
+        "objetos, los cuales son instancias de clases. Este enfoque permite organizar el código\n"
+        "de manera modular, facilitando la reutilización y el mantenimiento.\n\n"
+        "Python es un lenguaje multiparadigma, lo que significa que admite programación\n"
+        "orientada a objetos, funcional y procedural.\n\n"
+        "**Conceptos Claves de la POO**\n"
+        "La POO en Python se basa en varios principios fundamentales:\n"
+        "**Clases y Objetos**\n"
+        "- Clase: Es un molde o plantilla que define atributos (datos) y métodos (funcionalidad)\n "
+        "comunes para todos los objetos que se creen a partir de ella.\n\n"
+        " - Objeto: Es una instancia de una clase. Cada objeto tiene su propio estado y \n"
+        "comportamiento basado en la clase que lo define.\n\n"
+        "Ejemplo de una Clase y su Objeto en Python:\n"
+        "```python\n"
+        "class Persona:\n"
+        "    def __init__(self, nombre, edad):\n"
+        "        self.nombre = nombre\n"
+        "        self.edad = edad\n\n"
+        "    def saludar(self):\n"
+        '        return f"Hola, mi nombre es {self.nombre} y tengo {self.edad} años."\n\n'
+        "# Crear un objeto de la clase Persona\n"
+        'persona1 = Persona("Carlos", 30)\n'
+        "print(persona1.saludar())  # Salida: Hola, mi nombre es Carlos y tengo 30 años.\n"
+        "```\n"
+        "**Encapsulamiento**\n"
+        "Es el mecanismo que restringe el acceso directo a los atributos y métodos de un\n"
+        "objeto, protegiendo los datos. En Python:\n\n"
+        "- Los atributos públicos se acceden sin restricciones (self.nombre).\n"
+        "- Los atributos protegidos se indican con un guion bajo (self._nombre) y su uso es una convención, \n"
+        "pero no es privado.\n"
+        "- Los atributos privados se definen con doble guion bajo (self.__nombre), lo que impide su acceso directo.\n\n"
+        "Ejemplo de encapsulamiento:\n"
+        "```python\n"
+        "class CuentaBancaria:\n"
+        "    def __init__(self, titular, saldo):\n"
+        "        self.titular = titular  # Público\n"
+        "        self._saldo = saldo      # Protegido\n"
+        '        self.__clave = "secreta" # Privado\n\n'
+        "    def depositar(self, monto):\n"
+        "        self._saldo += monto\n\n"
+        "    def get_saldo(self):\n"
+        "        return self._saldo\n\n"
+        "# Crear objeto\n"
+        'cuenta = CuentaBancaria("Luis", 1000)\n'
+        "print(cuenta.titular)  # Acceso permitido\n"
+        "print(cuenta.get_saldo())  # Método para acceder al saldo\n\n"
+        "# print(cuenta.__clave)  # ERROR: No se puede acceder directamente a un atributo privado\n"
+        "```\n"
+        "**Herencia**\n"
+        "La herencia permite que una clase hija herede atributos y métodos de una clase\n"
+        "padre, promoviendo la reutilización del código.\n"
+        "Ejemplo de Herencia:\n"
+        "```python\n"
+        "class Vehiculo:\n"
+        "    def __init__(self, marca, modelo):\n"
+        "        self.marca = marca\n"
+        "        self.modelo = modelo\n\n"
+        "    def info(self):\n"
+        '        return f"Marca: {self.marca}, Modelo: {self.modelo}"\n\n'
+        "# Clase hija que hereda de Vehiculo\n"
+        "class Coche(Vehiculo):\n"
+        "    def __init__(self, marca, modelo, puertas):\n"
+        '        super().__init__(marca, modelo)  # Llama al constructor de la clase padre\n'
+        "        self.puertas = puertas\n\n"
+        "    def info(self):\n"
+        '        return f"{super().info()}, Puertas: {self.puertas}"\n\n'
+        'coche1 = Coche("Toyota", "Corolla", 4)\n'
+        "print(coche1.info())  # Salida: Marca: Toyota, Modelo: Corolla, Puertas: 4\n"
+        "```\n"
+        "**Polimorfismo**\n"
+        "El polimorfismo permite que un mismo método tenga diferentes comportamientos\n"
+        "según la clase que lo implemente.\n"
+        "Ejemplo de Polimorfismo:\n"
+        "```python\n"
+        "class Animal:\n"
+        "    def hacer_sonido(self):\n"
+        "        pass\n\n"
+        "class Perro(Animal):\n"
+        "    def hacer_sonido(self):\n"
+        '        return "Guau!"\n\n'
+        "class Gato(Animal):\n"
+        '    def hacer_sonido(self):\n'
+        '        return "Miau!"\n\n'
+        "# Uso del polimorfismo\n"
+        "animales = [Perro(), Gato()]\n"
+        "for animal in animales:\n"
+        "    print(animal.hacer_sonido())  # Salida: Guau! Miau!\n"
+        "```\n"
+        "**Abstracción**\n"
+        "La abstracción es el proceso de ocultar detalles internos y exponer solo lo necesario.\n"
+        "En Python, la abstracción se logra usando clases abstractas con la ayuda del módulo abc.\n"
+        "Ejemplo de Abstracción:\n"
+        "```python\n"
+        "from abc import ABC, abstractmethod\n\n"
+        "class Figura(ABC):  # Clase abstracta\n"
+        "    @abstractmethod\n"
+        "    def area(self):\n"
+        "        pass\n\n"
+        "class Cuadrado(Figura):\n"
+        "    def __init__(self, lado):\n"
+        "        self.lado = lado\n\n"
+        "    def area(self):\n"
+        "        return self.lado * self.lado\n\n"
+        "cuadrado = Cuadrado(4)\n"
+        "print(cuadrado.area())  # Salida: 16\n"
+        "```\n"
+        "**Beneficios de la POO en Python**\n"
+        "- Modularidad: Se puede dividir un problema grande en módulos reutilizables.\n"
+        "- Reutilización: Se pueden reutilizar clases en diferentes partes del código.\n"
+        "- Mantenibilidad: Es más fácil mantener y actualizar el código.\n"
+        "- Escalabilidad: Permite que los programas crezcan sin que el código se vuelva caótico.\n"
+
+        ),
+
+        (
+        "herencia",
+        "**Herencia**\n"
+        "La herencia permite que una clase hija herede atributos y métodos de una clase\n"
+        "padre, promoviendo la reutilización del código.\n"
+        "Ejemplo de Herencia:\n"
+        "```python\n"
+        "class Vehiculo:\n"
+        "    def __init__(self, marca, modelo):\n"
+        "        self.marca = marca\n"
+        "        self.modelo = modelo\n\n"
+        "    def info(self):\n"
+        '        return f"Marca: {self.marca}, Modelo: {self.modelo}"\n\n'
+        "# Clase hija que hereda de Vehiculo\n"
+        "class Coche(Vehiculo):\n"
+        "    def __init__(self, marca, modelo, puertas):\n"
+        '        super().__init__(marca, modelo)  # Llama al constructor de la clase padre\n'
+        "        self.puertas = puertas\n\n"
+        "    def info(self):\n"
+        '        return f"{super().info()}, Puertas: {self.puertas}"\n\n'
+        'coche1 = Coche("Toyota", "Corolla", 4)\n'
+        "print(coche1.info())  # Salida: Marca: Toyota, Modelo: Corolla, Puertas: 4\n"
+        "```\n"
+        ),
+
+        (
+        "polimorfismo",
+        "**Polimorfismo**\n"
+        "El polimorfismo permite que un mismo método tenga diferentes comportamientos\n"
+        "según la clase que lo implemente.\n"
+        "Ejemplo de Polimorfismo:\n"
+        "```python\n"
+        "class Animal:\n"
+        "    def hacer_sonido(self):\n"
+        "        pass\n\n"
+        "class Perro(Animal):\n"
+        "    def hacer_sonido(self):\n"
+        '        return "Guau!"\n\n'
+        "class Gato(Animal):\n"
+        '    def hacer_sonido(self):\n'
+        '        return "Miau!"\n\n'
+        "# Uso del polimorfismo\n"
+        "animales = [Perro(), Gato()]\n"
+        "for animal in animales:\n"
+        "    print(animal.hacer_sonido())  # Salida: Guau! Miau!\n"
+        "```\n"        
+        ),
+
+        (
+        "abstraccion",
+        "**Abstracción**\n"
+        "La abstracción es el proceso de ocultar detalles internos y exponer solo lo necesario.\n"
+        "En Python, la abstracción se logra usando clases abstractas con la ayuda del módulo abc.\n"
+        "Ejemplo de Abstracción:\n"
+        "```python\n"
+        "from abc import ABC, abstractmethod\n\n"
+        "class Figura(ABC):  # Clase abstracta\n"
+        "    @abstractmethod\n"
+        "    def area(self):\n"
+        "        pass\n\n"
+        "class Cuadrado(Figura):\n"
+        "    def __init__(self, lado):\n"
+        "        self.lado = lado\n\n"
+        "    def area(self):\n"
+        "        return self.lado * self.lado\n\n"
+        "cuadrado = Cuadrado(4)\n"
+        "print(cuadrado.area())  # Salida: 16\n"
+        "```\n"
+
+        ),
     ]
 
     for prompt, response in prompts_responses:
