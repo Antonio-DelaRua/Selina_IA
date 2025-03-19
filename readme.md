@@ -94,7 +94,7 @@ kiv para moviles y tablet ( tactil )
 - herencia
 - polimorfismo
 - abstraccion
-
+- django
 
 
 
