@@ -53,9 +53,6 @@ predefined_answers = {
         "```\nnpm start\n```\n"
     ),
 
-    
-  
-
     "RuXx": (
         "**SeLiNa IA** - By: RuXx\n\n"
         "```\n"
@@ -69,6 +66,33 @@ predefined_answers = {
         "    /       ====UU====UU====\n"
         "                '//||\\\\`\n"
         "```\n"
+    ),
+
+    "angular": (
+        "**Crear un nuevo proyecto**\n"
+        " Crea un nuevo proyecto Angular con una estructura básica.\n"
+        "```\nng new mi-proyecto\n```\n"
+        "**Servir la aplicación**\n"
+        "Levanta un servidor de desarrollo en http://localhost:4200/.\n"
+        "```\nng serve\n```\n"
+        "**Generar un componente**\n"
+        "Crea un nuevo componente con sus archivos (.html, .ts, .scss, .spec.ts).\n"
+        "```\nng generate component nombre-componente\n```\n"
+        "**Generar un servicio**\n"
+        "Crea un nuevo servicio para manejar lógica de negocio o peticiones HTTP.\n"
+        "```\nng generate service nombre-servicio\n```\n"
+        "**Generar un módulo**\n"
+        "Crea un nuevo módulo para organizar mejor la aplicación.\n"
+        "```\nng generate module nombre-modulo\n```\n"
+        "**Construir la aplicación para producción**\n"
+        "Compila y optimiza la aplicación para producción.\n"
+        "```\nng build --configuration=production\n```\n"
+        "**Agregar una nueva ruta (lazy loading)**\n"
+        "Crea un módulo y lo enlaza con RouterModule para carga diferida.\n"
+        "```\nng generate module nombre --route=nombre --module=app\n```\n"
+        "**listar todos los comandos disponibles**\n"
+        "```\nng help\n```\n"
+
     ),
 
 

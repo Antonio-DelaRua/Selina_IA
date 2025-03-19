@@ -90,6 +90,11 @@ ctrl + q  ------> cerrar aplicación
 - funcion python
 - palindromo
 - calculadora
+- manejo de excepciones
+- multiples excepciones
+- excepciones anidadas
+- finally
+- else
 
 
 

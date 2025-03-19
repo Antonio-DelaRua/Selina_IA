@@ -3,8 +3,8 @@ import json
 import threading
 from model import HistoryEntry, ApiKeyEntry, engine
 
-# Direct API Key
-OPENROUTER_API_KEY = "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"
+
+OPENROUTER_API_KEY = ApiKeyEntry.select_api_key()
 
 # Historial de la conversación
 conversation_history = []

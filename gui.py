@@ -142,11 +142,11 @@ def show_response(root):
         frame.pack(expand=True, fill='both')
 
         response_frame = tk.Frame(frame, bg='#ebe8e8', bd=0.5, relief='solid')
-        response_frame.pack(expand=True, fill='both', padx=10, pady=10)
+        response_frame.pack(expand=True, fill='both', padx=20, pady=20)
 
-        response_text_widget = tk.Text(response_frame, bg='#ebe8e8', wrap='word', font=("Inter", 14), padx=20, pady=20, spacing1=5, spacing3=5, bd=0)
+        response_text_widget = tk.Text(response_frame, bg='#ebe8e8', wrap='word', font=("Inter", 14), padx=20, pady=20, spacing1=5, spacing3=10, bd=0)
         response_text_widget.tag_configure("code", font=("Courier", 12), background="#f4f4f4", spacing3=10, lmargin1=20, lmargin2=20)
-        response_text_widget.tag_configure("bold", font=("Times New Roman", 14, "bold"))
+        response_text_widget.tag_configure("bold", font=("Times New Roman", 20, "bold"))
 
         response_text_widget.pack(expand=True, fill='both')
 

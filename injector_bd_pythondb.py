@@ -1693,6 +1693,201 @@ if __name__ == "__main__":
         
     ),
 
+        (
+        "manejo de excepciones",
+        "**Estructura Básica: try - except**\n\n"
+        "Captura y maneja excepciones específicas.\n"
+        "```python\n"
+        "try:\n"
+        "    # Código que podría generar un error\n"
+        "    resultado = 10 / 0  # División por cero\n"
+        "except ZeroDivisionError:\n"
+        "    # Se ejecuta si ocurre ZeroDivisionError\n"
+        '    print("¡Error! No puedes dividir por cero.")\n'
+        "```\n"
+        "Salida:\n"
+        "```python\n"
+        "¡Error! No puedes dividir por cero.\n"
+        "```\n"
+        "**Múltiples Excepciones**\n\n"
+        "Puedes capturar diferentes tipos de errores.\n"
+        "```python\n"
+        "try:\n"
+        '    num = int(input("Ingresa un número: "))  # Ejemplo: Si el usuario ingresa "abc"\n'
+        "    print(10 / num)  # Si num es 0, también habrá error\n"
+        "except ValueError:\n"
+        '    print("Debes ingresar un número válido.")\n'
+        "except ZeroDivisionError:\n"
+        '    print("No puedes dividir por cero.")\n'
+        "```\n"
+        "Salidas posibles:\n\n"
+        "- Si ingresas abc: Debes ingresar un número válido.\n"
+        "- Si ingresas 0: No puedes dividir por cero.\n\n"
+        "**else en Manejo de Excepciones**\n"
+        "Se ejecuta solo si no hubo errores en el bloque try.\n"
+        "```python\n"
+        "try:\n"
+        '    archivo = open("datos.txt", "r")\n'
+        "except FileNotFoundError:\n"
+        '    print("El archivo no existe.")\n'
+        "else:\n"
+        "    contenido = archivo.read()\n"
+        "    print(contenido)\n"
+        "    archivo.close()  # Importante cerrar el archivo\n"
+        "```\n"
+        "**finally en Manejo de Excepciones**\n"
+        "Se ejecuta siempre, haya o no errores. Útil para liberar recursos (como cerrar archivos).\n"
+        "```python\n"
+        "try:\n"
+        '    archivo = open("config.txt", "r")\n'
+        "    print(archivo.read())\n"
+        "except FileNotFoundError:\n"
+        '    print("Archivo no encontrado.")\n'
+        "finally:\n"
+        "    archivo.close()  # Siempre se cierra el archivo\n"
+        '    print("Proceso finalizado.")\n'
+        "```\n"
+        "**Capturar Todas las Excepciones (Genérico)**\n"
+        "Usar except sin especificar el error (no recomendado para producción).\n"
+        "```python\n"
+        "try:\n"
+        "    lista = [1, 2, 3]\n"
+        "    print(lista[5])  # Índice fuera de rango\n"
+        "except:\n"
+        '    print("Ocurrió un error inesperado.")\n'
+        "```\n"
+        "**Lanzar Excepciones: raise**\n"
+        "Puedes forzar un error manualmente con raise.\n"
+        "```python\n"
+        "def calcular_edad(edad):\n"
+        "    if edad < 0:\n"
+        '        raise ValueError("La edad no puede ser negativa.")\n'
+        '    return f"Tienes {edad} años."\n\n'
+        "try:\n"
+        "    print(calcular_edad(-5))\n"
+        "except ValueError as e:\n"
+        "    print(e)  # Imprime el mensaje de error\n"
+        "```\n"
+        "Salida:\n"
+        "```python\n"
+        "La edad no puede ser negativa.\n"
+        "```\n"
+        "**Excepciones Personalizadas**\n"
+        "Crea tus propias excepciones heredando de la clase Exception.\n"
+        "```python\n"
+        "class ErrorSaldoInsuficiente(Exception):\n"
+        '    def __init__(self, mensaje="Saldo insuficiente."):\n'
+        "        self.mensaje = mensaje\n"
+        "        super().__init__(self.mensaje)\n\n"
+        "def retirar_dinero(saldo, monto):\n"
+        "    if monto > saldo:\n"
+        "        raise ErrorSaldoInsuficiente()\n"
+        "    return saldo - monto\n\n"
+        "try:\n"
+        "    retirar_dinero(100, 200)\n"
+        "except ErrorSaldoInsuficiente as e:\n"
+        "    print(e)  # Salida: Saldo insuficiente.\n"
+        "```\n"
+        "**Manejo de Excepciones Anidadas**\n"
+        "Excepciones dentro de funciones llamadas.\n"
+        "```python\n"
+        "def dividir(a, b):\n"
+        "    return a / b\n\n"
+        "try:\n"
+        "    print(dividir(10, 0))\n"
+        "except ZeroDivisionError:\n"
+        '    print("Error en la función dividir: división por cero.")\n'
+        "```\n"
+        "**Ejemplo Completo: Validación de Entrada**\n"
+        "```python\n"
+        "while True:\n"
+        "    try:\n"
+        '        edad = int(input("Ingresa tu edad: "))\n'
+        "        if edad < 0:\n"
+        '            raise ValueError("La edad no puede ser negativa.")\n'
+        "        break\n"
+        "    except ValueError:\n"
+        '        print("Entrada inválida. Ingresa un número entero positivo.")\n\n'
+        'print(f"Tu edad es: {edad}")\n'
+        "```\n"
+        ),
+
+            (
+        "multiples excepciones",
+        "**Múltiples Excepciones**\n\n"
+        "Puedes capturar diferentes tipos de errores.\n"
+        "```python\n"
+        "try:\n"
+        '    num = int(input("Ingresa un número: "))  # Ejemplo: Si el usuario ingresa "abc"\n'
+        "    print(10 / num)  # Si num es 0, también habrá error\n"
+        "except ValueError:\n"
+        '    print("Debes ingresar un número válido.")\n'
+        "except ZeroDivisionError:\n"
+        '    print("No puedes dividir por cero.")\n'
+        "```\n"
+        "Salidas posibles:\n\n"
+        "- Si ingresas abc: Debes ingresar un número válido.\n"
+        "- Si ingresas 0: No puedes dividir por cero.\n\n"
+
+        ),
+
+            (
+        "excepciones anidadas",
+        "**Manejo de Excepciones Anidadas**\n"
+        "Excepciones dentro de funciones llamadas.\n"
+        "```python\n"
+        "def dividir(a, b):\n"
+        "    return a / b\n\n"
+        "try:\n"
+        "    print(dividir(10, 0))\n"
+        "except ZeroDivisionError:\n"
+        '    print("Error en la función dividir: división por cero.")\n'
+        "```\n"
+        "**Ejemplo Completo: Validación de Entrada**\n"
+        "```python\n"
+        "while True:\n"
+        "    try:\n"
+        '        edad = int(input("Ingresa tu edad: "))\n'
+        "        if edad < 0:\n"
+        '            raise ValueError("La edad no puede ser negativa.")\n'
+        "        break\n"
+        "    except ValueError:\n"
+        '        print("Entrada inválida. Ingresa un número entero positivo.")\n\n'
+        'print(f"Tu edad es: {edad}")\n'
+        "```\n"            
+        ),
+        
+        (
+        "finally",
+        "**finally en Manejo de Excepciones**\n"
+        "Se ejecuta siempre, haya o no errores. Útil para liberar recursos (como cerrar archivos).\n"
+        "```python\n"
+        "try:\n"
+        '    archivo = open("config.txt", "r")\n'
+        "    print(archivo.read())\n"
+        "except FileNotFoundError:\n"
+        '    print("Archivo no encontrado.")\n'
+        "finally:\n"
+        "    archivo.close()  # Siempre se cierra el archivo\n"
+        '    print("Proceso finalizado.")\n'
+        "```\n"
+        ),
+
+        (
+        "else",
+        "**else en Manejo de Excepciones**\n"
+        "Se ejecuta solo si no hubo errores en el bloque try.\n"
+        "```python\n"
+        "try:\n"
+        '    archivo = open("datos.txt", "r")\n'
+        "except FileNotFoundError:\n"
+        '    print("El archivo no existe.")\n'
+        "else:\n"
+        "    contenido = archivo.read()\n"
+        "    print(contenido)\n"
+        "    archivo.close()  # Importante cerrar el archivo\n"
+        "```\n"
+        ),
     ]
 
     for prompt, response in prompts_responses:
