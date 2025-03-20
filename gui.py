@@ -106,28 +106,35 @@ def show_response(root):
                 elif in_code_block:
                     code_block_text += line + "\n"
                 else:
-                    # Usamos una expresión regular para dividir por negrita o cursiva
-                    parts = re.split(r'(\*\*.*?\*\*|\*.*?\*)', line)
+                    # Expresión regular para dividir por negrita, cursiva y código en línea
+                    parts = re.split(r'(`[^`]+`|\*\*.*?\*\*|\*.*?\*)', line)
+
                     formatos = {
                         "# ": ("h1md", 1),
                         "## ": ("h2md", 2),
                         "### ": ("h3md", 3)
                     }
+
                     for part in parts:
                         if isinstance(part, str) and part:
-                            header_processed = False
-                            for prefijo, (tag, longitud) in formatos.items():
-                                if part.startswith(prefijo):
-                                    self.text_widget.insert(tk.END, part[longitud:].strip(), tag)
-                                    header_processed = True
-                                    break
-                            if not header_processed:
-                                if part.startswith("*") and part.endswith("*") and len(part) > 2 and part.count("*") == 2:
-                                    self.text_widget.insert(tk.END, part[1:-1].strip(), "italic")
-                                elif part.startswith("**") and part.endswith("**") and len(part) > 4 and part.count("*") == 4:
-                                    self.text_widget.insert(tk.END, part[2:-2], "negrita")
-                                else:
-                                    self.text_widget.insert(tk.END, part)
+                            if part.startswith("`") and part.endswith("`") and len(part) > 2:
+                                # Si está dentro de backticks, aplicamos el estilo "inline_code"
+                                self.text_widget.insert(tk.END, part[1:-1], "comillas_simples")
+                            else:
+                                header_processed = False
+                                for prefijo, (tag, longitud) in formatos.items():
+                                    if part.startswith(prefijo):
+                                        self.text_widget.insert(tk.END, part[longitud:].strip(), tag)
+                                        header_processed = True
+                                        break
+                                if not header_processed:
+                                    if part.startswith("*") and part.endswith("*") and len(part) > 2 and part.count("*") == 2:
+                                        self.text_widget.insert(tk.END, part[1:-1].strip(), "italic")
+                                    elif part.startswith("**") and part.endswith("**") and len(part) > 4 and part.count("*") == 4:
+                                        self.text_widget.insert(tk.END, part[2:-2], "negrita")
+                                    else:
+                                        self.text_widget.insert(tk.END, part)
+
                     # Agregar un solo salto de línea al final de cada línea
                     self.text_widget.insert(tk.END, "\n")
 
@@ -208,6 +215,12 @@ def show_response(root):
         # Estilo para negrita (**texto**)
         response_text_widget.tag_configure("negrita",
             font=("Times New Roman", 16, "bold")
+        )
+
+        # Estilo para comillas simples (`texto`)
+        response_text_widget.tag_configure("comillas_simples",
+                                    font=("Courier", 12),
+                                    foreground="blue"  # Azul para el código en línea
         )
 
         response_text_widget.pack(expand=True, fill='both')

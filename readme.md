@@ -101,3 +101,6 @@ kiv para moviles y tablet ( tactil )
 
 
 
+En este ejemplo, la función `calcular_rectangulo` toma dos parámetros (`largo` y `ancho`) y retorna un tuple con el área y el perímetro del rectángulo. El área se calcula multiplicando el largo y el ancho, y el perímetro se calcula sumando el largo y el ancho y multiplicando por 2.
+
+Luego, en el ejemplo de uso, se llaman a la función con los valores `largo = 5` y `ancho = 3`, y se imprimen los resultados.
