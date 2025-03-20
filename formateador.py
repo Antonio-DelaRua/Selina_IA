@@ -47,71 +47,99 @@ def format_markdown(md_text):
 
 # Ejemplo de entrada Markdown (tu contenido)
 md_content = """
-# 🌟 Guía Rápida de Markdown
+## Introducción a Spring Boot
 
-Markdown es un lenguaje de marcado ligero que permite dar formato a texto de forma sencilla. Es muy útil para documentaciones, blogs y notas. ¡Vamos a verlo en acción!
+Spring Boot es un framework de Java basado en Spring que facilita la creación de aplicaciones empresariales y microservicios. Su objetivo principal es simplificar la configuración y puesta en marcha de aplicaciones Spring, eliminando la necesidad de una configuración extensa.
 
-## 📝 Encabezados
-
-Puedes usar `#` para crear encabezados:
-
-```markdown
-# Encabezado 1
-## Encabezado 2
-### Encabezado 3
-```
-
-## 📋 Listas
-
-### Lista Ordenada:
-
-1. Primer elemento
-2. Segundo elemento
-3. Tercer elemento
-
-### Lista No Ordenada:
-
-- Elemento A
-- Elemento B
-  - Sub-elemento B1
-  - Sub-elemento B2
-- Elemento C
-
-## 💡 Énfasis y Código
-
-Puedes resaltar texto de varias formas:
-
-- **Negrita** con `**negrita**`
-- *Cursiva* con `*cursiva*`
-- ~~Tachado~~ con `~~tachado~~`
-
-Bloques de código:
-
-```python
-# Esto es un código en Python
-def hola_mundo():
-    print("¡Hola, mundo!")
-```
-
-Código en línea: `console.log("Hola mundo");`
-
-## 📠 Enlaces e Imágenes
-
-[OpenAI](https://openai.com)
-
-## 📌 Citas y Separadores
-
-> "El conocimiento es poder." — Francis Bacon
+### Características principales:
+- **Autoconfiguración**: Spring Boot configura automáticamente los componentes según las dependencias presentes en el proyecto.
+- **Standalone**: No requiere un servidor de aplicaciones externo como Tomcat o Jetty.
+- **Manejo de dependencias**: Usa `Spring Boot Starter` para gestionar dependencias fácilmente.
+- **Spring Boot Actuator**: Proporciona monitoreo y métricas para aplicaciones en producción.
 
 ---
 
-## ✅ Checklists
+## Ejemplo de uso
 
-- [x] Aprender Markdown
-- [ ] Aplicarlo en mis proyectos
-- [ ] Compartirlo con el mundo 🌍
+A continuación, un ejemplo de una aplicación simple con Spring Boot que expone un servicio REST.
 
-¡Espero que te sirva! 🚀
+### 1. Agregar dependencias en `pom.xml`
+
+```xml
+<dependencies>
+    <!-- Dependencia principal de Spring Boot -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    
+    <!-- Plugin de Spring Boot -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-test</artifactId>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
+```
+
+### 2. Crear la clase principal `Application.java`
+
+```java
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+```
+
+### 3. Crear un controlador REST `HelloController.java`
+
+```java
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api")
+public class HelloController {
+
+    @GetMapping("/hello")
+    public String sayHello() {
+        return "¡Hola desde Spring Boot!";
+    }
+}
+```
+
+### 4. Ejecutar la aplicación
+
+Para iniciar la aplicación, usa el siguiente comando en la terminal:
+
+```sh
+mvn spring-boot:run
+```
+
+### 5. Probar el servicio
+
+Una vez en ejecución, puedes acceder a la API en:
+
+```
+http://localhost:8080/api/hello
+```
+
+Este endpoint responderá con:
+
+```
+¡Hola desde Spring Boot!
+```
+
+---
+
+Este es un ejemplo básico de cómo se puede utilizar Spring Boot para crear una API REST. 🚀
+
 
 """
 
