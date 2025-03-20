@@ -27,10 +27,10 @@ if __name__ == "__main__":
     # Agregar más prompts predefinidos según sea necesario
     prompts_responses = [
             (
-        "que es python y para que se utiliza?",
-        "Python es un lenguaje de programación de alto nivel, interpretado y de propósito general. "
-        "Es conocido por su sintaxis sencilla y legible, lo que facilita su aprendizaje y uso.\n\n"
-        "¿Para qué se utiliza Python?\n"
+        "que es python?",
+        "*Python*  es un lenguaje de programación de alto nivel, interpretado y de propósito general."
+        "Es conocido por su sintaxis sencilla y legible, lo que facilita su aprendizaje y uso.\n"
+        "## ¿Para qué se utiliza Python?\n\n"
         "Python es muy versátil y se usa en diversos campos, como:\n\n"
         "- **Desarrollo web**: Con frameworks como Django y Flask.\n"
         "- **Ciencia de datos y Machine Learning**: Con bibliotecas como NumPy, Pandas, TensorFlow y Scikit-learn.\n"
@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
             (
         "como instalar python en windows?",
-        "Para instalar Python en Windows, sigue estos pasos:\n\n"
+        "## Para instalar Python en Windows, sigue estos pasos:\n\n"
         "**Descarga Python**\n"
         "- Ve al sitio web oficial de Python: https://www.python.org/downloads/ \n\n"
         "**Instala Python**\n"
@@ -135,7 +135,7 @@ if __name__ == "__main__":
     ),
             (
         "enteros",
-        "**Ejemplos de enteros (int) en Python**\n\n"
+        "### Ejemplos de enteros (int) en Python\n\n"
         "**Asignación básica:**\n"
         "```python\n"
         "# Números positivos\n"
@@ -2079,32 +2079,30 @@ if __name__ == "__main__":
     
     (
     "node",
-    "\n"
-    "Para instalar **Node.js** en Windows, sigue estos pasos:\n"
-
-    "✅ **Paso 1: Descargar el instalador de Node.js**\n\n"
-    "1. Ve al sitio oficial de Node.js: [https://nodejs.org/](https://nodejs.org/)\n\n"
-    "2. Elige la versión:\n\n"
+    "# Para instalar Node.js en Windows, sigue estos pasos:\n\n"
+    "### ✅ Paso 1: Descargar el instalador de Node.js\n\n"
+    "**1. Ve al sitio oficial de Node.js:** [https://nodejs.org/](https://nodejs.org/)\n\n"
+    "**2. Elige la versión:**\n\n"
     "   - **LTS (Long-Term Support)**: Recomendado para la mayoría de los usuarios (más estable para proyectos).\n\n"
-    "   - **Current**: Última versión con las características más recientes (menos estable).\n"
-    "✅ **Paso 2: Ejecutar el instalador**\n\n"
-    "1. Haz doble clic en el archivo `.msi` que descargaste.\n\n"
+    "   - **Current**: Última versión con las características más recientes (menos estable).\n\n"
+    "### ✅ Paso 2: Ejecutar el instalador\n\n"
+    "1. Haz doble clic en el archivo .msi que descargaste.\n\n"
     "2. Sigue las instrucciones del asistente:\n\n"
     "   - Acepta los términos de la licencia.\n\n"
     "   - Deja las opciones predeterminadas (recomendado).\n\n"
-    '   - Asegúrate de marcar la opción **"Automatically install the necessary tools"** si aparece.\n'
+    '   - Asegúrate de marcar la opción *"Automatically install the necessary tools"* si aparece.\n\n'
 
-    " ✅ **Paso 3: Verificar la instalación**\n\n"
-    "1. Abre **Símbolo del sistema** (CMD) o **PowerShell**:\n\n"
-    "   - Presiona `Win + R`, escribe `cmd` y presiona **Enter**.\n\n"
+    "### ✅ Paso 3: Verificar la instalación\n\n"
+    "1. Abre Símbolo del sistema (CMD) o PowerShell:\n\n"
+    "   - Presiona *Win + R*, escribe cmd y presiona *Enter*.\n\n"
     "2. Escribe los siguientes comandos para verificar la instalación:\n"
     "\n"
-    "```bash\n\n"
+    "```\n\n"
     "node -v\n"
     "```\n\n"
     "✅ Te mostrará la versión de Node.js instalada.\n"
     "\n"
-    "```bash\n\n"
+    "```\n\n"
     "npm -v\n"
     "```\n\n"
     "✅ Te mostrará la versión de npm (Node Package Manager).\n"
@@ -2112,13 +2110,12 @@ if __name__ == "__main__":
     "✅ **Paso 4: (Opcional) Actualizar Node.js**\n\n"
     "En el futuro, puedes actualizar Node.js usando el siguiente comando en PowerShell:\n"
     "\n"
-    "```bash\n\n"
+    "```\n\n"
     "npm install -g n\n\n"
     "n latest\n"
     "```\n"
     "\n"
-    "¿Necesitas ayuda con algún paso más? 🚀\n"
-    "\n"
+    "*¿Necesitas ayuda con algún paso más?* 🚀\n"
     "\n"
     ),
 
@@ -2563,7 +2560,7 @@ if __name__ == "__main__":
         "Para más detalles, consulta la [documentación oficial de Python](https://www.python.org).\n"
         "```\n"
         "\n"
-        "¿Quieres que te ayude a crear un **README.md** para tu proyecto en Python? 🚀\n"
+        "* ¿Quieres que te ayude a crear un **README.md** para tu proyecto en Python? * 🚀\n"
         "\n"
         "\n"
     ),
@@ -2578,15 +2575,75 @@ if __name__ == "__main__":
         "Texto normal\n"
     ),
 
-        (
-        "prue1",
-        "#h1 titulo\n"
-        "##h2 subtitulo\n"
-        "###h3 susubtitulo\n"
-        "*texto en cursiva *\n"
-        "**texto en negrita**\n"
-        "Texto normal\n"
+    (
+        "pruena",
+        "# 🌟 Guía Rápida de Markdown\n"
+        "\n"
+        "Markdown es un lenguaje de marcado ligero que permite dar formato a texto de forma sencilla. Es muy útil para documentaciones, blogs y notas. ¡Vamos a verlo en acción!\n"
+        "\n"
+        "## 📝 Encabezados\n"
+        "\n"
+        "Puedes usar `#` para crear encabezados:\n"
+        "\n"
+        "```markdown\n\n"
+        "# Encabezado 1\n\n"
+        "## Encabezado 2\n\n"
+        "### Encabezado 3\n"
+        "```\n"
+        "\n"
+        "## 📋 Listas\n"
+        "\n"
+        "### Lista Ordenada:\n"
+        "\n"
+        "1. Primer elemento\n\n"
+        "2. Segundo elemento\n\n"
+        "3. Tercer elemento\n"
+        "\n"
+        "### Lista No Ordenada:\n"
+        "\n"
+        "- Elemento A\n\n"
+        "- Elemento B\n\n"
+        "  - Sub-elemento B1\n\n"
+        "  - Sub-elemento B2\n\n"
+        "- Elemento C\n"
+        "\n"
+        "## 💡 Énfasis y Código\n"
+        "\n"
+        "Puedes resaltar texto de varias formas:\n"
+        "\n"
+        "- **Negrita** con `**negrita**`\n\n"
+        "- *Cursiva* con `*cursiva*`\n\n"
+        "- ~~Tachado~~ con `~~tachado~~`\n"
+        "\n"
+        "Bloques de código:\n"
+        "\n"
+        "```python\n\n"
+        "# Esto es un código en Python\n\n"
+        "def hola_mundo():\n\n"
+        '   print("¡Hola, mundo!")\n'
+        "```\n"
+        "\n"
+        'Código en línea: `console.log("Hola mundo");`\n'
+        "\n"
+        "## 🔗 Enlaces e Imágenes\n"
+        "\n"
+        "[OpenAI](https://openai.com)\n"
+        "\n"
+        "\n"
+        "## 📌 Citas y Separadores\n"
+        "\n"
+        '> "El conocimiento es poder." — Francis Bacon\n'
+        "\n"
+        "## ✅ Checklists\n"
+        "\n"
+        "- [x] Aprender Markdown\n\n"
+        "- [ ] Aplicarlo en mis proyectos\n\n"
+        "- [ ] Compartirlo con el mundo 🌍\n"
+        "\n"
+        "¡Espero que te sirva! 🚀\n"
+        "\n"
     ),
+
 
 
  
