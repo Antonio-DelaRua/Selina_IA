@@ -3,6 +3,8 @@ import json
 import threading
 from model import *
 
+import markdown
+
 
 # Direct API Key
 OPENROUTER_API_KEY = apiKey.selectApiKeys()
@@ -58,8 +60,9 @@ def chat_with_bot(prompt, update_callback, finish_callback):
                         choice = response_data.get('choices', [{}])[0]
                         message_content = choice.get('delta', {}).get('content', '')
                         msg += message_content
-                        # print(f"Respuesta del modelo: {message_content}")
-                        update_callback(message_content)
+                        
+        msg = markdown.markdown(msg)
+        update_callback(msg)
         finish_callback()  # Indicar que el stream ha finalizado
         HistoryEntry(prompt=prompt, response=msg)
 

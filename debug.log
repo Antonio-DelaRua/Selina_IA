@@ -1,0 +1,320 @@
+[DEBUG][tkintermd][21:21:29]: Successfully imported extension module "markdown.extensions.codehilite".
+[DEBUG][tkintermd][21:21:29]: Successfully loaded extension "markdown.extensions.codehilite.CodeHiliteExtension".
+[DEBUG][tkintermd][21:21:29]: Successfully imported extension module "markdown.extensions.tables".
+[DEBUG][tkintermd][21:21:29]: Successfully loaded extension "markdown.extensions.tables.TableExtension".
+[DEBUG][tkintermd][21:21:29]: Successfully imported extension module "pymdownx.magiclink".
+[DEBUG][tkintermd][21:21:29]: Successfully loaded extension "pymdownx.magiclink.MagiclinkExtension".
+[DEBUG][tkintermd][21:21:29]: Successfully imported extension module "pymdownx.betterem".
+[DEBUG][tkintermd][21:21:29]: Successfully loaded extension "pymdownx.betterem.BetterEmExtension".
+[DEBUG][tkintermd][21:21:29]: Successfully imported extension module "pymdownx.tilde".
+[DEBUG][tkintermd][21:21:29]: Successfully loaded extension "pymdownx.tilde.DeleteSubExtension".
+[DEBUG][tkintermd][21:21:29]: Successfully imported extension module "pymdownx.emoji".
+[DEBUG][tkintermd][21:21:29]: Successfully loaded extension "pymdownx.emoji.EmojiExtension".
+[DEBUG][tkintermd][21:21:29]: Successfully imported extension module "pymdownx.tasklist".
+[DEBUG][tkintermd][21:21:29]: Successfully loaded extension "pymdownx.tasklist.TasklistExtension".
+[DEBUG][tkintermd][21:21:29]: Successfully imported extension module "pymdownx.superfences".
+[DEBUG][tkintermd][21:21:29]: Successfully imported extension module "pymdownx.highlight".
+[DEBUG][tkintermd][21:21:29]: Successfully loaded extension "pymdownx.highlight.HighlightExtension".
+[DEBUG][tkintermd][21:21:29]: Successfully loaded extension "pymdownx.superfences.SuperFencesCodeExtension".
+[DEBUG][tkintermd][21:21:29]: Successfully imported extension module "pymdownx.saneheaders".
+[DEBUG][tkintermd][21:21:29]: Successfully loaded extension "pymdownx.saneheaders.SaneHeadersExtension".
+[DEBUG][tkintermd][21:21:30]: Successfully imported extension module "markdown.extensions.codehilite".
+[DEBUG][tkintermd][21:21:30]: Successfully loaded extension "markdown.extensions.codehilite.CodeHiliteExtension".
+[DEBUG][tkintermd][21:21:30]: Successfully imported extension module "markdown.extensions.tables".
+[DEBUG][tkintermd][21:21:30]: Successfully loaded extension "markdown.extensions.tables.TableExtension".
+[DEBUG][tkintermd][21:21:30]: Successfully imported extension module "pymdownx.magiclink".
+[DEBUG][tkintermd][21:21:30]: Successfully loaded extension "pymdownx.magiclink.MagiclinkExtension".
+[DEBUG][tkintermd][21:21:30]: Successfully imported extension module "pymdownx.betterem".
+[DEBUG][tkintermd][21:21:30]: Successfully loaded extension "pymdownx.betterem.BetterEmExtension".
+[DEBUG][tkintermd][21:21:30]: Successfully imported extension module "pymdownx.tilde".
+[DEBUG][tkintermd][21:21:30]: Successfully loaded extension "pymdownx.tilde.DeleteSubExtension".
+[DEBUG][tkintermd][21:21:30]: Successfully imported extension module "pymdownx.emoji".
+[DEBUG][tkintermd][21:21:30]: Successfully loaded extension "pymdownx.emoji.EmojiExtension".
+[DEBUG][tkintermd][21:21:30]: Successfully imported extension module "pymdownx.tasklist".
+[DEBUG][tkintermd][21:21:30]: Successfully loaded extension "pymdownx.tasklist.TasklistExtension".
+[DEBUG][tkintermd][21:21:30]: Successfully imported extension module "pymdownx.superfences".
+[DEBUG][tkintermd][21:21:30]: Successfully imported extension module "pymdownx.highlight".
+[DEBUG][tkintermd][21:21:30]: Successfully loaded extension "pymdownx.highlight.HighlightExtension".
+[DEBUG][tkintermd][21:21:30]: Successfully loaded extension "pymdownx.superfences.SuperFencesCodeExtension".
+[DEBUG][tkintermd][21:21:30]: Successfully imported extension module "pymdownx.saneheaders".
+[DEBUG][tkintermd][21:21:30]: Successfully loaded extension "pymdownx.saneheaders.SaneHeadersExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "markdown.extensions.codehilite".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "markdown.extensions.codehilite.CodeHiliteExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "markdown.extensions.tables".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "markdown.extensions.tables.TableExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.magiclink".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.magiclink.MagiclinkExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.betterem".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.betterem.BetterEmExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.tilde".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.tilde.DeleteSubExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.emoji".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.emoji.EmojiExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.tasklist".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.tasklist.TasklistExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.superfences".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.highlight".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.highlight.HighlightExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.superfences.SuperFencesCodeExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.saneheaders".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.saneheaders.SaneHeadersExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "markdown.extensions.codehilite".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "markdown.extensions.codehilite.CodeHiliteExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "markdown.extensions.tables".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "markdown.extensions.tables.TableExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.magiclink".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.magiclink.MagiclinkExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.betterem".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.betterem.BetterEmExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.tilde".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.tilde.DeleteSubExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.emoji".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.emoji.EmojiExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.tasklist".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.tasklist.TasklistExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.superfences".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.highlight".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.highlight.HighlightExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.superfences.SuperFencesCodeExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.saneheaders".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.saneheaders.SaneHeadersExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "markdown.extensions.codehilite".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "markdown.extensions.codehilite.CodeHiliteExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "markdown.extensions.tables".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "markdown.extensions.tables.TableExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.magiclink".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.magiclink.MagiclinkExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.betterem".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.betterem.BetterEmExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.tilde".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.tilde.DeleteSubExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.emoji".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.emoji.EmojiExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.tasklist".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.tasklist.TasklistExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.superfences".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.highlight".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.highlight.HighlightExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.superfences.SuperFencesCodeExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.saneheaders".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.saneheaders.SaneHeadersExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "markdown.extensions.codehilite".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "markdown.extensions.codehilite.CodeHiliteExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "markdown.extensions.tables".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "markdown.extensions.tables.TableExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.magiclink".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.magiclink.MagiclinkExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.betterem".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.betterem.BetterEmExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.tilde".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.tilde.DeleteSubExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.emoji".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.emoji.EmojiExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.tasklist".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.tasklist.TasklistExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.superfences".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.highlight".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.highlight.HighlightExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.superfences.SuperFencesCodeExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.saneheaders".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.saneheaders.SaneHeadersExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "markdown.extensions.codehilite".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "markdown.extensions.codehilite.CodeHiliteExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "markdown.extensions.tables".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "markdown.extensions.tables.TableExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.magiclink".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.magiclink.MagiclinkExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.betterem".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.betterem.BetterEmExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.tilde".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.tilde.DeleteSubExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.emoji".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.emoji.EmojiExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.tasklist".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.tasklist.TasklistExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.superfences".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.highlight".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.highlight.HighlightExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.superfences.SuperFencesCodeExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.saneheaders".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.saneheaders.SaneHeadersExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "markdown.extensions.codehilite".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "markdown.extensions.codehilite.CodeHiliteExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "markdown.extensions.tables".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "markdown.extensions.tables.TableExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.magiclink".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.magiclink.MagiclinkExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.betterem".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.betterem.BetterEmExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.tilde".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.tilde.DeleteSubExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.emoji".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.emoji.EmojiExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.tasklist".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.tasklist.TasklistExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.superfences".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.highlight".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.highlight.HighlightExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.superfences.SuperFencesCodeExtension".
+[DEBUG][tkintermd][21:22:07]: Successfully imported extension module "pymdownx.saneheaders".
+[DEBUG][tkintermd][21:22:07]: Successfully loaded extension "pymdownx.saneheaders.SaneHeadersExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "markdown.extensions.codehilite".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "markdown.extensions.codehilite.CodeHiliteExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "markdown.extensions.tables".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "markdown.extensions.tables.TableExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.magiclink".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.magiclink.MagiclinkExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.betterem".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.betterem.BetterEmExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.tilde".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.tilde.DeleteSubExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.emoji".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.emoji.EmojiExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.tasklist".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.tasklist.TasklistExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.superfences".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.highlight".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.highlight.HighlightExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.superfences.SuperFencesCodeExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.saneheaders".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.saneheaders.SaneHeadersExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "markdown.extensions.codehilite".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "markdown.extensions.codehilite.CodeHiliteExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "markdown.extensions.tables".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "markdown.extensions.tables.TableExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.magiclink".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.magiclink.MagiclinkExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.betterem".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.betterem.BetterEmExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.tilde".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.tilde.DeleteSubExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.emoji".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.emoji.EmojiExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.tasklist".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.tasklist.TasklistExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.superfences".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.highlight".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.highlight.HighlightExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.superfences.SuperFencesCodeExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.saneheaders".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.saneheaders.SaneHeadersExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "markdown.extensions.codehilite".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "markdown.extensions.codehilite.CodeHiliteExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "markdown.extensions.tables".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "markdown.extensions.tables.TableExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.magiclink".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.magiclink.MagiclinkExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.betterem".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.betterem.BetterEmExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.tilde".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.tilde.DeleteSubExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.emoji".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.emoji.EmojiExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.tasklist".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.tasklist.TasklistExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.superfences".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.highlight".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.highlight.HighlightExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.superfences.SuperFencesCodeExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.saneheaders".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.saneheaders.SaneHeadersExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "markdown.extensions.codehilite".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "markdown.extensions.codehilite.CodeHiliteExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "markdown.extensions.tables".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "markdown.extensions.tables.TableExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.magiclink".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.magiclink.MagiclinkExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.betterem".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.betterem.BetterEmExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.tilde".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.tilde.DeleteSubExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.emoji".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.emoji.EmojiExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.tasklist".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.tasklist.TasklistExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.superfences".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.highlight".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.highlight.HighlightExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.superfences.SuperFencesCodeExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.saneheaders".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.saneheaders.SaneHeadersExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "markdown.extensions.codehilite".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "markdown.extensions.codehilite.CodeHiliteExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "markdown.extensions.tables".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "markdown.extensions.tables.TableExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.magiclink".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.magiclink.MagiclinkExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.betterem".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.betterem.BetterEmExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.tilde".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.tilde.DeleteSubExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.emoji".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.emoji.EmojiExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.tasklist".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.tasklist.TasklistExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.superfences".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.highlight".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.highlight.HighlightExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.superfences.SuperFencesCodeExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.saneheaders".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.saneheaders.SaneHeadersExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "markdown.extensions.codehilite".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "markdown.extensions.codehilite.CodeHiliteExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "markdown.extensions.tables".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "markdown.extensions.tables.TableExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.magiclink".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.magiclink.MagiclinkExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.betterem".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.betterem.BetterEmExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.tilde".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.tilde.DeleteSubExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.emoji".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.emoji.EmojiExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.tasklist".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.tasklist.TasklistExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.superfences".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.highlight".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.highlight.HighlightExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.superfences.SuperFencesCodeExtension".
+[DEBUG][tkintermd][21:22:08]: Successfully imported extension module "pymdownx.saneheaders".
+[DEBUG][tkintermd][21:22:08]: Successfully loaded extension "pymdownx.saneheaders.SaneHeadersExtension".
+[DEBUG][tkintermd][21:24:10]: Successfully imported extension module "markdown.extensions.codehilite".
+[DEBUG][tkintermd][21:24:10]: Successfully loaded extension "markdown.extensions.codehilite.CodeHiliteExtension".
+[DEBUG][tkintermd][21:24:10]: Successfully imported extension module "markdown.extensions.tables".
+[DEBUG][tkintermd][21:24:10]: Successfully loaded extension "markdown.extensions.tables.TableExtension".
+[DEBUG][tkintermd][21:24:10]: Successfully imported extension module "pymdownx.magiclink".
+[DEBUG][tkintermd][21:24:10]: Successfully loaded extension "pymdownx.magiclink.MagiclinkExtension".
+[DEBUG][tkintermd][21:24:10]: Successfully imported extension module "pymdownx.betterem".
+[DEBUG][tkintermd][21:24:10]: Successfully loaded extension "pymdownx.betterem.BetterEmExtension".
+[DEBUG][tkintermd][21:24:10]: Successfully imported extension module "pymdownx.tilde".
+[DEBUG][tkintermd][21:24:10]: Successfully loaded extension "pymdownx.tilde.DeleteSubExtension".
+[DEBUG][tkintermd][21:24:10]: Successfully imported extension module "pymdownx.emoji".
+[DEBUG][tkintermd][21:24:10]: Successfully loaded extension "pymdownx.emoji.EmojiExtension".
+[DEBUG][tkintermd][21:24:10]: Successfully imported extension module "pymdownx.tasklist".
+[DEBUG][tkintermd][21:24:10]: Successfully loaded extension "pymdownx.tasklist.TasklistExtension".
+[DEBUG][tkintermd][21:24:10]: Successfully imported extension module "pymdownx.superfences".
+[DEBUG][tkintermd][21:24:10]: Successfully imported extension module "pymdownx.highlight".
+[DEBUG][tkintermd][21:24:10]: Successfully loaded extension "pymdownx.highlight.HighlightExtension".
+[DEBUG][tkintermd][21:24:10]: Successfully loaded extension "pymdownx.superfences.SuperFencesCodeExtension".
+[DEBUG][tkintermd][21:24:10]: Successfully imported extension module "pymdownx.saneheaders".
+[DEBUG][tkintermd][21:24:10]: Successfully loaded extension "pymdownx.saneheaders.SaneHeadersExtension".
+[DEBUG][tkintermd][21:24:10]: Successfully imported extension module "markdown.extensions.codehilite".
+[DEBUG][tkintermd][21:24:10]: Successfully loaded extension "markdown.extensions.codehilite.CodeHiliteExtension".
+[DEBUG][tkintermd][21:24:10]: Successfully imported extension module "markdown.extensions.tables".
+[DEBUG][tkintermd][21:24:10]: Successfully loaded extension "markdown.extensions.tables.TableExtension".
+[DEBUG][tkintermd][21:24:10]: Successfully imported extension module "pymdownx.magiclink".
+[DEBUG][tkintermd][21:24:10]: Successfully loaded extension "pymdownx.magiclink.MagiclinkExtension".
+[DEBUG][tkintermd][21:24:10]: Successfully imported extension module "pymdownx.betterem".
+[DEBUG][tkintermd][21:24:10]: Successfully loaded extension "pymdownx.betterem.BetterEmExtension".
+[DEBUG][tkintermd][21:24:10]: Successfully imported extension module "pymdownx.tilde".
+[DEBUG][tkintermd][21:24:10]: Successfully loaded extension "pymdownx.tilde.DeleteSubExtension".
+[DEBUG][tkintermd][21:24:10]: Successfully imported extension module "pymdownx.emoji".
+[DEBUG][tkintermd][21:24:10]: Successfully loaded extension "pymdownx.emoji.EmojiExtension".
+[DEBUG][tkintermd][21:24:10]: Successfully imported extension module "pymdownx.tasklist".
+[DEBUG][tkintermd][21:24:10]: Successfully loaded extension "pymdownx.tasklist.TasklistExtension".
+[DEBUG][tkintermd][21:24:10]: Successfully imported extension module "pymdownx.superfences".
+[DEBUG][tkintermd][21:24:10]: Successfully imported extension module "pymdownx.highlight".
+[DEBUG][tkintermd][21:24:10]: Successfully loaded extension "pymdownx.highlight.HighlightExtension".
+[DEBUG][tkintermd][21:24:10]: Successfully loaded extension "pymdownx.superfences.SuperFencesCodeExtension".
+[DEBUG][tkintermd][21:24:10]: Successfully imported extension module "pymdownx.saneheaders".
+[DEBUG][tkintermd][21:24:10]: Successfully loaded extension "pymdownx.saneheaders.SaneHeadersExtension".

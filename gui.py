@@ -6,6 +6,15 @@ from PyQt5.QtGui import QPixmap
 from chatbot import chat_with_bot
 
 
+from tkintermd.frame import TkintermdFrame
+from tkinterweb import HtmlFrame
+import markdown
+import tempfile
+
+import tkinter as tk
+from tkinter.constants import *
+
+
 
 open_windows = []
 # Configurar transparencia (sin click-through para permitir interacción)
@@ -71,7 +80,27 @@ def open_chat_window():
     response_display.setReadOnly(True)
 
     def update_callback(new_text):
-        response_display.insertPlainText(new_text)
+        # Create a new Tkinter window for the response
+        root = tk.Tk()
+        frame = HtmlFrame(root, messages_enabled=False)
+
+        # Load the HTML template with CSS styles
+        style = open("template.html").read()
+
+        # Create HTML content
+        body_start = '<body>'
+        body_end = '</body>'
+
+        # Write the HTML content combining style and markdown-converted text
+        # Remove code blocks markers if present
+        f = tempfile.NamedTemporaryFile(mode='w')
+        f.write(style + body_start + new_text.replace("```", "") + body_end)
+        f.flush()
+
+        # Load the HTML file into the frame
+        frame.load_file(f.name)
+        frame.pack(fill="both", expand=True)
+        root.mainloop()
 
     def finish_callback():
         response_display.append("\n--- Fin del mensaje ---")
@@ -91,8 +120,9 @@ def open_chat_window():
 
     input_dialog.setLayout(layout)
     input_dialog.show()
-    # Guardar referencia global
+    # Save global reference
     open_windows.append(input_dialog)
+
 
 
 # Animación para escalar
