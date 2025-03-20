@@ -38,145 +38,159 @@ def format_markdown(md_text):
 md_content = """
 
 
-¡Claro! Aquí tienes una explicación de **Django** junto con ejemplos en **Markdown**:
+¡Claro! **Markdown** es un lenguaje ligero de marcado que se usa para dar formato a textos de manera sencilla. Aunque no está directamente relacionado con **Python**, puedes usar **Markdown** para documentar código Python en archivos como `README.md`, en **Jupyter Notebooks**, o en plataformas como **GitHub**. Aquí tienes una guía con los comandos más usados en **Markdown** y cómo aplicarlos para documentar tus proyectos en Python:
 
 ---
 
-# 🐍 **Django: El framework web en Python**
+## 📋 **Guía de comandos Markdown**
 
-Django es un **framework de desarrollo web** de alto nivel y código abierto, diseñado para crear aplicaciones web de manera rápida, segura y escalable. Sigue el patrón **MTV (Model-Template-View)**, similar al **MVC (Model-View-Controller)**.
+### 1. **Encabezados (Títulos)**  
+Se crean usando el símbolo `#` seguido de un espacio.
 
----
+```markdown
+# Título de nivel 1
+## Título de nivel 2
+### Título de nivel 3
+```
 
-## ✅ **Principales características de Django**
-- **Rápido**: Facilita un desarrollo ágil y limpio.
-- **Seguro**: Incluye protección contra inyecciones SQL, CSRF, XSS, etc.
-- **Escalable**: Adaptable a proyectos pequeños y grandes.
-- **DRY (Don't Repeat Yourself)**: Reutilización de código y optimización.
-
----
-
-## 📁 **Estructura básica de un proyecto Django**
-```bash
-mi_proyecto/
-├── manage.py          # Utilidad para administrar el proyecto
-├── mi_proyecto/       # Configuración del proyecto
-│   ├── __init__.py
-│   ├── settings.py    # Configuración principal
-│   ├── urls.py        # Rutas del proyecto
-│   └── wsgi.py        # Interfaz WSGI para producción
-└── app/               # Una aplicación Django
-    ├── __init__.py
-    ├── admin.py      # Registro en el panel de administración
-    ├── apps.py       # Configuración de la aplicación
-    ├── models.py     # Definición de la base de datos (Modelos)
-    ├── tests.py      # Pruebas unitarias
-    └── views.py      # Lógica de las vistas
+📝 **Ejemplo en Python**:
+```markdown
+# Proyecto de Python: Calculadora
+## Descripción
+Este programa realiza operaciones básicas: suma, resta, multiplicación y división.
 ```
 
 ---
 
-## 🚀 **Cómo empezar con Django**
-### 1. **Instalar Django**
-Asegúrate de tener Python instalado y ejecuta:
-```bash
-pip install django
-```
+### 2. **Negrita y Cursiva**
+- **Negrita**: Usa `**texto**` o `__texto__`
+- *Cursiva*: Usa `*texto*` o `_texto_`
+- ***Negrita y cursiva***: Usa `***texto***`
 
-### 2. **Crear un proyecto Django**
-```bash
-django-admin startproject mi_proyecto
-cd mi_proyecto
-python manage.py runserver
+📝 **Ejemplo en Python**:
+```markdown
+**Función principal**
+*Este programa está desarrollado en Python 3.*
 ```
-Accede a `http://localhost:8000` para ver la página de bienvenida.
 
 ---
 
-## 📊 **Ejemplo: Crear una aplicación en Django**
-### 1. Crear una aplicación:
-```bash
-python manage.py startapp blog
-```
+### 3. **Código en línea y bloques de código**
+- **Código en línea**: Usa una comilla invertida \(`)
+- **Bloque de código**: Usa tres comillas invertidas (\`\`\`) con el lenguaje especificado.
 
-### 2. Registrar la app en `settings.py`:
+📝 **Ejemplo en Python**:
+```markdown
+Llama a la función con:
+
 ```python
-INSTALLED_APPS = [
-    ...
-    'blog',
-]
+suma(2, 3)
 ```
-
-### 3. Definir un modelo en `models.py`:
-```python
-from django.db import models
-
-class Post(models.Model):
-    titulo = models.CharField(max_length=200)
-    contenido = models.TextField()
-    fecha_publicacion = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.titulo
-```
-
-### 4. Migrar la base de datos:
-```bash
-python manage.py makemigrations
-python manage.py migrate
-```
-
-### 5. Crear una vista en `views.py`:
-```python
-from django.http import HttpResponse
-
-def inicio(request):
-    return HttpResponse("¡Hola, Django!")
-```
-
-### 6. Configurar la URL en `urls.py`:
-```python
-from django.urls import path
-from blog.views import inicio
-
-urlpatterns = [
-    path('', inicio, name='inicio'),
-]
 ```
 
 ---
 
-## 🛠️ **Panel de administración de Django**
-1. Crear un superusuario:
-```bash
-python manage.py createsuperuser
+### 4. **Listas**
+- **Lista no ordenada**: Usa `-`, `*` o `+`
+- **Lista ordenada**: Usa números seguidos de un punto (`1.`, `2.`, etc.)
+
+📝 **Ejemplo en Python**:
+```markdown
+### Funciones implementadas:
+
+- Sumar
+- Restar
+- Multiplicar
+- Dividir
+
+### Pasos para ejecutar:
+1. Clonar el repositorio
+2. Instalar dependencias
+3. Ejecutar `main.py`
 ```
 
-2. Registrar el modelo en `admin.py`:
+---
+
+### 5. **Enlaces e Imágenes**
+- **Enlace**: `[Texto del enlace](URL)`
+- **Imagen**: `![Texto alternativo](ruta/imagen.png)`
+
+📝 **Ejemplo en Python**:
+```markdown
+[Documentación oficial de Python](https://www.python.org)
+
+![Logo de Python](https://www.python.org/static/community_logos/python-logo.png)
+```
+
+---
+
+### 6. **Tablas**
+Para crear tablas, usa el símbolo `|` para las columnas y `-` para dividir el encabezado del contenido.
+
+📝 **Ejemplo en Python**:
+```markdown
+| Función      | Descripción               |
+|--------------|---------------------------|
+| `suma()`     | Realiza una suma          |
+| `resta()`    | Realiza una resta         |
+| `multiplica()` | Multiplica dos números    |
+| `divide()`   | Divide dos números         |
+```
+
+---
+
+### 7. **Citas (Blockquotes)**
+Usa el símbolo `>` al inicio de la línea.
+
+📝 **Ejemplo en Python**:
+```markdown
+> Este proyecto está basado en Python 3.10.
+```
+
+---
+
+### 8. **Líneas divisorias**
+Se crean usando tres guiones `---`, asteriscos `***` o guiones bajos `___`.
+
+```markdown
+---
+```
+
+---
+
+### 📚 **Ejemplo Completo en Markdown para Python**
+```markdown
+# 📊 Calculadora en Python
+
+## 📌 Descripción
+Este proyecto es una calculadora básica en **Python** que realiza operaciones como:
+
+- Suma
+- Resta
+- Multiplicación
+- División
+
+## 🔧 Requisitos
+- Python 3.10 o superior
+- Librerías: Ninguna externa
+
+## 📋 Uso
+
 ```python
-from django.contrib import admin
-from .models import Post
+# Ejecutar la calculadora
+from calculadora import suma
 
-admin.site.register(Post)
+resultado = suma(5, 3)
+print(f"Resultado: {resultado}")
 ```
 
-3. Acceder al panel: `http://localhost:8000/admin`
+## 📄 Documentación
+Para más detalles, consulta la [documentación oficial de Python](https://www.python.org).
+```
 
 ---
 
-## 📚 **Recursos adicionales**
-- 📘 [Documentación oficial de Django](https://docs.djangoproject.com/)
-- 🧰 **Comandos útiles**:
-    ```bash
-    python manage.py runserver       # Ejecutar el servidor
-    python manage.py makemigrations  # Crear migraciones
-    python manage.py migrate         # Aplicar migraciones
-    python manage.py createsuperuser # Crear usuario administrador
-    ```
----
-
-¿Quieres que profundice en alguna parte o te muestre más ejemplos? 🚀
-
+¿Quieres que te ayude a crear un **README.md** para tu proyecto en Python? 🚀
 
 """
 

@@ -95,6 +95,8 @@ kiv para moviles y tablet ( tactil )
 - polimorfismo
 - abstraccion
 - django
+- flask
+
 
 
 

@@ -105,16 +105,30 @@ def show_response(root):
                 elif in_code_block:
                     code_block_text += line + "\n"
                 else:
+                    # Usamos una expresión regular para dividir por negrita o cursiva
                     parts = re.split(r'(\*\*.*?\*\*|\*.*?\*)', line)
+                    formatos = {
+                                "# ": ("h1md", 1),
+                                "## ": ("h2md", 2),
+                                "### ": ("h3md", 3)
+}
                     for part in parts:
-                        if part:
-                            if part.startswith("**") and part.endswith("**"):
-                                self.text_widget.insert(tk.END, part[2:-2], "bold")
-                            elif part.startswith("*") and part.endswith("*"):
-                                self.text_widget.insert(tk.END, part[1:-1], "custom_font")
+                        if isinstance(part, str) and part:
+                            # Detectar encabezados
+                            for prefijo, (tag, longitud) in formatos.items():
+                                if part.startswith(prefijo):
+                                    self.text_widget.insert(tk.END, part[longitud:].strip(), tag)
+                                    break
                             else:
-                                self.text_widget.insert(tk.END, part)
-                    self.text_widget.insert(tk.END, "\n")
+                                # Detectar texto en cursiva (*texto*)
+                                if part.startswith("*") and part.endswith("*") and len(part) > 2 and part.count("*") == 2:
+                                    self.text_widget.insert(tk.END, part[1:-1].strip(), "italic")
+                                # Detectar texto en negrita (**texto**)
+                                elif part.startswith("**") and part.endswith("**") and len(part) > 4 and part.count("*") == 4:
+                                    self.text_widget.insert(tk.END, part[2:-2], "negrita")
+                                else:
+                                    self.text_widget.insert(tk.END, part)
+                        self.text_widget.insert(tk.END, "\n")
 
         def insert_code_block(self, text):
             self.text_widget.insert(tk.END, "\n\n", "code")
@@ -143,9 +157,11 @@ def show_response(root):
 
         response_text_widget = tk.Text(response_frame, bg='#ebe8e8', wrap='word', font=("Inter", 14), padx=20, pady=20, 
                                       spacing1=10, spacing2=12, spacing3=15, bd=0)
+        
+        
         # Configure tags on the actual Text widget
-        response_text_widget.tag_configure("bold", font=("Helvetica", 14, "bold"))
-        response_text_widget.tag_configure("custom_font", font=("Courier New", 12, "italic"), foreground="#3B5998") # dentro de *
+
+        # Estilo formateado del codigo (``` ```)
         response_text_widget.tag_configure("code", 
                 font=("Courier", 12), 
                 background="#f4f4f4",
@@ -153,6 +169,45 @@ def show_response(root):
                 lmargin2=10,   # 30 píxeles para líneas que se parten
                 rmargin=30     # 30 píxeles de margen derecho
             )
+            
+        # Estilo para encabezado 1 (#)
+        response_text_widget.tag_configure("h1md",
+            font=("Segoe UI", 30, "bold"),
+            foreground="#1a1a1a",
+            spacing1=0,
+            spacing3=0,
+            lmargin1=0,
+            lmargin2=0,
+            
+        )
+
+        # Estilo para encabezado 2 (##)
+        response_text_widget.tag_configure("h2md",
+            font=("Helvetica", 24, "bold"),
+            foreground="#3a3a3a",
+            spacing1=20,
+            spacing3=12,
+            underline=True,
+            justify="left"
+        )
+
+        # Estilo para encabezado 3 (###)
+        response_text_widget.tag_configure("h3md",
+            font=("Segoe UI", 18, "bold"),
+            foreground="#3a3a3a",
+
+        )
+
+        # Estilo para cursiva (*texto*)
+        response_text_widget.tag_configure("italic",
+            font=("Segoe UI", 12, "italic"),
+            foreground="#444444"
+        )
+
+        # Estilo para negrita (**texto**)
+        response_text_widget.tag_configure("negrita",
+            font=("Helvetica", 16, "bold")
+        )
 
         response_text_widget.pack(expand=True, fill='both')
 
