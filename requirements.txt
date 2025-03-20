@@ -9,3 +9,5 @@ testresources
 PyQt5
 openrouter-exception-handler
 pyqt5-tools
+markdown
+tkinterweb
