@@ -117,7 +117,7 @@ kiv para moviles y tablet ( tactil )
 - packaging
 - documentacion
 - fastAPI
-- SQLAlchemy
+- sqlalchemy
 - alembic
 - OAuth2
 - JWT

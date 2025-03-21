@@ -5851,7 +5851,7 @@ if __name__ == "__main__":
     ),
 
     (
-        "SQLAlchemy",
+        "sqlalchemy",
         "# 🔥 SQLAlchemy: ORM y Conexión a Bases de Datos en Python  \n"
         "\n"
         "### 📌 1. ¿Qué es SQLAlchemy?  \n\n"
