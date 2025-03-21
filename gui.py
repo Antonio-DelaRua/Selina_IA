@@ -7,9 +7,12 @@ from movimientos import apply_gravity, move_to_edge, climb_animation
 import re
 import speech_recognition as sr
 
+# Variables globales para la ventana de respuesta
 response_window = None
 response_text_widget = None
 
+
+# Función para manejar el doble clic en el muñeco
 def on_muneco_double_click(event, root):
     input_window = tk.Toplevel(root)
 
@@ -38,6 +41,19 @@ def on_muneco_double_click(event, root):
                      bg='orange', fg='white', font=("Comic Sans MS", 12))
     mic_button.pack(side='left', padx=10, pady=10, fill='y')
 
+    # Animación de pulso al grabar
+    def pulse_mic():
+        current_color = mic_button.cget("background")
+        new_color = '#ff4500' if current_color == 'orange' else 'orange'
+        mic_button.config(background=new_color)
+        if text_widget.tag_ranges("recording"):  # Si sigue grabando
+            root.after(500, pulse_mic)
+    
+    mic_button.config(command=lambda: [
+        start_listening_thread(text_widget, root, input_window),
+        pulse_mic()
+    ])
+
     # Botón de enviar
     send_button = tk.Button(frame, text="Enviar", command=lambda: send_message(input_window, root, text_widget), 
                           bg='orange', fg='white', font=("Comic Sans MS", 12))
@@ -53,10 +69,14 @@ def on_muneco_double_click(event, root):
     text_widget.focus_set()
 
 
+
+# Función para iniciar el hilo de escucha
 def start_listening_thread(text_widget, root, input_window):  # Añadir input_window como parámetro
     threading.Thread(target=listen_and_convert, 
                    args=(text_widget, root, input_window)).start()  # Pasar input_window
 
+
+# Función para escuchar y convertir voz a texto
 def listen_and_convert(text_widget, root, input_window):
     recognizer = sr.Recognizer()
     
@@ -78,7 +98,7 @@ def listen_and_convert(text_widget, root, input_window):
             root.after(0, text_widget.delete, "1.0", tk.END)
             root.after(0, text_widget.insert, "1.0", text)
             # Enviar automáticamente después de 0.5 segundos
-            root.after(1000, lambda: send_message(input_window, root, text_widget))
+            root.after(500, lambda: send_message(input_window, root, text_widget))
             
     except sr.WaitTimeoutError:
         show_error_message(root, "Tiempo de espera agotado")
@@ -89,11 +109,15 @@ def listen_and_convert(text_widget, root, input_window):
     except Exception as e:
         show_error_message(root, f"Error inesperado: {str(e)}")
 
+
+# Función para mostrar mensajes de error
 def show_error_message(root, message):
     response_window = show_response(root)
     response_window.update_response(f"❌ Error de voz: {message}")
 
 
+
+# Función para enviar mensajes
 def send_message(input_window, root, text_widget):
     user_text = text_widget.get("1.0", tk.END).strip()
     if user_text:
@@ -104,13 +128,19 @@ def send_message(input_window, root, text_widget):
         threading.Thread(target=fetch_response, args=(user_text, response_window_instance)).start()
     input_window.destroy()
 
+
+# Función para obtener la respuesta del agente
 def fetch_response(user_text, response_window_instance):
+    # response = agent(user_text)  # Asegúrate de que 'agent' está definido y funciona correctamente
+    # Simulación de respuesta del agente (para pruebas)
     response = agent(user_text)
     print("esto es lo q toy buscando", response)
     if response is None:
         response = "Lo siento, no pude obtener una respuesta en este momento."
     response_window_instance.update_response(response)
 
+
+# Función para ajustar la altura del cuadro de texto
 def on_text_change(event, text_widget):
     content = text_widget.get("1.0", tk.END)
     lines = content.count('\n') + 1
@@ -118,6 +148,8 @@ def on_text_change(event, text_widget):
     text_widget.config(height=new_height)
 
 
+
+# Función para mostrar la ventana de respuesta
 def show_response(root):
     global response_window, response_text_widget
 
@@ -190,10 +222,31 @@ def show_response(root):
                     # Agregar un solo salto de línea al final de cada línea
                     self.text_widget.insert(tk.END, "\n")
 
+                    
         def insert_code_block(self, text):
             self.text_widget.insert(tk.END, "\n", "code")
             self.text_widget.insert(tk.END, text, "code")
             self.text_widget.insert(tk.END, "\n", "code")
+            code_start = self.text_widget.index(tk.END)
+
+
+            
+            button_frame = tk.Frame(self.text_widget, bg="#f4f4f4")
+            
+            def copy_code():
+                self.text_widget.clipboard_clear()
+                self.text_widget.clipboard_append(text.strip())
+                
+            copy_button = tk.Button(
+                button_frame, 
+                text="Copiar código",
+                command=copy_code,
+                bg='grey', 
+                fg='white', 
+                font=("Courier", 10, "bold")
+            )
+            copy_button.pack(pady=0)
+            self.text_widget.window_create(code_start, window=button_frame)
 
     if response_window is None or not response_window.winfo_exists():
         response_window = tk.Toplevel(root)
@@ -281,6 +334,9 @@ def show_response(root):
 
     return ResponseWindow(response_text_widget)
 
+
+
+# Funciones para el movimiento del muñeco
 def start_move(event):
     global startX, startY
     startX = event.x
@@ -306,6 +362,8 @@ def do_move(event, muneco_label, root):
 
     muneco_label.place(x=x, y=y)
 
+
+# Función para mostrar el menú de animación
 def show_animation_menu(event, root, muneco_label, fall_images, walk_images, climb_images, fly_image, muneco_photo):
     def select_animation(animation):
         if animation == "Gravedad":
@@ -352,7 +410,9 @@ def show_animation_menu(event, root, muneco_label, fall_images, walk_images, cli
     Button(animation_menu, text="Mover a la izquierda", command=lambda: select_animation("Mover a la izquierda"), bg='orange', fg='white', font=("Microsoft Sans Serif", 12)).pack(pady=10)
     Button(animation_menu, text="Mover a la derecha", command=lambda: select_animation("Mover a la derecha"), bg='orange', fg='white', font=("Microsoft Sans Serif", 12)).pack(pady=10)
     Button(animation_menu, text="Escalar", command=lambda: select_animation("Escalar"), bg='orange', fg='white', font=("Microsoft Sans Serif", 12)).pack(pady=10)
-    
+
+
+# Función para cargar imágenes
 def load_images():
     image_paths = {
         "muneco": "img/muneco.png",
@@ -372,6 +432,8 @@ def load_images():
 
     return images
 
+
+# Función para configurar la interfaz gráfica
 def setup_gui(root):
     root.title("NoBt GPT  \U0001F40D")
     root.configure(bg='white')
@@ -390,7 +452,7 @@ def setup_gui(root):
 
     canvas = tk.Canvas(root, bg='white', highlightthickness=0)
     canvas.pack(fill="both", expand=True)
-
+    
     images = load_images()
     muneco_photo = images["muneco"]
     fall_images = images["fall"]
@@ -416,7 +478,7 @@ def setup_gui(root):
     muneco_label.bind("<ButtonRelease-3>", lambda event: show_animation_menu(event, root, muneco_label, fall_images, walk_images, climb_images, fly_image, muneco_photo))
     
     # Bind Ctrl+Q to close the application
-    root.bind("<Control-q>", lambda event: root.quit())
+    root.bind("<Control-q>", lambda event: [print("Bye Bye Camarada"), root.destroy()])
     
 
     return muneco_label, images

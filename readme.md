@@ -190,22 +190,30 @@ Web Scraping: BeautifulSoup, Scrapy, Selenium.
 
 
 
-        def insert_code_block(self, text):
-            self.text_widget.insert(tk.END, "\n", "code")
-            start_index = self.text_widget.index(tk.INSERT)  # Obtener el índice actual
-            self.text_widget.insert(tk.END, text, "code")
-            end_index = self.text_widget.index(tk.INSERT)  # Obtener el índice después de insertar el texto
+from fastapi import FastAPI
 
-            # Crear un Frame para el botón, alineado a la izquierda
-            button_frame = tk.Frame(self.text_widget, bg="#f4f4f4")
-            button_frame.pack(anchor='w', padx=30, pady=(0, 10))  # Alineado a la izquierda
+app = FastAPI()
 
-            # Crear el botón "Copiar código"
-            copy_button = tk.Button(button_frame, text="Copiar código",
-                                    command=lambda t=text: copy_to_clipboard(t),  # Pasar el texto como argumento
-                                    bg='blue', fg='white', font=("Courier", 10, "bold"))
-            copy_button.pack(side='left')  # Empaquetar el botón dentro del frame
+# Base de datos simulada
 
-            # Crear un widget de ventana para el frame del botón
-            self.text_widget.window_create(end_index, window=button_frame)
-            self.text_widget.insert(end_index, "\n")
+users_db = {
+
+    1: {'id': 1, 'nombre': 'Alice'},
+
+    2: {'id': 2, 'nombre': 'Bob'}
+
+}
+
+@app.get('/usuarios/{user_id}')
+
+def obtener_usuario(user_id: int):
+
+    usuario = users_db.get(user_id)
+
+    if usuario:
+
+        return usuario
+
+    return {'error': 'Usuario no encontrado'}, 404
+
+# Ejecutar con: uvicorn users_service:app --reload --port 8001
