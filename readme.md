@@ -137,3 +137,53 @@ kiv para moviles y tablet ( tactil )
 - strategy
 - solid
 - microservicios
+
+
+
+Arquitectura limpia (Clean Architecture): Separación de capas (dominio, aplicación, infraestructura).
+
+Microservicios vs Monolito: Cuándo elegir cada uno.
+
+Event-Driven Architecture: Uso de brokers como RabbitMQ, Kafka.
+
+CQRS y Event Sourcing: Diseño para sistemas complejos.
+
+7. DevOps y Deployment
+Contenedores: Docker, Docker Compose.
+
+Cloud: AWS (EC2, S3, Lambda), GCP, Azure.
+
+CI/CD: GitHub Actions, GitLab CI, Jenkins.
+
+Servidores web: Nginx, Gunicorn, uWSGI.
+
+Monitorización: Prometheus, Grafana, Sentry.
+
+Infra as Code: Terraform, CloudFormation.
+
+8. Seguridad
+OWASP Top 10: Prevención de SQLi, XSS, CSRF, etc.
+
+Hardening: Configuración segura de servidores y aplicaciones.
+
+Criptografía: Uso de bcrypt, cryptography.
+
+Auditorías: Herramientas como Bandit para análisis estático.
+
+9. Habilidades Blandas
+Trabajo en equipo: Uso de metodologías ágiles (Scrum, Kanban).
+
+Mentoría: Guiar a desarrolladores junior.
+
+Comunicación: Explicar ideas técnicas a no técnicos.
+
+Gestión de tiempo: Priorización de tareas complejas.
+
+10. Extra (Dependiendo del enfoque)
+Data Science: Pandas, NumPy, Matplotlib.
+
+Machine Learning: Scikit-learn, TensorFlow, PyTorch.
+
+Automatización: Scripts con click o argparse.
+
+Web Scraping: BeautifulSoup, Scrapy, Selenium.
