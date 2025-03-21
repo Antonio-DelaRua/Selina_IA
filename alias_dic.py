@@ -1,6 +1,8 @@
 predefined_answers = {
     "hola": "Pulsa ESC para destruir el mundo",
 
+    "el ale es moña" : "si 100 % confirmed",
+
     "entorno virtual": (
         "Para crear un entorno virtual en Python:\n"
         "```\npython -m venv env\n```\n\n"

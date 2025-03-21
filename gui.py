@@ -5,6 +5,7 @@ import threading
 from agent import agent
 from movimientos import apply_gravity, move_to_edge, climb_animation
 import re
+import speech_recognition as sr
 
 response_window = None
 response_text_widget = None
@@ -31,7 +32,15 @@ def on_muneco_double_click(event, root):
     frame = tk.Frame(input_window, bg='white')
     frame.pack(pady=10, padx=10, expand=True, fill='both')
 
-    send_button = tk.Button(frame, text="Enviar", command=lambda: send_message(input_window, root, text_widget), bg='orange', fg='white', font=("Comic Sans MS", 12))
+    # Botón de micrófono
+    mic_button = tk.Button(frame, text="🎤", 
+                     command=lambda: start_listening_thread(text_widget, root, input_window),
+                     bg='orange', fg='white', font=("Comic Sans MS", 12))
+    mic_button.pack(side='left', padx=10, pady=10, fill='y')
+
+    # Botón de enviar
+    send_button = tk.Button(frame, text="Enviar", command=lambda: send_message(input_window, root, text_widget), 
+                          bg='orange', fg='white', font=("Comic Sans MS", 12))
     send_button.pack(side='left', padx=10, pady=10, fill='y')
 
     text_widget = tk.Text(frame, font=("Comic Sans MS", 13), wrap='word', height=1, spacing1=5, spacing3=5, padx=10, highlightthickness=0, bd=1, relief='solid')
@@ -39,8 +48,51 @@ def on_muneco_double_click(event, root):
     text_widget.bind("<KeyRelease>", lambda event: on_text_change(event, text_widget))
     text_widget.bind("<Return>", lambda event: send_message(input_window, root, text_widget))
     text_widget.bind("<Shift-Return>", lambda event: None)
+    text_widget.bind("<Control-m>", lambda event: start_listening_thread(text_widget, root))
 
     text_widget.focus_set()
+
+
+def start_listening_thread(text_widget, root, input_window):  # Añadir input_window como parámetro
+    threading.Thread(target=listen_and_convert, 
+                   args=(text_widget, root, input_window)).start()  # Pasar input_window
+
+def listen_and_convert(text_widget, root, input_window):
+    recognizer = sr.Recognizer()
+    
+    try:
+        with sr.Microphone() as source:
+            # Actualizar la interfaz
+            root.after(0, text_widget.delete, "1.0", tk.END)
+            root.after(0, text_widget.insert, tk.END, "Escuchando...")
+            text_widget.update_idletasks()
+            
+            # Configurar para reducir ruido ambiental
+            recognizer.adjust_for_ambient_noise(source, duration=0.5)
+            audio = recognizer.listen(source, timeout=10)
+            
+            # Convertir audio a texto
+            text = recognizer.recognize_google(audio, language='es-ES')
+            
+            # Actualizar el cuadro de texto
+            root.after(0, text_widget.delete, "1.0", tk.END)
+            root.after(0, text_widget.insert, "1.0", text)
+            # Enviar automáticamente después de 0.5 segundos
+            root.after(1000, lambda: send_message(input_window, root, text_widget))
+            
+    except sr.WaitTimeoutError:
+        show_error_message(root, "Tiempo de espera agotado")
+    except sr.UnknownValueError:
+        show_error_message(root, "No se pudo entender el audio")
+    except sr.RequestError as e:
+        show_error_message(root, f"Error en el servicio: {e}")
+    except Exception as e:
+        show_error_message(root, f"Error inesperado: {str(e)}")
+
+def show_error_message(root, message):
+    response_window = show_response(root)
+    response_window.update_response(f"❌ Error de voz: {message}")
+
 
 def send_message(input_window, root, text_widget):
     user_text = text_widget.get("1.0", tk.END).strip()
