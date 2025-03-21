@@ -14,18 +14,8 @@
 <h3>🔨 👦 About Me :</h3>
 <br>
 
+ 💻 RuXx .
 
-
- 💻 Freelancer.
-
- ✔  Te puedo ayudar con **Python,Angular, Javascript, Java, Spring, Html, CSS**
-
- 📭 Contacta conmigo **ruxxdeveloper@gmail.com**
-
- 🏋️‍♂️ Sigo aprendiendo **React, testing with JUNIT, Laravel, Symfony,Python...**
-
- 🌍 Website [ruxxdev.site]
- 
 </div>
 
 
@@ -51,15 +41,20 @@
 
 ## CMD
 ctrl + q  ------> cerrar aplicación
-
+kiv para moviles y tablet ( tactil )
 
 ## PALABRAS CLAVE
 
+
+# predefinidos alias_dic
 - hola
 - entorno virtual
 - git 
 - react
 - ruxx
+- angular
+
+ # bd_python
 - que es python y para que se utiliza?
 - como instalar python en windows?
 - fundamentos de python
@@ -90,7 +85,135 @@ ctrl + q  ------> cerrar aplicación
 - funcion python
 - palindromo
 - calculadora
+- manejo de excepciones
+- multiples excepciones
+- excepciones anidadas
+- finally
+- else
+- POO
+- herencia
+- polimorfismo
+- abstraccion
+- django
+- flask
+- spring boot
+- modulo
+- iterador
+- decoradores
+- context managers
+- metaclase
+- GIL
+- gestion de memoria
+- protocolo
+- pytest
+- unittest
+- debugging
+- logging
+- flake8
+- black
+- Mypy
+- isort
+- gestor de dependencias
+- packaging
+- documentacion
+- fastAPI
+- sqlalchemy
+- alembic
+- OAuth2
+- JWT
+- graphQL
+- postgresql
+- mysql
+- mongodb
+- redis
+- conexiones asincronas
+- asyncpg
+- aiomysql
+- caching
+- patrones de diseño
+- singleton
+- factory
+- Observer
+- strategy
+- solid
+- microservicios
 
 
 
+Arquitectura limpia (Clean Architecture): Separación de capas (dominio, aplicación, infraestructura).
 
+Microservicios vs Monolito: Cuándo elegir cada uno.
+
+Event-Driven Architecture: Uso de brokers como RabbitMQ, Kafka.
+
+CQRS y Event Sourcing: Diseño para sistemas complejos.
+
+7. DevOps y Deployment
+Contenedores: Docker, Docker Compose.
+
+Cloud: AWS (EC2, S3, Lambda), GCP, Azure.
+
+CI/CD: GitHub Actions, GitLab CI, Jenkins.
+
+Servidores web: Nginx, Gunicorn, uWSGI.
+
+Monitorización: Prometheus, Grafana, Sentry.
+
+Infra as Code: Terraform, CloudFormation.
+
+8. Seguridad
+OWASP Top 10: Prevención de SQLi, XSS, CSRF, etc.
+
+Hardening: Configuración segura de servidores y aplicaciones.
+
+Criptografía: Uso de bcrypt, cryptography.
+
+Auditorías: Herramientas como Bandit para análisis estático.
+
+9. Habilidades Blandas
+Trabajo en equipo: Uso de metodologías ágiles (Scrum, Kanban).
+
+Mentoría: Guiar a desarrolladores junior.
+
+Comunicación: Explicar ideas técnicas a no técnicos.
+
+Gestión de tiempo: Priorización de tareas complejas.
+
+10. Extra (Dependiendo del enfoque)
+Data Science: Pandas, NumPy, Matplotlib.
+
+Machine Learning: Scikit-learn, TensorFlow, PyTorch.
+
+Automatización: Scripts con click o argparse.
+
+Web Scraping: BeautifulSoup, Scrapy, Selenium.
+
+
+
+from fastapi import FastAPI
+
+app = FastAPI()
+
+# Base de datos simulada
+
+users_db = {
+
+    1: {'id': 1, 'nombre': 'Alice'},
+
+    2: {'id': 2, 'nombre': 'Bob'}
+
+}
+
+@app.get('/usuarios/{user_id}')
+
+def obtener_usuario(user_id: int):
+
+    usuario = users_db.get(user_id)
+
+    if usuario:
+
+        return usuario
+
+    return {'error': 'Usuario no encontrado'}, 404
+
+# Ejecutar con: uvicorn users_service:app --reload --port 8001

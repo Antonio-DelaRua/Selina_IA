@@ -121,7 +121,7 @@ class ApiKeyEntry:
         try:
             api_key = session.query(ApiKey).first()
             if api_key:
-                print(f"API Key: {api_key.key}")
+                #print(f"API Key: {api_key.key}")
                 return api_key.key
             else:
                 print("No se encontraron claves de API en la base de datos.")
