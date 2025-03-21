@@ -47,99 +47,188 @@ def format_markdown(md_text):
 
 # Ejemplo de entrada Markdown (tu contenido)
 md_content = """
-## Introducción a Spring Boot
 
-Spring Boot es un framework de Java basado en Spring que facilita la creación de aplicaciones empresariales y microservicios. Su objetivo principal es simplificar la configuración y puesta en marcha de aplicaciones Spring, eliminando la necesidad de una configuración extensa.
+# **📌 Microservicios en Python: Guía completa con ejemplo práctico**  
 
-### Características principales:
-- **Autoconfiguración**: Spring Boot configura automáticamente los componentes según las dependencias presentes en el proyecto.
-- **Standalone**: No requiere un servidor de aplicaciones externo como Tomcat o Jetty.
-- **Manejo de dependencias**: Usa `Spring Boot Starter` para gestionar dependencias fácilmente.
-- **Spring Boot Actuator**: Proporciona monitoreo y métricas para aplicaciones en producción.
+## **¿Qué son los microservicios?**  
+Los **microservicios** son un enfoque arquitectónico para desarrollar aplicaciones como un conjunto de **servicios pequeños, independientes y comunicados entre sí**. Cada microservicio tiene una responsabilidad específica y funciona de manera autónoma.  
+
+🔹 **Características principales:**  
+✅ **Independencia**: Cada servicio opera de forma autónoma.  
+✅ **Escalabilidad**: Se pueden escalar individualmente.  
+✅ **Despliegue independiente**: Cada servicio se puede actualizar sin afectar a otros.  
+✅ **Comunicación entre servicios**: Generalmente mediante **APIs REST, gRPC o mensajería** (RabbitMQ, Kafka, Redis).  
+✅ **Flexibilidad tecnológica**: Diferentes microservicios pueden usar distintos lenguajes o bases de datos.  
 
 ---
 
-## Ejemplo de uso
+## **📌 Microservicios en un entorno Python**  
+Python es una excelente opción para microservicios debido a su **sencillez y ecosistema**. Las herramientas más utilizadas son:  
 
-A continuación, un ejemplo de una aplicación simple con Spring Boot que expone un servicio REST.
+🔹 **Frameworks web:**  
+- [FastAPI](https://fastapi.tiangolo.com/) 🚀 (el más rápido)  
+- [Flask](https://flask.palletsprojects.com/) 🏗️ (ligero y flexible)  
+- [Django REST Framework (DRF)](https://www.django-rest-framework.org/) 🛠️ (ideal si usas Django)  
 
-### 1. Agregar dependencias en `pom.xml`
+🔹 **Comunicación entre microservicios:**  
+- **HTTP REST APIs** (con FastAPI, Flask, DRF).  
+- **Mensajería asíncrona** con **RabbitMQ, Kafka, Redis Pub/Sub**.  
+- **gRPC** (alta velocidad en comunicación binaria).  
 
-```xml
-<dependencies>
-    <!-- Dependencia principal de Spring Boot -->
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
+🔹 **Gestión de microservicios:**  
+- **Docker** (para contenerización).  
+- **Kubernetes** (para orquestación de servicios).  
+- **Consul o etcd** (para descubrimiento de servicios).  
+
+---
+
+## **📌 Ejemplo práctico de microservicio con Python y FastAPI**  
+### 🏗 **Caso de uso:**  
+Construiremos un **sistema de pedidos** con dos microservicios:  
+1️⃣ **Microservicio de Usuarios** (`users_service.py`)  
+2️⃣ **Microservicio de Pedidos** (`orders_service.py`)  
+
+Los servicios se comunicarán entre sí mediante **HTTP REST APIs**.
+
+---
+
+### **1️⃣ Microservicio de Usuarios (`users_service.py`)**
+Este servicio gestiona usuarios y expone un endpoint para obtener información de un usuario.  
+
+```python
+from fastapi import FastAPI
+
+app = FastAPI()
+
+# Base de datos simulada
+users_db = {
+    1: {"id": 1, "nombre": "Alice"},
+    2: {"id": 2, "nombre": "Bob"}
+}
+
+@app.get("/usuarios/{user_id}")
+def obtener_usuario(user_id: int):
+    usuario = users_db.get(user_id)
+    if usuario:
+        return usuario
+    return {"error": "Usuario no encontrado"}, 404
+
+# Ejecutar con: uvicorn users_service:app --reload --port 8001
+```
+📌 **Explicación:**  
+✔️ **Usamos FastAPI** para exponer un endpoint `/usuarios/{user_id}`.  
+✔️ **Simulamos una base de datos** en `users_db`.  
+✔️ Si el usuario existe, lo devolvemos en JSON.  
+
+---
+
+### **2️⃣ Microservicio de Pedidos (`orders_service.py`)**
+Este servicio gestiona pedidos y consulta el **microservicio de usuarios** para obtener información de los clientes.
+
+```python
+from fastapi import FastAPI
+import requests  # Para comunicarnos con el otro microservicio
+
+app = FastAPI()
+
+# Base de datos simulada de pedidos
+orders_db = {
+    1: {"id": 1, "user_id": 1, "producto": "Laptop"},
+    2: {"id": 2, "user_id": 2, "producto": "Teléfono"}
+}
+
+USER_SERVICE_URL = "http://127.0.0.1:8001/usuarios"  # URL del microservicio de usuarios
+
+@app.get("/pedidos/{order_id}")
+def obtener_pedido(order_id: int):
+    pedido = orders_db.get(order_id)
+    if not pedido:
+        return {"error": "Pedido no encontrado"}, 404
+
+    # Llamamos al microservicio de usuarios
+    user_response = requests.get(f"{USER_SERVICE_URL}/{pedido['user_id']}")
     
-    <!-- Plugin de Spring Boot -->
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-test</artifactId>
-        <scope>test</scope>
-    </dependency>
-</dependencies>
+    if user_response.status_code == 200:
+        pedido["cliente"] = user_response.json()
+    else:
+        pedido["cliente"] = {"error": "Usuario no encontrado"}
+
+    return pedido
+
+# Ejecutar con: uvicorn orders_service:app --reload --port 8002
 ```
-
-### 2. Crear la clase principal `Application.java`
-
-```java
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-@SpringBootApplication
-public class Application {
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
-}
-```
-
-### 3. Crear un controlador REST `HelloController.java`
-
-```java
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-@RestController
-@RequestMapping("/api")
-public class HelloController {
-
-    @GetMapping("/hello")
-    public String sayHello() {
-        return "¡Hola desde Spring Boot!";
-    }
-}
-```
-
-### 4. Ejecutar la aplicación
-
-Para iniciar la aplicación, usa el siguiente comando en la terminal:
-
-```sh
-mvn spring-boot:run
-```
-
-### 5. Probar el servicio
-
-Una vez en ejecución, puedes acceder a la API en:
-
-```
-http://localhost:8080/api/hello
-```
-
-Este endpoint responderá con:
-
-```
-¡Hola desde Spring Boot!
-```
+📌 **Explicación:**  
+✔️ Exponemos un endpoint `/pedidos/{order_id}` para consultar pedidos.  
+✔️ Buscamos en `orders_db` el pedido solicitado.  
+✔️ Llamamos al **microservicio de usuarios** (`users_service`) con `requests.get()`.  
+✔️ Si el usuario existe, lo agregamos a la respuesta del pedido.  
 
 ---
 
-Este es un ejemplo básico de cómo se puede utilizar Spring Boot para crear una API REST. 🚀
+## **📌 Probando los microservicios**
+### **1️⃣ Iniciar ambos microservicios en terminales separadas**
+```bash
+uvicorn users_service:app --reload --port 8001
+```
+```bash
+uvicorn orders_service:app --reload --port 8002
+```
 
+### **2️⃣ Probar el servicio de Usuarios**
+```bash
+curl http://127.0.0.1:8001/usuarios/1
+```
+**Respuesta esperada:**
+```json
+{"id": 1, "nombre": "Alice"}
+```
+
+### **3️⃣ Probar el servicio de Pedidos**
+```bash
+curl http://127.0.0.1:8002/pedidos/1
+```
+**Respuesta esperada:**
+```json
+{
+    "id": 1,
+    "user_id": 1,
+    "producto": "Laptop",
+    "cliente": {
+        "id": 1,
+        "nombre": "Alice"
+    }
+}
+```
+📌 **¡Éxito!** El servicio de pedidos obtiene información del usuario llamando al otro microservicio.  
+
+---
+
+## **📌 Ventajas y Desventajas de Microservicios**
+🔹 **Ventajas:**  
+✅ Escalabilidad independiente de cada servicio.  
+✅ Despliegue modular y flexible.  
+✅ Menor acoplamiento (cada servicio se puede desarrollar y mantener por separado).  
+
+🔹 **Desventajas:**  
+❌ Mayor complejidad en la comunicación entre servicios.  
+❌ Necesidad de gestionar la orquestación con herramientas como **Kubernetes**.  
+❌ Requiere **observabilidad** con herramientas como **Prometheus y Grafana** para monitoreo.  
+
+---
+
+## **📌 Herramientas para Microservicios en Python**
+✔️ **FastAPI / Flask / Django REST Framework** → Para construir APIs.  
+✔️ **Docker & Kubernetes** → Para contenerización y despliegue.  
+✔️ **RabbitMQ / Kafka / Redis** → Para comunicación asíncrona entre servicios.  
+✔️ **PostgreSQL / MongoDB / Redis** → Bases de datos para almacenamiento.  
+✔️ **Celery** → Para tareas en segundo plano.  
+
+---
+
+## **🎯 Conclusión**
+🚀 **Los microservicios permiten crear aplicaciones escalables y modulares.**  
+🔥 Python, junto con **FastAPI**, Docker y Kubernetes, es ideal para implementarlos.  
+🔗 ¡Ahora tienes la base para diseñar tus propios microservicios en Python! 🚀
 
 """
 

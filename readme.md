@@ -97,10 +97,43 @@ kiv para moviles y tablet ( tactil )
 - django
 - flask
 - spring boot
-
-
-
-
-En este ejemplo, la función `calcular_rectangulo` toma dos parámetros (`largo` y `ancho`) y retorna un tuple con el área y el perímetro del rectángulo. El área se calcula multiplicando el largo y el ancho, y el perímetro se calcula sumando el largo y el ancho y multiplicando por 2.
-
-Luego, en el ejemplo de uso, se llaman a la función con los valores `largo = 5` y `ancho = 3`, y se imprimen los resultados.
+- modulo
+- iterador
+- decoradores
+- context managers
+- metaclase
+- GIL
+- gestion de memoria
+- protocolo
+- pytest
+- unittest
+- debugging
+- logging
+- flake8
+- black
+- Mypy
+- isort
+- gestor de dependencias
+- packaging
+- documentacion
+- fastAPI
+- SQLAlchemy
+- alembic
+- OAuth2
+- JWT
+- graphQL
+- postgresql
+- mysql
+- mongodb
+- redis
+- conexiones asincronas
+- asyncpg
+- aiomysql
+- caching
+- patrones de diseño
+- singleton
+- factory
+- Observer
+- strategy
+- solid
+- microservicios

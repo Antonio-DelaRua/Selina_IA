@@ -171,7 +171,7 @@ def show_response(root):
 
         # Estilo formateado del codigo (``` ```)
         response_text_widget.tag_configure("code", 
-                font=("Courier", 12), 
+                font=("Courier", 12, "bold"), 
                 background="#f4f4f4",
                 lmargin1=30,   # 30 píxeles de margen izquierdo
                 lmargin2=10,   # 30 píxeles para líneas que se parten
@@ -180,7 +180,7 @@ def show_response(root):
             
         # Estilo para encabezado 1 (#)
         response_text_widget.tag_configure("h1md",
-            font=("Segoe UI", 30, "bold"),
+            font=("Segoe UI", 24, "bold"),
             foreground="#1a1a1a",
             spacing1=0,
             spacing3=0,
@@ -191,7 +191,7 @@ def show_response(root):
 
         # Estilo para encabezado 2 (##)
         response_text_widget.tag_configure("h2md",
-            font=("Helvetica", 24, "bold"),
+            font=("Helvetica", 20, "bold"),
             foreground="#3a3a3a",
             spacing1=20,
             spacing3=12,
