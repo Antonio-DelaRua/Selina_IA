@@ -191,9 +191,9 @@ def show_response(root):
                     self.text_widget.insert(tk.END, "\n")
 
         def insert_code_block(self, text):
-            self.text_widget.insert(tk.END, "\n\n", "code")
+            self.text_widget.insert(tk.END, "\n", "code")
             self.text_widget.insert(tk.END, text, "code")
-            self.text_widget.insert(tk.END, "\n\n", "code")
+            self.text_widget.insert(tk.END, "\n", "code")
 
     if response_window is None or not response_window.winfo_exists():
         response_window = tk.Toplevel(root)
