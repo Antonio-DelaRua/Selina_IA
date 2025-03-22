@@ -137,8 +137,21 @@ kiv para moviles y tablet ( tactil )
 - strategy
 - solid
 - microservicios
+- ejercicio1
+- ejercicio2
+- ejercicio3
+- ejercicio4
+- ejercicio5
+- ejercicio6
+- ejercicio7
+- ejercicio8
+- ejercicio9
+- ejercicio10
 
 
+
+
+me queda por documentar : {
 
 Arquitectura limpia (Clean Architecture): Separación de capas (dominio, aplicación, infraestructura).
 
@@ -189,31 +202,4 @@ Automatización: Scripts con click o argparse.
 Web Scraping: BeautifulSoup, Scrapy, Selenium.
 
 
-
-from fastapi import FastAPI
-
-app = FastAPI()
-
-# Base de datos simulada
-
-users_db = {
-
-    1: {'id': 1, 'nombre': 'Alice'},
-
-    2: {'id': 2, 'nombre': 'Bob'}
-
 }
-
-@app.get('/usuarios/{user_id}')
-
-def obtener_usuario(user_id: int):
-
-    usuario = users_db.get(user_id)
-
-    if usuario:
-
-        return usuario
-
-    return {'error': 'Usuario no encontrado'}, 404
-
-# Ejecutar con: uvicorn users_service:app --reload --port 8001
