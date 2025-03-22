@@ -363,17 +363,24 @@ def do_move(event, muneco_label, root):
     muneco_label.place(x=x, y=y)
 
 
-# Función para mostrar el menú de animación
 def show_animation_menu(event, root, muneco_label, fall_images, walk_images, climb_images, fly_image, muneco_photo):
     def select_animation(animation):
+        global animacion_id  # Usamos una variable global para rastrear la animación activa
+
+        # Si hay una animación en curso, la cancelamos
+        if "animacion_id" in globals() and animacion_id:
+            root.after_cancel(animacion_id)
+
+        # Ejecutamos la animación seleccionada
         if animation == "Gravedad":
-            apply_gravity(muneco_label, root, fall_images, muneco_photo)
+            animacion_id = apply_gravity(muneco_label, root, fall_images, muneco_photo)
         elif animation == "Mover a la izquierda":
-            move_to_edge("left", muneco_label, root, walk_images, muneco_photo)
+            animacion_id = move_to_edge("left", muneco_label, root, walk_images, muneco_photo)
         elif animation == "Mover a la derecha":
-            move_to_edge("right", muneco_label, root, walk_images, muneco_photo)
+            animacion_id = move_to_edge("right", muneco_label, root, walk_images, muneco_photo)
         elif animation == "Escalar":
-            climb_animation(muneco_label, root, climb_images, fly_image, muneco_photo)
+            animacion_id = climb_animation(muneco_label, root, climb_images, fly_image, muneco_photo)
+
         animation_menu.destroy()
 
     animation_menu = Toplevel(root)
@@ -389,15 +396,10 @@ def show_animation_menu(event, root, muneco_label, fall_images, walk_images, cli
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
 
-    # Ajustar la posición horizontal del menú si está cerca del borde derecho de la pantalla
     if position_x + menu_width > screen_width:
         position_x = x - menu_width
-
-    # Ajustar la posición horizontal del menú si está cerca del borde izquierdo de la pantalla
     if position_x < 0:
         position_x = x + muneco_label.winfo_width()
-
-    # Ajustar la posición vertical del menú si está cerca del borde inferior de la pantalla
     if position_y + menu_height > screen_height:
         position_y = screen_height - menu_height - 10
 
@@ -410,7 +412,6 @@ def show_animation_menu(event, root, muneco_label, fall_images, walk_images, cli
     Button(animation_menu, text="Mover a la izquierda", command=lambda: select_animation("Mover a la izquierda"), bg='orange', fg='white', font=("Microsoft Sans Serif", 12)).pack(pady=10)
     Button(animation_menu, text="Mover a la derecha", command=lambda: select_animation("Mover a la derecha"), bg='orange', fg='white', font=("Microsoft Sans Serif", 12)).pack(pady=10)
     Button(animation_menu, text="Escalar", command=lambda: select_animation("Escalar"), bg='orange', fg='white', font=("Microsoft Sans Serif", 12)).pack(pady=10)
-
 
 # Función para cargar imágenes
 def load_images():
