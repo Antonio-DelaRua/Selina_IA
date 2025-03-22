@@ -20,10 +20,10 @@ class CompanyInfo:
     ]
 
     CONTACTO = {
-        "email": "contacto@techsolutions.com",
+        "email": "contacto@tNoBt.com",
         "telefono": "+34 600 123 456",
         "direccion": "Calle Innovación 123, Madrid, España",
-        "sitio_web": "https://www.techsolutions.com"
+        "sitio_web": "https://www.NoBt.com"
     }
 
     EQUIPO = [

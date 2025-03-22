@@ -7,3 +7,4 @@ testresources
 imagetk
 fuzzywuzzy
 SpeechRecognition pyaudio 
+langchain_ollama

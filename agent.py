@@ -21,9 +21,7 @@ def chat_with_codellama(prompt):
         return f"Error al llamar a CodeLlama: {e}"
 
 def agent(prompt):
-    """
-    Versión optimizada con mejor manejo de datos y contexto
-    """
+
     user_query = prompt.lower().strip()
     
     # 🌟 Sistema de coincidencia contextual mejorado
