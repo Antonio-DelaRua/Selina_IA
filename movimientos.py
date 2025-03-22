@@ -63,8 +63,8 @@ def climb_animation(muneco_label, root, climb_images, fly_image, muneco_photo):
 
         if y > 0:
             muneco_label.config(image=climb_images[index % len(climb_images)])
-            muneco_label.place(x=x, y=y-3)  # Reducir la distancia de subida
-            animacion_id = root.after(20, climb, index + 1)  # Aumentar la frecuencia de actualización
+            muneco_label.place(x=x, y=y-6)  # Reducir la distancia de subida
+            animacion_id = root.after(65, climb, index + 1)  # Aumentar la frecuencia de actualización
         else:
             muneco_label.config(image=fly_image)
             descend_zigzag()

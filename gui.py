@@ -101,19 +101,23 @@ def listen_and_convert(text_widget, root, input_window):
             root.after(500, lambda: send_message(input_window, root, text_widget))
             
     except sr.WaitTimeoutError:
-        show_error_message(root, "Tiempo de espera agotado")
+        show_error_message(root, "Tiempo de espera agotado", input_window)
     except sr.UnknownValueError:
-        show_error_message(root, "No se pudo entender el audio")
+        show_error_message(root, "Tiempo de espera agotado", input_window)
     except sr.RequestError as e:
-        show_error_message(root, f"Error en el servicio: {e}")
+        show_error_message(root, f"Error en el servicio: {e}", input_window)
     except Exception as e:
-        show_error_message(root, f"Error inesperado: {str(e)}")
+        show_error_message(root, f"Error inesperado: {str(e)}", input_window)
 
 
 # Función para mostrar mensajes de error
-def show_error_message(root, message):
+def show_error_message(root, message, input_window):
     response_window = show_response(root)
-    response_window.update_response(f"❌ Error de voz: {message}")
+    response_window.update_response(f"❌ : {message}")
+        # Verifica si input_window existe antes de cerrarlo
+    if input_window and input_window.winfo_exists():
+        input_window.destroy()
+    
 
 
 
@@ -134,7 +138,6 @@ def fetch_response(user_text, response_window_instance):
     # response = agent(user_text)  # Asegúrate de que 'agent' está definido y funciona correctamente
     # Simulación de respuesta del agente (para pruebas)
     response = agent(user_text)
-    print("esto es lo q toy buscando", response)
     if response is None:
         response = "Lo siento, no pude obtener una respuesta en este momento."
     response_window_instance.update_response(response)
@@ -324,8 +327,8 @@ def show_response(root):
 
         # Estilo para comillas simples (`texto`)
         response_text_widget.tag_configure("comillas_simples",
-                                    font=("Courier", 15, "italic"),
-                                    foreground="#7099A3"  # Azul para el código en línea
+                                    font=("Courier", 15, "bold"),
+                                    foreground="orange"  
         )
 
         response_text_widget.pack(expand=True, fill='both')

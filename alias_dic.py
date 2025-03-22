@@ -105,9 +105,5 @@ predefined_answers = {
 
     ),
 
-
-
-    
-
     
 }
