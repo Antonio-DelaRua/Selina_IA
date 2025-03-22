@@ -2,8 +2,8 @@ import requests
 import json
 import threading
 from model import HistoryEntry, PythonDB
-from alias_dic import predefined_answers
-from fuzzywuzzy import process
+
+
 
 # Direct API Key
 OPENROUTER_API_KEY = "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"
@@ -50,21 +50,9 @@ def chat_with_bot(prompt):
         print(f"Error al llamar a la API de OpenRouter: {e}")
         return f"Error al llamar a la API de OpenRouter: {e}"
 
-def find_closest_match(prompt):
-    match, score = process.extractOne(prompt, predefined_answers.keys())
-    if score > 80:  # Umbral de similitud
-        return match
-    return None
 
 def agent(prompt):
-    # Buscar el prompt más cercano en las respuestas predefinidas
-    closest_match = find_closest_match(prompt)
-    if closest_match:
-        response = predefined_answers[closest_match]
-        if not HistoryEntry.get_by_prompt(closest_match):
-            HistoryEntry(prompt=closest_match, response=response)
-        return response
-
+  
     # Buscar en la tabla de prompts predefinidos (PythonDB)
     try:
         predefined_query = PythonDB.get_by_prompt(prompt)

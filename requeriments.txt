@@ -2,7 +2,8 @@ setuptools
 Pillow
 tk
 requests
-SQLAlchemy
+sqlalchemy
 testresources
 imagetk
 fuzzywuzzy
+SpeechRecognition pyaudio 
