@@ -4,7 +4,7 @@ from gui import setup_gui
 def main():
     try:
         root = tk.Tk()
-        muneco_label, images = setup_gui(root)
+        setup_gui(root)
 
         root.mainloop()
     except KeyboardInterrupt:
