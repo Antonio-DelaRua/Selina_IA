@@ -324,8 +324,8 @@ def show_response(root):
 
         # Estilo para comillas simples (`texto`)
         response_text_widget.tag_configure("comillas_simples",
-                                    font=("Courier", 12),
-                                    foreground="blue"  # Azul para el código en línea
+                                    font=("Courier", 15, "italic"),
+                                    foreground="#7099A3"  # Azul para el código en línea
         )
 
         response_text_widget.pack(expand=True, fill='both')
