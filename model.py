@@ -59,7 +59,7 @@ class HistoryEntry:
         if prompt and response:
             self.prompt = prompt
             self.response = response
-            self.save()
+           
 
     def save(self):
         Session = sessionmaker(bind=engine)

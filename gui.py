@@ -231,6 +231,7 @@ def show_response(root):
             self.text_widget.insert(tk.END, text, "code")
             self.text_widget.insert(tk.END, "\n", "code")
             code_start = self.text_widget.index(tk.END)
+            self.text_widget.insert(tk.END, "\n\n")
 
 
             

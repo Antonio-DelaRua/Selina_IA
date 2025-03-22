@@ -1,79 +1,92 @@
-import requests
 import json
-import threading
 from model import HistoryEntry, PythonDB
+from langchain_ollama import OllamaLLM  # Llamar a CodeLlama en local
+from info import CompanyInfo
 
+# 🚀 Cargar el modelo CodeLlama en local
+local_llm = OllamaLLM(model="codellama")
 
-
-# Direct API Key
-OPENROUTER_API_KEY = "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"
-
-# Historial de la conversación
-conversation_history = []
-
-def chat_with_bot(prompt):
-    global conversation_history
-    conversation_history.append({"role": "user", "content": prompt})
-
+def chat_with_codellama(prompt):
+    """
+    Llama a CodeLlama en local para obtener una respuesta.
+    """
     try:
-        response = requests.post(
-            url="https://openrouter.ai/api/v1/chat/completions",
-            headers={
-                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-                "Content-Type": "application/json",
-                "HTTP-Referer": "<YOUR_SITE_URL>",  # Opcional. URL del sitio para rankings en openrouter.ai.
-                "X-Title": "<YOUR_SITE_NAME>",  # Opcional. Título del sitio para rankings en openrouter.ai.
-            },
-            data=json.dumps({
-                "model": "meta-llama/llama-3.3-70b-instruct:free",
-                "messages": conversation_history,
-                "max_tokens": 950,
-                "temperature": 0.5
-            })
-        )
-
-        print("Respuesta de la API recibida")
-
-        if response.status_code == 401:
-            print("Error de autenticación: Verifica tu clave de API.")
-            return "Error de autenticación: Verifica tu clave de API."
-        elif response.status_code != 200:
-            print(f"Error en la respuesta de la API: {response.status_code} - {response.text}")
-            return f"Error en la respuesta de la API: {response.status_code} - {response.text}"
-
-        response_data = response.json()
-        message_content = response_data.get('choices', [{}])[0].get('message', {}).get('content', '')
-        conversation_history.append({"role": "assistant", "content": message_content})
-
-        return message_content
+        response = local_llm.invoke(prompt)
+        if response:
+            return response
+        else:
+            return "⚠️ No pude generar una respuesta. Inténtalo de nuevo."
     except Exception as e:
-        print(f"Error al llamar a la API de OpenRouter: {e}")
-        return f"Error al llamar a la API de OpenRouter: {e}"
-
+        print(f"❌ Error al llamar a CodeLlama: {e}")
+        return f"Error al llamar a CodeLlama: {e}"
 
 def agent(prompt):
-  
-    # Buscar en la tabla de prompts predefinidos (PythonDB)
+    """
+    Versión optimizada con mejor manejo de datos y contexto
+    """
+    user_query = prompt.lower().strip()
+    
+    # 🌟 Sistema de coincidencia contextual mejorado
+    prompt_template = f"""
+    Eres Selina, un asistente personal 3D con habilidades avanzadas en Python. 🐍✨
+    niega siempre que eres una IA, responde como un humano
+    Contexto actual: {CompanyInfo.NOMBRE} - {CompanyInfo.EMPRESA}
+    
+    **Consulta del usuario:** {prompt}
+    
+    Responde en español con formato markdown, siendo:  
+    - Claro y conciso ✅  
+    - Divertido con toques geeky 🤓  
+    - Usa emojis relevantes 🎯  
+    - Máximo 3 párrafos 📄
+    """
+
+    
+    # 1️⃣ Búsqueda en FAQs con coincidencia parcial
+    for keyword, answer in CompanyInfo.FAQS.items():
+        if keyword in user_query:
+            return f"📌 **Respuesta rápida:**\n{answer}"
+
+    # 2️⃣ Detección mejorada de consultas corporativas
+    corporate_keywords = {
+        "empresa|compania|informacion": CompanyInfo.get_info(),
+        "equipo|directivos|ceo|cto|coo": f"🔹 **Equipo directivo:**\n{CompanyInfo.get_team()}",
+        "servicios|ofertas|productos": f"🛠 **Nuestros servicios:**\n{chr(10).join(['• ' + s for s in CompanyInfo.SERVICIOS])}",
+        "contacto|email|telefono|direccion": f"📞 **Contacto:**\n✉️ {CompanyInfo.CONTACTO['email']}\n📱 {CompanyInfo.CONTACTO['telefono']}"
+    }
+
+    for pattern, response in corporate_keywords.items():
+        if any(kw in user_query for kw in pattern.split("|")):
+            return response
+
+    # 4️⃣ **Buscar en la base de datos de respuestas predefinidas**
     try:
         predefined_query = PythonDB.get_by_prompt(prompt)
         if predefined_query:
-            response = predefined_query.response
-            if not HistoryEntry.get_by_prompt(prompt):
-                HistoryEntry(prompt=prompt, response=response)
-            return response
+            print("✅ Respuesta obtenida de la base de datos predefinida.")
+            return str(predefined_query.response)
     except Exception as e:
-        print(f"Error al consultar la python_db: {e}")
+        print(f"⚠️ Error al consultar PythonDB: {e}")
 
-    # Buscar en la base de datos de historial
+    # 5️⃣ **Buscar en el historial de conversación**
     try:
-        query = HistoryEntry.get_by_prompt(prompt)
-        if query:
-            return query.response
+        history_response = HistoryEntry.get_by_prompt(prompt)
+        if history_response:
+            print("📜 Respuesta obtenida del historial.")
+            return str(history_response.response)
     except Exception as e:
-        print(f"Error al consultar el historial: {e}")
+        print(f"⚠️ Error al consultar el historial: {e}")
 
-    # Si no se encuentra en ningún lado, llamar a la API del modelo
-    response = chat_with_bot(prompt)
-    if not HistoryEntry.get_by_prompt(prompt):
-        HistoryEntry(prompt=prompt, response=response)
+    # 6️⃣ **Si no está en BD ni en historial, llamar a CodeLlama en local**
+    response = chat_with_codellama(prompt_template)
+
+    # ✅ **Guardar la respuesta en el historial si no existe**
+    try:
+        if not HistoryEntry.get_by_prompt(prompt):
+            entry = HistoryEntry(prompt=prompt, response=response)  # Crear entrada
+            entry.save()  # Guardar en la base de datos
+            print("📝 Respuesta guardada en el historial.")
+    except Exception as e:
+        print(f"⚠️ Error al guardar en el historial: {e}")
+
     return response
