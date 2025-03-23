@@ -39,15 +39,12 @@ def show_combined_window(root):
             self.response_frame = tk.Frame(frame, bg='#ebe8e8', bd=0.5, relief='solid')
             self.response_frame.pack(expand=True, fill='both', padx=20, pady=20)
 
-            # Configurar grid para mejor control
             self.response_frame.grid_rowconfigure(0, weight=1)
             self.response_frame.grid_columnconfigure(0, weight=1)
 
-            # Barra de desplazamiento PRIMERO
             scrollbar = tk.Scrollbar(self.response_frame, orient="vertical")
-            scrollbar.grid(row=0, column=1, sticky='ns')  # Usar grid en lugar de pack
+            scrollbar.grid(row=0, column=1, sticky='ns')
 
-            # Text widget SEGUNDO
             self.response_text_widget = tk.Text(
                 self.response_frame, 
                 bg='#ebe8e8', 
@@ -59,9 +56,8 @@ def show_combined_window(root):
                 state="disabled",
                 yscrollcommand=scrollbar.set
             )
-            self.response_text_widget.grid(row=0, column=0, sticky='nsew')  # Usar grid
+            self.response_text_widget.grid(row=0, column=0, sticky='nsew')
 
-            # Configurar scrollbar
             scrollbar.config(command=self.response_text_widget.yview)
 
             self.setup_text_styles()
@@ -74,11 +70,11 @@ def show_combined_window(root):
             button_container.pack(side='right', fill='y')
 
             send_button = tk.Button(button_container, text="Enviar", command=self.send_message,
-                                    bg='orange', fg='white', font=("Comic Sans MS", 12))
+                                    bg='#0A66C2', fg='white', font=("Comic Sans MS", 12))
             send_button.pack(side='left', padx=5)
 
             mic_button = tk.Button(button_container, text="🎤", command=self.start_listening,
-                                   bg='orange', fg='white', font=("Comic Sans MS", 12))
+                                   bg='#0A66C2', fg='white', font=("Comic Sans MS", 12))
             mic_button.pack(side='left', padx=5)
 
             self.text_widget = tk.Text(self.input_frame, font=("Comic Sans MS", 13), wrap='word', height=1,
@@ -96,65 +92,88 @@ def show_combined_window(root):
             self.response_text_widget.tag_configure("italic", font=("Segoe UI", 12, "italic"))
             self.response_text_widget.tag_configure("negrita", font=("Times New Roman", 16, "bold"))
             self.response_text_widget.tag_configure("comillas_simples", font=("Courier", 15, "bold"), foreground="orange")
+            self.response_text_widget.tag_configure("code", 
+                font=("Courier", 12, "bold"), 
+                background="#f4f4f4",
+                lmargin1=30,
+                lmargin2=10,
+                rmargin=30
+            )
 
         def update_response(self, new_text):
+            self.response_text_widget.config(state="normal")
+            
             if "Consultando..." in self.complete_text:
                 self.complete_text = self.complete_text.replace("Consultando...", "")
             self.complete_text += new_text
-
-            self.response_text_widget.config(state="normal")
+            
             self.response_text_widget.delete("1.0", tk.END)
+            self.insert_formatted_text(self.complete_text)
             
-            # Dividir el texto en partes y aplicar estilos
-            lines = self.complete_text.split('\n')
+            self.response_text_widget.yview(tk.END)
+            self.response_text_widget.see("1.0")
+            self.response_text_widget.config(state="disabled")
+
+        def insert_formatted_text(self, text):
+            lines = text.split('\n')
             in_code_block = False
-            
+            code_block_text = ""
+
             for line in lines:
                 if line.startswith("```"):
                     if in_code_block:
-                        # Finalizar bloque de código
-                        self.response_text_widget.insert(tk.END, '\n', 'code')
+                        self.insert_code_block(code_block_text)
                         in_code_block = False
+                        code_block_text = ""
                     else:
-                        # Iniciar bloque de código
-                        self.response_text_widget.insert(tk.END, '\n', 'code')
                         in_code_block = True
                 elif in_code_block:
-                    self.response_text_widget.insert(tk.END, line + '\n', 'code')
+                    code_block_text += line + "\n"
                 else:
-                    # Aplicar estilos a texto normal
-                    parts = re.split(r'(\*\*.*?\*\*|\*.*?\*|`.*?`)', line)
-                    for part in parts:
-                        if part.startswith('**') and part.endswith('**'):
-                            self.response_text_widget.insert(tk.END, part[2:-2], 'negrita')
-                        elif part.startswith('*') and part.endswith('*'):
-                            self.response_text_widget.insert(tk.END, part[1:-1], 'italic')
-                        elif part.startswith('`') and part.endswith('`'):
-                            self.response_text_widget.insert(tk.END, part[1:-1], 'comillas_simples')
-                        elif part.startswith('# '):
-                            self.response_text_widget.insert(tk.END, part[2:], 'h1md')
-                        elif part.startswith('## '):
-                            self.response_text_widget.insert(tk.END, part[3:], 'h2md')
-                        elif part.startswith('### '):
-                            self.response_text_widget.insert(tk.END, part[4:], 'h3md')
-                        else:
-                            self.response_text_widget.insert(tk.END, part)
-                    self.response_text_widget.insert(tk.END, '\n')
+                    parts = re.split(r'(`[^`]+`|\*\*.*?\*\*|\*.*?\*)', line)
 
-            self.response_text_widget.config(state="disabled")
-            self.response_text_widget.see("1.0")
-            
+                    formatos = {
+                        "# ": ("h1md", 1),
+                        "## ": ("h2md", 2),
+                        "### ": ("h3md", 3)
+                    }
+
+                    for part in parts:
+                        if isinstance(part, str) and part:
+                            if part.startswith("`") and part.endswith("`") and len(part) > 2:
+                                self.response_text_widget.insert(tk.END, part[1:-1], "comillas_simples")
+                            else:
+                                header_processed = False
+                                for prefijo, (tag, longitud) in formatos.items():
+                                    if part.startswith(prefijo):
+                                        self.response_text_widget.insert(tk.END, part[longitud:].strip(), tag)
+                                        header_processed = True
+                                        break
+                                if not header_processed:
+                                    if part.startswith("*") and part.endswith("*") and len(part) > 2 and part.count("*") == 2:
+                                        self.response_text_widget.insert(tk.END, part[1:-1].strip(), "italic")
+                                    elif part.startswith("**") and part.endswith("**") and len(part) > 4 and part.count("*") == 4:
+                                        self.response_text_widget.insert(tk.END, part[2:-2], "negrita")
+                                    else:
+                                        self.response_text_widget.insert(tk.END, part)
+                    self.response_text_widget.insert(tk.END, "\n\n")
+
+        def insert_code_block(self, text):
+            self.response_text_widget.insert(tk.END, "\n\n", "code")
+            self.response_text_widget.insert(tk.END, text, "code")
+            self.response_text_widget.insert(tk.END, "\n\n", "code")
+            self.response_text_widget.insert(tk.END, "\n\n")
+
         def send_message(self):
             user_input = self.text_widget.get("1.0", tk.END).strip()
             if user_input:
                 self.text_widget.delete("1.0", tk.END)
-                self.text_widget.update_idletasks()  # Asegurar actualización inmediata
                 self.complete_text = "" 
                 self.response_text_widget.config(state="normal")
                 self.response_text_widget.delete("1.0", tk.END)
                 self.response_text_widget.config(state="disabled")
-                self.update_response("Consultando...")  # Mostrar mensaje de carga
-                self.window.after(100, lambda: fetch_response(user_input, self))  # Llamada diferida para evitar congelamiento
+                self.update_response("Consultando...")
+                self.window.after(100, lambda: fetch_response(user_input, self))
 
         def start_listening(self):
             self.update_response("\n[Escuchando...]\n")
@@ -244,14 +263,21 @@ def show_animation_menu(event, root, muneco_label, fall_images, walk_images, cli
     animation_menu.geometry(f"{menu_width}x{menu_height}+{position_x}+{position_y}")
     animation_menu.configure(bg='white')
 
-    Frame(animation_menu, bg='white').pack(expand=True, fill='both')
+    Frame(animation_menu, bg='#0A66C2').pack(expand=True, fill='both')
 
-    Button(animation_menu, text="Gravedad", command=lambda: select_animation("Gravedad"), bg='orange', fg='white', font=("Microsoft Sans Serif", 12)).pack(pady=10)
-    Button(animation_menu, text="Mover a la izquierda", command=lambda: select_animation("Mover a la izquierda"), bg='orange', fg='white', font=("Microsoft Sans Serif", 12)).pack(pady=10)
-    Button(animation_menu, text="Mover a la derecha", command=lambda: select_animation("Mover a la derecha"), bg='orange', fg='white', font=("Microsoft Sans Serif", 12)).pack(pady=10)
-    Button(animation_menu, text="Escalar", command=lambda: select_animation("Escalar"), bg='orange', fg='white', font=("Microsoft Sans Serif", 12)).pack(pady=10)
+    button_config = {
+        "bg": "white",
+        "fg": "black",
+        "font": ("Microsoft Sans Serif", 12),
+        "width": 25  # Ancho fijo para todos los botones (ajusta según necesidad)
+    }
 
-# Función para cargar imágenes
+    # Creación de botones con configuración uniforme
+    Button(animation_menu, text="Gravedad", command=lambda: select_animation("Gravedad"), **button_config).pack(pady=10, padx=20)
+    Button(animation_menu, text="izquierda", command=lambda: select_animation("Mover a la izquierda"), **button_config).pack(pady=10, padx=20)
+    Button(animation_menu, text="derecha", command=lambda: select_animation("Mover a la derecha"), **button_config).pack(pady=10, padx=20)
+    Button(animation_menu, text="Escalar", command=lambda: select_animation("Escalar"), **button_config).pack(pady=10, padx=20)
+    # Función para cargar imágenes
 def load_images():
     image_paths = {
         "muneco": "img/muneco.png",
