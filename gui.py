@@ -1,7 +1,4 @@
 
-
-
-
 import tkinter as tk
 from tkinter import Toplevel, Text, Button, Frame
 from PIL import Image, ImageTk
@@ -149,92 +146,6 @@ def show_combined_window(root):
             self.update_response("\n[Escuchando...]\n")
 
     return CombinedWindow(root)
-
-
-
-def fetch_response(user_text, response_window_instance):
-    CombinedWindow = agent(user_text)  # Delegamos toda la lógica al agente
-
-    # Asegurar que la respuesta no sea None
-    if CombinedWindow is None:
-        CombinedWindow = "Lo siento, no pude obtener una respuesta en este momento."
-
-    # Actualizar la interfaz con la respuesta correcta
-    response_window_instance.update_response(CombinedWindow)
-
-    
-def fetch_response(user_text, response_window_instance):
-    CombinedWindow = agent(user_text)  # Delegamos toda la lógica al agente
-
-    # Asegurar que la respuesta no sea None
-    if CombinedWindow is None:
-        CombinedWindow = "Lo siento, no pude obtener una respuesta en este momento."
-
-    # Actualizar la interfaz con la respuesta correcta
-    response_window_instance.update_response(CombinedWindow)
-
-
-# Función para iniciar el hilo de escucha
-def start_listening_thread(text_widget, root, input_window):  # Añadir input_window como parámetro
-    threading.Thread(target=listen_and_convert, 
-                   args=(text_widget, root, input_window)).start()  # Pasar input_window
-
-
-# Función para escuchar y convertir voz a texto
-def listen_and_convert(text_widget, root, input_window):
-    recognizer = sr.Recognizer()
-    
-    try:
-        with sr.Microphone() as source:
-            # Actualizar la interfaz
-            root.after(0, text_widget.delete, "1.0", tk.END)
-            root.after(0, text_widget.insert, tk.END, "Escuchando...")
-            text_widget.update_idletasks()
-            
-            # Configurar para reducir ruido ambiental
-            recognizer.adjust_for_ambient_noise(source, duration=0.5)
-            audio = recognizer.listen(source, timeout=10)
-            
-            # Convertir audio a texto
-            text = recognizer.recognize_google(audio, language='es-ES')
-            
-            # Actualizar el cuadro de texto
-            root.after(0, text_widget.delete, "1.0", tk.END)
-            root.after(0, text_widget.insert, "1.0", text)
-            # Enviar automáticamente después de 0.5 segundos
-            root.after(500, lambda: send_message(input_window, root, text_widget))
-            
-    except sr.WaitTimeoutError:
-        show_error_message(root, "Tiempo de espera agotado", input_window)
-    except sr.UnknownValueError:
-        show_error_message(root, "Tiempo de espera agotado", input_window)
-    except sr.RequestError as e:
-        show_error_message(root, f"Error en el servicio: {e}", input_window)
-    except Exception as e:
-        show_error_message(root, f"Error inesperado: {str(e)}", input_window)
-
-
-# Función para mostrar mensajes de error
-def show_error_message(root, message, input_window):
-    response_window = show_combined_window(root)
-    response_window.update_response(f"❌ : {message}")
-        # Verifica si input_window existe antes de cerrarlo
-    if input_window and input_window.winfo_exists():
-        input_window.destroy()
-    
-
-
-
-# Función para enviar mensajes
-def send_message(input_window, root, text_widget):
-    user_text = text_widget.get("1.0", tk.END).strip()
-    if user_text:
-        response_window_instance = show_combined_window(root)
-        response_window_instance.update_response("Consultando...")  # Mostrar mensaje de espera
-
-        # Usar el agente para obtener una respuesta en un hilo separado
-        threading.Thread(target=fetch_response, args=(user_text, response_window_instance)).start()
-    input_window.destroy()
 
 
 # Función para obtener la respuesta del agente
