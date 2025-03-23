@@ -1,10 +1,7 @@
-
 from model import HistoryEntry, PythonDB
 from langchain_ollama import OllamaLLM  # Llamar a CodeLlama en local
 from info import CompanyInfo
-from  helper import NotionDB  # Importamos NotionDB
-
-
+from helper import NotionDB  # Importamos NotionDB
 
 # 🚀 Cargar el modelo CodeLlama en local
 local_llm = OllamaLLM(model="codellama")
@@ -15,40 +12,15 @@ def chat_with_codellama(prompt):
     """
     try:
         response = local_llm.invoke(prompt)
-        if response:
-            return response
-        else:
-            return "⚠️ No pude generar una respuesta. Inténtalo de nuevo."
+        return response if response else "⚠️ No pude generar una respuesta. Inténtalo de nuevo."
     except Exception as e:
         print(f"❌ Error al llamar a CodeLlama: {e}")
         return f"Error al llamar a CodeLlama: {e}"
 
 def agent(prompt):
-
     user_query = prompt.lower().strip()
-    
+
     # 🌟 Sistema de coincidencia contextual mejorado
-    prompt_template = f"""
-    Eres Selina, un asistente personal 3D con habilidades avanzadas en Python. 🐍✨
-    niega siempre que eres una IA, responde como un humano
-    Contexto actual: {CompanyInfo.NOMBRE} - {CompanyInfo.EMPRESA}
-    
-    **Consulta del usuario:** {prompt}
-    
-    Responde en español con formato markdown, siendo:  
-    - Claro y conciso ✅  
-    - Divertido con toques geeky 🤓  
-    - Usa emojis relevantes 🎯  
-    - Máximo 3 párrafos 📄
-    """
-
-    
-    # 1️⃣ Búsqueda en FAQs con coincidencia parcial
-    for keyword, answer in CompanyInfo.FAQS.items():
-        if keyword in user_query:
-            return f"📌 **Respuesta rápida:**\n{answer}"
-
-    # 2️⃣ Detección mejorada de consultas corporativas
     corporate_keywords = {
         "empresa|compania|informacion": CompanyInfo.get_info(),
         "equipo|directivos|ceo|cto|coo": f"🔹 **Equipo directivo:**\n{CompanyInfo.get_team()}",
@@ -56,42 +28,41 @@ def agent(prompt):
         "contacto|email|telefono|direccion": f"📞 **Contacto:**\n✉️ {CompanyInfo.CONTACTO['email']}\n📱 {CompanyInfo.CONTACTO['telefono']}"
     }
 
+    # 1️⃣ **Búsqueda rápida en FAQs**
+    for keyword, answer in CompanyInfo.FAQS.items():
+        if keyword in user_query:
+            return f"📌 **Respuesta rápida:**\n{answer}"
 
+    # 2️⃣ **Buscar en la base de datos de respuestas predefinidas (PythonDB)**
     try:
-        # 🔍 1️⃣ Buscar en la base de datos de respuestas predefinidas (PythonDB)
         predefined_query = PythonDB.get_by_prompt(prompt)
         if predefined_query:
-            response = predefined_query.response
-            if not HistoryEntry.get_by_prompt(prompt):
-                HistoryEntry(prompt=prompt, response=response)
-            return response
+            return predefined_query.response  # 🔹 No se guarda en historial
+    except Exception as e:
+        print(f"⚠️ Error en la consulta a PythonDB: {e}")
 
-        # 🔍 2️⃣ Buscar en Notion
+    # 3️⃣ **Buscar en Notion**
+    try:
         notion_response = NotionDB.query_database(user_query)
         if notion_response and notion_response != "No se encontraron resultados en Notion.":
-            if not HistoryEntry.get_by_prompt(prompt):  # Guardar en historial si no existe
-                HistoryEntry(prompt=prompt, response=notion_response)
-            return notion_response
-
+            return notion_response  # 🔹 No se guarda en historial
     except Exception as e:
-        print(f"⚠️ Error en la consulta a PythonDB o Notion: {e}")
+        print(f"⚠️ Error en la consulta a NotionDB: {e}")
 
-    # 🔍 3️⃣ Buscar en la base de datos de historial
+    # 4️⃣ **Buscar en la base de datos de historial**
     try:
         query = HistoryEntry.get_by_prompt(prompt)
         if query:
-            return query.response
-        response = chat_with_codellama(prompt)
-        new_entry = HistoryEntry(prompt=prompt, response=response)
-        new_entry.save()
-        return response  # Devolvemos la respuesta generada
+            return query.response  # 🔹 Ya está en historial, no lo guardamos otra vez
     except Exception as e:
         print(f"⚠️ Error al consultar el historial: {e}")
 
-
-    # 🧠 4️⃣ Si no se encuentra en ningún lado, llamar a la API del modelo
+    # 5️⃣ **Si no se encuentra en ningún lado, generar respuesta con el modelo**
     response = chat_with_codellama(prompt)
+
+    # 🔹 **Guardar solo si no está en PythonDB, NotionDB o Historial**
     if not HistoryEntry.get_by_prompt(prompt):
-        HistoryEntry(prompt=prompt, response=response)
+        new_entry = HistoryEntry(prompt=prompt, response=response)
+        new_entry.save()
 
     return response
