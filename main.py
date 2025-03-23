@@ -1,6 +1,7 @@
 import tkinter as tk
 from gui import setup_gui
 
+
 def main():
     try:
         root = tk.Tk()

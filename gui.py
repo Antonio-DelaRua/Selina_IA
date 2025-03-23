@@ -6,6 +6,8 @@ from agent import agent
 from movimientos import apply_gravity, move_to_edge, climb_animation
 import re
 import speech_recognition as sr
+from helper import NotionDB  # Asegúrate de que helper.py contiene la clase NotionDB
+
 
 # Variables globales para la ventana de respuesta
 response_window = None
@@ -135,11 +137,19 @@ def send_message(input_window, root, text_widget):
 
 # Función para obtener la respuesta del agente
 def fetch_response(user_text, response_window_instance):
-    # response = agent(user_text)  # Asegúrate de que 'agent' está definido y funciona correctamente
-    # Simulación de respuesta del agente (para pruebas)
-    response = agent(user_text)
+    # Intentar obtener respuesta de Notion primero
+    notion_response = NotionDB.query_database(user_text)
+
+    if notion_response and notion_response != "No se encontraron resultados en Notion.":
+        response = notion_response  # Usamos la respuesta de Notion si existe
+    else:
+        response = agent(user_text)  # Si Notion no responde, usamos el modelo
+
+    # Asegurar que la respuesta no sea None
     if response is None:
         response = "Lo siento, no pude obtener una respuesta en este momento."
+
+    # Actualizar la interfaz con la respuesta correcta
     response_window_instance.update_response(response)
 
 

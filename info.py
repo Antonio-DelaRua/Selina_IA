@@ -1,9 +1,8 @@
-# info.py
+
 
 class CompanyInfo:
-    """
-    Contiene la información estructurada de la empresa con formato mejorado.
-    """
+    NOTION_API_KEY = "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"
+    NOTION_DATABASE_ID = "1bef4868-0df1-80e4-9707-cc0d1af9cd1d"
 
     NOMBRE =  "NoBt Shop"
     EMPRESA = "Desarrollo de software y soluciones IA"

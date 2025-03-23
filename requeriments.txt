@@ -6,5 +6,15 @@ sqlalchemy
 testresources
 imagetk
 fuzzywuzzy
-SpeechRecognition pyaudio 
+SpeechRecognition 
+pyaudio 
 langchain_ollama
+notion-client
+numpy
+scikit-learn
+sentence-transformers
+torch 
+torchvision 
+torchaudio
+litellm
+pipwin

@@ -203,3 +203,10 @@ Web Scraping: BeautifulSoup, Scrapy, Selenium.
 
 
 }
+
+Si usas Python 3.10 o superior y te da error sentence-transformers, instala también:
+
+pip install torch torchvision torchaudio
+
+pip install --user Cython
+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

@@ -61,30 +61,23 @@ def agent(prompt):
     try:
         predefined_query = PythonDB.get_by_prompt(prompt)
         if predefined_query:
-            print("✅ Respuesta obtenida de la base de datos predefinida.")
-            return str(predefined_query.response)
+            response = predefined_query.response
+            if not HistoryEntry.get_by_prompt(prompt):
+                HistoryEntry(prompt=prompt, response=response)
+            return response
     except Exception as e:
-        print(f"⚠️ Error al consultar PythonDB: {e}")
+        print(f"Error al consultar la python_db: {e}")
 
-    # 5️⃣ **Buscar en el historial de conversación**
+    # Buscar en la base de datos de historial
     try:
-        history_response = HistoryEntry.get_by_prompt(prompt)
-        if history_response:
-            print("📜 Respuesta obtenida del historial.")
-            return str(history_response.response)
+        query = HistoryEntry.get_by_prompt(prompt)
+        if query:
+            return query.response
     except Exception as e:
-        print(f"⚠️ Error al consultar el historial: {e}")
+        print(f"Error al consultar el historial: {e}")
 
-    # 6️⃣ **Si no está en BD ni en historial, llamar a CodeLlama en local**
-    response = chat_with_codellama(prompt_template)
-
-    # ✅ **Guardar la respuesta en el historial si no existe**
-    try:
-        if not HistoryEntry.get_by_prompt(prompt):
-            entry = HistoryEntry(prompt=prompt, response=response)  # Crear entrada
-            entry.save()  # Guardar en la base de datos
-            print("📝 Respuesta guardada en el historial.")
-    except Exception as e:
-        print(f"⚠️ Error al guardar en el historial: {e}")
-
+    # Si no se encuentra en ningún lado, llamar a la API del modelo
+    response = chat_with_codellama(prompt)
+    if not HistoryEntry.get_by_prompt(prompt):
+        HistoryEntry(prompt=prompt, response=response)
     return response
