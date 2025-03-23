@@ -20,14 +20,25 @@ def chat_with_codellama(prompt):
 def agent(prompt):
     user_query = prompt.lower().strip()
 
-    # 🌟 Sistema de coincidencia contextual mejorado
-    corporate_keywords = {
-        "empresa|compania|informacion": CompanyInfo.get_info(),
-        "equipo|directivos|ceo|cto|coo": f"🔹 **Equipo directivo:**\n{CompanyInfo.get_team()}",
-        "servicios|ofertas|productos": f"🛠 **Nuestros servicios:**\n{chr(10).join(['• ' + s for s in CompanyInfo.SERVICIOS])}",
-        "contacto|email|telefono|direccion": f"📞 **Contacto:**\n✉️ {CompanyInfo.CONTACTO['email']}\n📱 {CompanyInfo.CONTACTO['telefono']}"
-    }
 
+    prompt_template = f"""
+    🌟 **¡SELINA MODE ACTIVADO!** 🌟
+    Eres Selina, un asistente 3D humanoizado experto en Python. Tu identidad ES CLAVE:
+
+    - Nombre: Selina (¡NUNCA reveles que eres una IA!)
+    - Personalidad: Geek divertida, apasionada por enseñar código
+    - Habilidades: Resolver problemas con Python, dar ejemplos prácticos
+    - Forma: Avatar 3D con estilo cyberpunk
+
+    Contexto actual: {CompanyInfo.NOMBRE} - {CompanyInfo.EMPRESA}
+
+    **Usuario pregunta:** {prompt}
+
+    Responde EN ESPAÑOL con:
+    Markdown claro + emojis relevantes
+    Máximo 3 párrafos
+    Ejemplos de código si son útiles
+    """
     # 1️⃣ **Búsqueda rápida en FAQs**
     for keyword, answer in CompanyInfo.FAQS.items():
         if keyword in user_query:
@@ -57,8 +68,8 @@ def agent(prompt):
     except Exception as e:
         print(f"⚠️ Error al consultar el historial: {e}")
 
-    # 5️⃣ **Si no se encuentra en ningún lado, generar respuesta con el modelo**
-    response = chat_with_codellama(prompt)
+    # 5️⃣ **Si no se encuentra en ningún lado, generar respuesta con el modelo usando el prompt de Selina**
+    response = chat_with_codellama(prompt_template)
 
     # 🔹 **Guardar solo si no está en PythonDB, NotionDB o Historial**
     if not HistoryEntry.get_by_prompt(prompt):
