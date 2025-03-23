@@ -171,14 +171,24 @@ def show_response(root):
             self.complete_text = ""
 
         def update_response(self, new_text):
+            # Actualizar el texto completo
             if "Consultando..." in self.complete_text:
                 self.complete_text = self.complete_text.replace("Consultando...", "")
             self.complete_text += new_text
+            
+            # Habilitar temporalmente el widget para editar
+            self.text_widget.config(state="normal")  # <<--- Estado NORMAL para modificar
+            
+            # Borrar e insertar texto
             self.text_widget.delete("1.0", tk.END)
             self.insert_formatted_text(self.complete_text)
-            self.text_widget.yview(tk.END)
+            
+            # Deshabilitar de nuevo para evitar edición
+            self.text_widget.config(state="disabled")  # <<--- Estado DISABLED después
+            
+            # Forzar scroll al principio (posición "1.0")
+            self.text_widget.see("1.0")  # <<--- Esto muestra el inicio del texto
             self.text_widget.update_idletasks()
-            self.text_widget.see("1.0")
 
         def insert_formatted_text(self, text):
             self.text_widget.delete("1.0", tk.END)
@@ -236,7 +246,7 @@ def show_response(root):
             self.text_widget.insert(tk.END, "\n", "code")
             code_start = self.text_widget.index(tk.END)
             self.text_widget.insert(tk.END, "\n\n")
-
+            
 
             
             button_frame = tk.Frame(self.text_widget, bg="#f4f4f4")
@@ -336,6 +346,16 @@ def show_response(root):
                                     foreground="orange"  
         )
 
+        # Scrollbar vertical
+        scrollbar = tk.Scrollbar(response_frame, orient="vertical")
+        scrollbar.pack(side="right", fill="y")
+
+
+
+        # Vincular la barra de desplazamiento con el widget de texto
+        scrollbar.config(command=response_text_widget.yview)
+
+        
         response_text_widget.pack(expand=True, fill='both')
 
         response_window.bind("<Control-space>", lambda event: copy_to_clipboard(response_text_widget.get("1.0", tk.END)))
