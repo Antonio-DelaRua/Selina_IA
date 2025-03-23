@@ -1,7 +1,10 @@
-import json
+
 from model import HistoryEntry, PythonDB
 from langchain_ollama import OllamaLLM  # Llamar a CodeLlama en local
 from info import CompanyInfo
+from  helper import NotionDB  # Importamos NotionDB
+
+
 
 # 🚀 Cargar el modelo CodeLlama en local
 local_llm = OllamaLLM(model="codellama")
@@ -53,31 +56,42 @@ def agent(prompt):
         "contacto|email|telefono|direccion": f"📞 **Contacto:**\n✉️ {CompanyInfo.CONTACTO['email']}\n📱 {CompanyInfo.CONTACTO['telefono']}"
     }
 
-    for pattern, response in corporate_keywords.items():
-        if any(kw in user_query for kw in pattern.split("|")):
-            return response
 
-    # 4️⃣ **Buscar en la base de datos de respuestas predefinidas**
     try:
+        # 🔍 1️⃣ Buscar en la base de datos de respuestas predefinidas (PythonDB)
         predefined_query = PythonDB.get_by_prompt(prompt)
         if predefined_query:
             response = predefined_query.response
             if not HistoryEntry.get_by_prompt(prompt):
                 HistoryEntry(prompt=prompt, response=response)
             return response
-    except Exception as e:
-        print(f"Error al consultar la python_db: {e}")
 
-    # Buscar en la base de datos de historial
+        # 🔍 2️⃣ Buscar en Notion
+        notion_response = NotionDB.query_database(user_query)
+        if notion_response and notion_response != "No se encontraron resultados en Notion.":
+            if not HistoryEntry.get_by_prompt(prompt):  # Guardar en historial si no existe
+                HistoryEntry(prompt=prompt, response=notion_response)
+            return notion_response
+
+    except Exception as e:
+        print(f"⚠️ Error en la consulta a PythonDB o Notion: {e}")
+
+    # 🔍 3️⃣ Buscar en la base de datos de historial
     try:
         query = HistoryEntry.get_by_prompt(prompt)
         if query:
             return query.response
+        response = chat_with_codellama(prompt)
+        new_entry = HistoryEntry(prompt=prompt, response=response)
+        new_entry.save()
+        return response  # Devolvemos la respuesta generada
     except Exception as e:
-        print(f"Error al consultar el historial: {e}")
+        print(f"⚠️ Error al consultar el historial: {e}")
 
-    # Si no se encuentra en ningún lado, llamar a la API del modelo
+
+    # 🧠 4️⃣ Si no se encuentra en ningún lado, llamar a la API del modelo
     response = chat_with_codellama(prompt)
     if not HistoryEntry.get_by_prompt(prompt):
         HistoryEntry(prompt=prompt, response=response)
+
     return response

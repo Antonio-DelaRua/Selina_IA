@@ -137,13 +137,7 @@ def send_message(input_window, root, text_widget):
 
 # Función para obtener la respuesta del agente
 def fetch_response(user_text, response_window_instance):
-    # Intentar obtener respuesta de Notion primero
-    notion_response = NotionDB.query_database(user_text)
-
-    if notion_response and notion_response != "No se encontraron resultados en Notion.":
-        response = notion_response  # Usamos la respuesta de Notion si existe
-    else:
-        response = agent(user_text)  # Si Notion no responde, usamos el modelo
+    response = agent(user_text)  # Delegamos toda la lógica al agente
 
     # Asegurar que la respuesta no sea None
     if response is None:
@@ -151,7 +145,7 @@ def fetch_response(user_text, response_window_instance):
 
     # Actualizar la interfaz con la respuesta correcta
     response_window_instance.update_response(response)
-
+    
 
 # Función para ajustar la altura del cuadro de texto
 def on_text_change(event, text_widget):
