@@ -6,7 +6,7 @@ from agent import agent
 from movimientos import apply_gravity, move_to_edge, climb_animation
 import re
 import speech_recognition as sr
-from helper import NotionDB  # Asegúrate de que helper.py contiene la clase NotionDB
+
 
 
 # Variables globales para la ventana de respuesta
