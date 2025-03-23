@@ -131,17 +131,13 @@ def show_combined_window(root):
                     self.response_text_widget.insert(tk.END, '\n')
 
             self.response_text_widget.config(state="disabled")
-            self.response_text_widget.see("1.0")
+            self.response_text_widget.see("end")
             
         def send_message(self):
             user_input = self.text_widget.get("1.0", tk.END).strip()
             if user_input:
                 self.text_widget.delete("1.0", tk.END)
                 self.text_widget.update_idletasks()  # Asegurar actualización inmediata
-                self.complete_text = "" 
-                self.response_text_widget.config(state="normal")
-                self.response_text_widget.delete("1.0", tk.END)
-                self.response_text_widget.config(state="disabled")
                 self.update_response("Consultando...")  # Mostrar mensaje de carga
                 self.window.after(100, lambda: fetch_response(user_input, self))  # Llamada diferida para evitar congelamiento
 

@@ -37,6 +37,7 @@ def agent(prompt):
     Responde EN ESPAÑOL con:
     Markdown claro + emojis relevantes
     Máximo 3 párrafos
+    No te presentes siempre
     Ejemplos de código si son útiles
     """
     # 🔹 **Búsqueda rápida en FAQs**
