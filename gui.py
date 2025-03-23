@@ -2,7 +2,6 @@
 import tkinter as tk
 from tkinter import Toplevel, Text, Button, Frame
 from PIL import Image, ImageTk
-import threading
 from agent import agent
 from movimientos import apply_gravity, move_to_edge, climb_animation
 import re
@@ -40,15 +39,30 @@ def show_combined_window(root):
             self.response_frame = tk.Frame(frame, bg='#ebe8e8', bd=0.5, relief='solid')
             self.response_frame.pack(expand=True, fill='both', padx=20, pady=20)
 
-            self.response_text_widget = tk.Text(self.response_frame, bg='#ebe8e8', wrap='word',
-                                                font=("Inter", 14), padx=20, pady=20, bd=0, state="disabled")
-            self.response_text_widget.pack(expand=True, fill='both')
+            # Configurar grid para mejor control
+            self.response_frame.grid_rowconfigure(0, weight=1)
+            self.response_frame.grid_columnconfigure(0, weight=1)
 
-            # Barra de desplazamiento
-            scrollbar = tk.Scrollbar(self.response_frame, orient="vertical", command=self.response_text_widget.yview)
-            scrollbar.pack(side="right", fill="y")
-            self.response_text_widget.config(yscrollcommand=scrollbar.set)
+            # Barra de desplazamiento PRIMERO
+            scrollbar = tk.Scrollbar(self.response_frame, orient="vertical")
+            scrollbar.grid(row=0, column=1, sticky='ns')  # Usar grid en lugar de pack
 
+            # Text widget SEGUNDO
+            self.response_text_widget = tk.Text(
+                self.response_frame, 
+                bg='#ebe8e8', 
+                wrap='word',
+                font=("Inter", 14), 
+                padx=20, 
+                pady=20, 
+                bd=0, 
+                state="disabled",
+                yscrollcommand=scrollbar.set
+            )
+            self.response_text_widget.grid(row=0, column=0, sticky='nsew')  # Usar grid
+
+            # Configurar scrollbar
+            scrollbar.config(command=self.response_text_widget.yview)
 
             self.setup_text_styles()
 
@@ -159,14 +173,6 @@ def fetch_response(user_text, response_window_instance):
     # Actualizar la interfaz con la respuesta correcta
     response_window_instance.update_response(response)
     
-
-# Función para ajustar la altura del cuadro de texto
-def on_text_change(event, text_widget):
-    content = text_widget.get("1.0", tk.END)
-    lines = content.count('\n') + 1
-    new_height = min(10, lines)  # Limitar a un máximo de 10 líneas visibles
-    text_widget.config(height=new_height)
-
 
 # Funciones para el movimiento del muñeco
 def start_move(event):
