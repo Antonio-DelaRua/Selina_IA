@@ -45,6 +45,7 @@
 ## CMD
 ctrl + q  ------> cerrar aplicación
 kiv para moviles y tablet ( tactil )
+historia, ver historial, abrir historia ---> para ver los ultimos 10 prompt
 
 ## PALABRAS CLAVE
 

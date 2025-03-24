@@ -91,7 +91,7 @@ def show_combined_window(root):
             self.response_text_widget.tag_configure("h3md", font=("Times New Roman", 20, "bold"))
             self.response_text_widget.tag_configure("italic", font=("Segoe UI", 12, "italic"), foreground="grey")
             self.response_text_widget.tag_configure("negrita", font=("Times New Roman", 16, "bold"))
-            self.response_text_widget.tag_configure("comillas_simples", font=("Courier", 15, "bold"), foreground="#0A66C2")
+            self.response_text_widget.tag_configure("comillas_simples", font=("Courier", 15, "bold"), foreground="grey")
             self.response_text_widget.tag_configure("code", 
                 font=("Courier", 12, "bold"), 
                 background="#f4f4f4",
