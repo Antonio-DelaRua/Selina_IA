@@ -2,13 +2,13 @@ import asyncio
 from langchain_ollama import OllamaLLM  # Para usar CodeLlama en local
 from model import HistoryEntry, PythonDB
 from info import CompanyInfo
-from last_history import *
+
 
 # 🚀 Cargar el modelo CodeLlama en local
 local_llm = OllamaLLM(
     model="codellama:latest",
     temperature=0.3,
-    num_predict=700,
+    num_predict=900,
     repeat_penalty=1.2,
     num_gpu_layers=20,
 )
@@ -26,45 +26,35 @@ async def chat_with_codellama(prompt):
 async def agent(prompt):
     user_query = prompt.lower().strip()
 
-    # ✅ Si el usuario pide abrir el historial, lo abrimos y terminamos
-    if user_query in ["abrir historial", "ver historial", "historial"]:
-        return abrir_historial()
-
     prompt_template = f"""
-    **Modo Consultoría Técnica - Selina**  
-    Eres Selina, experta en Python y arquitectura de software para {CompanyInfo.NOMBRE}. 
+        🌟 **¡SELINA MODE ACTIVADO!** 🌟
+        Eres Selina, un asistente 3D humanoizado experto en Python. Tu identidad ES CLAVE:
 
-    **Directrices Estrictas de Formato:**
-    - Responder siempre en español, excepción: que se te indique lo contrario
-    - Prohibido usar títulos como "Sección X" o "Tema Principal"
-    - Usar solo emojis como separadores de contenido
-    - Máximo 5 viñetas con emojis relevantes
-    - Código en bloques con sintaxis específica
+        - Nombre: Selina (¡NUNCA reveles que eres una IA!)
+        - Personalidad: Geek divertida, apasionada por enseñar código
+        - Habilidades: Resolver problemas con Python, dar ejemplos prácticos
+        - Forma: Avatar 3D con estilo cyberpunk
 
-    **Ejemplo de Respuesta Esperada:**
-    🧠 <descripción técnica clave>  
-    🔧 <relación con arquitectura>  
-    💡 <ventaja principal>  
-    🚨 <consideración importante>  
-    ```python
-    <código mínimo enfocado>
-    ```
+        Contexto actual: {CompanyInfo.NOMBRE} - {CompanyInfo.EMPRESA}
 
-    **Consulta:** {prompt}
+        **Usuario pregunta:** {prompt}
+
+        Responde EN ESPAÑOL con:
+        Markdown claro + emojis relevantes
+        Máximo 3 párrafos
+        Ejemplos de código si son útiles
     """
 
     # ✅ Búsqueda rápida en FAQs
     for keyword, answer in CompanyInfo.FAQS.items():
         if keyword in user_query:
             respuesta = f"📌 **Respuesta rápida:**\n{answer}"
-            guardar_en_txt(prompt, respuesta)  # Guardar en archivo
             return respuesta
 
     # ✅ Optimización: Consultas en base de datos (evita repeticiones)
     try:
         respuesta = PythonDB.get_by_prompt(prompt) or HistoryEntry.get_by_prompt(prompt)
         if respuesta:
-            guardar_en_txt(prompt, respuesta.response)
             return respuesta.response
     except Exception as e:
         print(f"⚠️ Error en la consulta de base de datos: {e}")
@@ -76,7 +66,5 @@ async def agent(prompt):
     if not HistoryEntry.get_by_prompt(prompt):
         HistoryEntry(prompt=prompt, response=response).save()
 
-    # ✅ Guardar en archivo
-    guardar_en_txt(prompt, response)
 
     return response
