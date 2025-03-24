@@ -139,7 +139,6 @@ Además de la implementación técnica, es importante seguir algunas buenas prá
 4. Utiliza la herramienta de control de versiones adecuada para el proyecto, ya que te permitirá realizar un seguimiento de los cambios y mantener una copia de cada versión del código en caso de ser necesario.
 
 En resumen, utilizar la history en Python es una herramienta valiosa para documentar y gestionar el cambio en proyectos de software y soluciones IA. Al seguir las buenas prácticas profesionales y implementando la historia de manera efectiva, podrás mantener un registro claro y coherente del proyecto a lo largo del tiempo.
-====================================================================================================
 
 
 ====================================================================================================
@@ -173,6 +172,61 @@ Conclusion:
 ----------
 
 In conclusion, a well-designed data architecture is essential for any company, especially one with NoBt Shop's size and scale. By following best practices such as data normalization, encryption, partitioning, replication, versioning, validation, quality, and security, companies like NoBt Shop can ensure that their data is accurate, secure, and easy to manage.
+
+
+====================================================================================================
+📅 Fecha: 2025-03-24 15:41:01
+❓ Pregunta: for
+💡 Respuesta:
+**Bucle for**
+
+Se usa cuando queremos recorrer una secuencia de elementos (listas, cadenas, rangos, etc.).
+```python
+for i in range(1, 6):  # Recorre los números del 1 al 5
+    print(f"Número: {i}")
+```
+Explicación Paso a Paso
+
+- range(1, 6) genera los números 1, 2, 3, 4, 5 (el 6 no se incluye).
+- En cada iteración, la variable i toma un valor de la secuencia.
+- print(f"Número: {i}") muestra cada número en la consola.
+
+Salida esperada:
+```python
+Número: 1
+Número: 2
+Número: 3
+Número: 4
+Número: 5
+```
+
+
+
+====================================================================================================
+📅 Fecha: 2025-03-24 15:41:03
+❓ Pregunta: else
+💡 Respuesta:
+**else en Manejo de Excepciones**
+Se ejecuta solo si no hubo errores en el bloque try.
+```python
+try:
+    archivo = open("datos.txt", "r")
+except FileNotFoundError:
+    print("El archivo no existe.")
+else:
+    contenido = archivo.read()
+    print(contenido)
+    archivo.close()  # Importante cerrar el archivo
+```
+
+====================================================================================================
+
+
+====================================================================================================
+📅 Fecha: 2025-03-24 16:11:06
+❓ Pregunta: hola
+💡 Respuesta:
+Pulsa ESC para destruir el mundo
 ====================================================================================================
 
 
