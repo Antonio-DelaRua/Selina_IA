@@ -5,7 +5,8 @@ from PIL import Image, ImageTk
 from agent import agent
 from movimientos import apply_gravity, move_to_edge, climb_animation
 import re
-import speech_recognition as sr
+import asyncio
+import threading
 
 
 
@@ -181,17 +182,13 @@ def show_combined_window(root):
     return CombinedWindow(root)
 
 
-# Función para obtener la respuesta del agente
-def fetch_response(user_text, response_window_instance):
-    response = agent(user_text)  # Delegamos toda la lógica al agente
 
-    # Asegurar que la respuesta no sea None
-    if response is None:
-        response = "Lo siento, no pude obtener una respuesta en este momento."
+def fetch_response(user_input, response_window_instance):
+    def run_agent():
+        response = asyncio.run(agent(user_input))  # ✅ Corre la tarea en un hilo sin bloquear Tkinter
+        response_window_instance.update_response(response)
 
-    # Actualizar la interfaz con la respuesta correcta
-    response_window_instance.update_response(response)
-    
+    threading.Thread(target=run_agent, daemon=True).start()  # ✅ Corre en segundo plano
 
 # Funciones para el movimiento del muñeco
 def start_move(event):

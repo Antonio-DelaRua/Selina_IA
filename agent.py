@@ -1,27 +1,29 @@
+import asyncio
+from langchain_ollama import OllamaLLM  # Para usar CodeLlama en local
 from model import HistoryEntry, PythonDB
-from langchain_ollama import OllamaLLM  # Llamar a CodeLlama en local
 from info import CompanyInfo
 from last_history import *
 
-
-
 # 🚀 Cargar el modelo CodeLlama en local
-local_llm = OllamaLLM(model="codellama")
+local_llm = OllamaLLM(
+    model="codellama:latest",
+    temperature=0.3,
+    num_predict=700,
+    repeat_penalty=1.2,
+    num_gpu_layers=20,
+)
 
-def chat_with_codellama(prompt):
-    """
-    Llama a CodeLlama en local para obtener una respuesta.
-    """
+async def chat_with_codellama(prompt):
+    """Llama a CodeLlama en local de forma asíncrona para evitar bloqueos."""
     try:
-        response = local_llm.invoke(prompt)
-        return response if response else "⚠️ No pude generar una respuesta. Inténtalo de nuevo."
+        loop = asyncio.get_running_loop()
+        response = await loop.run_in_executor(None, local_llm.invoke, prompt)
+        return response or "⚠️ No pude generar una respuesta. Inténtalo de nuevo."
     except Exception as e:
         print(f"❌ Error al llamar a CodeLlama: {e}")
         return f"Error al llamar a CodeLlama: {e}"
 
-
-
-def agent(prompt):
+async def agent(prompt):
     user_query = prompt.lower().strip()
 
     # ✅ Si el usuario pide abrir el historial, lo abrimos y terminamos
@@ -32,50 +34,49 @@ def agent(prompt):
     **Modo Consultoría Técnica - Selina**  
     Eres Selina, experta en Python y arquitectura de software para {CompanyInfo.NOMBRE}. 
 
-    **Directrices de Respuesta:**
-    1. Explicación técnica estructurada en 3 partes:
-    - Fundamentos conceptuales
-    - Implementación práctica (si aplica)
-    - Buenas prácticas profesionales
+    **Directrices Estrictas de Formato:**
+    - Responder siempre en español, excepción: que se te indique lo contrario
+    - Prohibido usar títulos como "Sección X" o "Tema Principal"
+    - Usar solo emojis como separadores de contenido
+    - Máximo 5 viñetas con emojis relevantes
+    - Código en bloques con sintaxis específica
 
-    2. Requisitos:
-    - Máximo 300 palabras
-    - Código auto-contenido (sin dependencias externas)
-    - Ejemplos basados en escenarios reales de la empresa
-    - Nivel técnico ajustado al contexto: {CompanyInfo.EMPRESA}
+    **Ejemplo de Respuesta Esperada:**
+    🧠 <descripción técnica clave>  
+    🔧 <relación con arquitectura>  
+    💡 <ventaja principal>  
+    🚨 <consideración importante>  
+    ```python
+    <código mínimo enfocado>
+    ```
 
     **Consulta:** {prompt}
     """
 
+    # ✅ Búsqueda rápida en FAQs
     for keyword, answer in CompanyInfo.FAQS.items():
         if keyword in user_query:
             respuesta = f"📌 **Respuesta rápida:**\n{answer}"
             guardar_en_txt(prompt, respuesta)  # Guardar en archivo
             return respuesta
 
+    # ✅ Optimización: Consultas en base de datos (evita repeticiones)
     try:
-        predefined_query = PythonDB.get_by_prompt(prompt)
-        if predefined_query:
-            guardar_en_txt(prompt, predefined_query.response)  # Guardar en archivo
-            return predefined_query.response
+        respuesta = PythonDB.get_by_prompt(prompt) or HistoryEntry.get_by_prompt(prompt)
+        if respuesta:
+            guardar_en_txt(prompt, respuesta.response)
+            return respuesta.response
     except Exception as e:
-        print(f"⚠️ Error en la consulta a PythonDB: {e}")
+        print(f"⚠️ Error en la consulta de base de datos: {e}")
 
-    try:
-        query = HistoryEntry.get_by_prompt(prompt)
-        if query:
-            guardar_en_txt(prompt, query.response)  # Guardar en archivo
-            return query.response
-    except Exception as e:
-        print(f"⚠️ Error al consultar el historial: {e}")
+    # 🔥 Generar respuesta con CodeLlama de forma asíncrona
+    response = await chat_with_codellama(prompt_template)  
 
-    response = chat_with_codellama(prompt_template)
-
+    # ✅ Guardar solo si no existe en historial
     if not HistoryEntry.get_by_prompt(prompt):
-        new_entry = HistoryEntry(prompt=prompt, response=response)
-        new_entry.save()
+        HistoryEntry(prompt=prompt, response=response).save()
 
-    # Guardar la respuesta generada en el archivo (solo mantiene las últimas 10)
+    # ✅ Guardar en archivo
     guardar_en_txt(prompt, response)
 
     return response
