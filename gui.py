@@ -30,7 +30,7 @@ def show_combined_window(root):
             self.window.geometry(f"{window_width}x{window_height}+{position_x}+{position_y}")
 
             self.window.configure(bg='white')
-            self.window.attributes("-topmost", True)
+            
 
             frame = tk.Frame(self.window, bg='white')
             frame.pack(expand=True, fill='both')
@@ -89,9 +89,9 @@ def show_combined_window(root):
             self.response_text_widget.tag_configure("h1md", font=("Segoe UI", 24, "bold"))
             self.response_text_widget.tag_configure("h2md", font=("Helvetica", 20, "bold"))
             self.response_text_widget.tag_configure("h3md", font=("Times New Roman", 20, "bold"))
-            self.response_text_widget.tag_configure("italic", font=("Segoe UI", 12, "italic"))
+            self.response_text_widget.tag_configure("italic", font=("Segoe UI", 12, "italic"), foreground="grey")
             self.response_text_widget.tag_configure("negrita", font=("Times New Roman", 16, "bold"))
-            self.response_text_widget.tag_configure("comillas_simples", font=("Courier", 15, "bold"), foreground="orange")
+            self.response_text_widget.tag_configure("comillas_simples", font=("Courier", 15, "bold"), foreground="#0A66C2")
             self.response_text_widget.tag_configure("code", 
                 font=("Courier", 12, "bold"), 
                 background="#f4f4f4",

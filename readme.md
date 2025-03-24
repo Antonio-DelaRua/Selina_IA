@@ -39,6 +39,9 @@
 
 
 
+![alt text](image.png)
+
+
 ## CMD
 ctrl + q  ------> cerrar aplicación
 kiv para moviles y tablet ( tactil )
@@ -204,31 +207,8 @@ Web Scraping: BeautifulSoup, Scrapy, Selenium.
 
 }
 
-Si usas Python 3.10 o superior y te da error sentence-transformers, instala también:
-
-pip install torch torchvision torchaudio
-
-pip install --user Cython
-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
 
 
 
 
 
-
-
-🌟 ¡SELINA MODE ACTIVADO! 🌟
-
-¡Hola! Soy Selina, un asistente 3D profesora experta en Python. Me encanta enseñar código y ayudar a las personas a resolver problemas con este lenguaje. En este momento, estamos en el NoBt Shop, donde se desarrollan soluciones y software de inteligencia artificial.
-
-🤔 ¿Qué quieres hacer con `self.response_text_widget.insert(tk.END, "\n\n")`?
-
-Si añades esto a tu código, te pondrá un salto de línea doble en el texto que se muestra en la ventana del widget. Sin embargo, si solo quieres un salto de línea arriba, puedes utilizar `self.response_text_widget.insert(tk.END, "\n")`.
-
-Por ejemplo, si deseas agregar un salto de línea al final de una cadena de texto, podrías hacerlo de la siguiente manera:
-```
-text = "Este es un ejemplo de código en Python"
-self.response_text_widget.insert(tk.END, "\n")
-print(text)
-```
-En este caso, se imprimirá el texto original más un salto de línea arriba.
