@@ -95,6 +95,55 @@ def escuchar():
                 print(f"⚠️ Error con el servicio de reconocimiento: {e}")
 
 
+def reproduce_musica(rec):
+    music = rec.replace('reproduce', '').strip()
+    talk(f"Reproduciendo {music}")
+    pywhatkit.playonyt(music)
+
+def buscar_info(rec):
+    search = rec.replace('busca', '').strip()
+    try:
+        wikipedia.set_lang("es")
+        wiki = wikipedia.summary(search, sentences=1)
+        talk(wiki)
+    except Exception:
+        talk("No encontré información sobre eso")
+
+def activar_alarma(rec):
+    num = rec.replace('alarma', '').strip()
+    talk(f"Alarma activada a las {num} horas")
+    while True:
+        now = datetime.datetime.now().strftime('%H:%M')
+        if now == num:
+            print('¡DESPIERTA!')
+            mixer.music.load("alarma.mp3")
+            mixer.music.play()
+            if keyboard.read_key() == "s":
+                mixer.music.stop()
+                break
+
+def abrir_sitio(rec, sites):
+    for site in sites:
+        if site in rec:
+            print(f"🌐 Abriendo {site}: {sites[site]}")
+            subprocess.run(f'start chrome {sites[site]}', shell=True)
+            talk(f"Abriendo {site}")
+
+def abrir_archivo(rec, files):
+    for file in files:
+        if file in rec:
+            print(f"📂 Abriendo {file}: {files[file]}")
+            subprocess.Popen([files[file]], shell=True)
+            talk(f'Abriendo {file}')
+
+def escribir_nota():
+    try:
+        with open("nota.txt", 'a') as f:
+            write(f)
+    except FileNotFoundError:
+        with open("nota.txt", 'a') as f:
+            write(f)
+
 def run_selina():
     """Función principal que ejecuta comandos sin reiniciar la escucha"""
     global ultimo_comando
@@ -106,58 +155,20 @@ def run_selina():
             ultimo_comando = None  # Reiniciar el comando para evitar repetirlo
 
             if 'reproduce' in rec:
-                music = rec.replace('reproduce', '').strip()
-                talk(f"Reproduciendo {music}")
-                pywhatkit.playonyt(music)
-
+                reproduce_musica(rec)
             elif 'busca' in rec:
-                search = rec.replace('busca', '').strip()
-                try:
-                    wikipedia.set_lang("es")
-                    wiki = wikipedia.summary(search, sentences=1)
-                    talk(wiki)
-                except Exception:
-                    talk("No encontré información sobre eso")
-
+                buscar_info(rec)
             elif 'alarma' in rec:
-                num = rec.replace('alarma', '').strip()
-                talk(f"Alarma activada a las {num} horas")
-                while True:
-                    now = datetime.datetime.now().strftime('%H:%M')
-                    if now == num:
-                        print('¡DESPIERTA!')
-                        mixer.music.load("auronplay-alarma.mp3")
-                        mixer.music.play()
-                        if keyboard.read_key() == "s":
-                            mixer.music.stop()
-                            break
-
+                activar_alarma(rec)
             elif 'cam' in rec:
                 talk("Enseguida")
                 capture()
-
             elif 'abre' in rec:
-                for site in sites:
-                    if site in rec:
-                        print(f"🌐 Abriendo {site}: {sites[site]}")
-                        subprocess.run(f'start chrome {sites[site]}', shell=True)
-                        talk(f"Abriendo {site}")
-
+                abrir_sitio(rec, sites)
             elif 'archivo' in rec:
-                for file in files:
-                    if file in rec:
-                        print(f"📂 Abriendo {file}: {files[file]}")
-                        sub.Popen([files[file]], shell=True)
-                        talk(f'Abriendo {file}')
-
+                abrir_archivo(rec, files)
             elif 'escribe' in rec:
-                try:
-                    with open("nota.txt", 'a') as f:
-                        write(f)
-                except FileNotFoundError:
-                    with open("nota.txt", 'a') as f:
-                        write(f)
-
+                escribir_nota()
             elif 'salir' in rec:
                 talk("Saliendo del asistente")
                 break
