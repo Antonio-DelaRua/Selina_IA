@@ -7,6 +7,7 @@ from movimientos import apply_gravity, move_to_edge, climb_animation
 import re
 import asyncio
 import threading
+from bot import run_selina, escuchar
 
 
 
@@ -14,6 +15,14 @@ import threading
 response_window = None
 response_text_widget = None
 
+
+
+
+def iniciar_asistente():
+    """Función para iniciar run_selina() en un hilo separado"""
+    hilo_escucha = threading.Thread(target=escuchar, daemon=True)
+    hilo_escucha.start()  # Iniciar escucha en segundo plano
+    run_selina()
 
 # Función para manejar el doble clic en el muñeco
 def show_combined_window(root):
@@ -74,7 +83,7 @@ def show_combined_window(root):
                                     bg='#0A66C2', fg='white', font=("Comic Sans MS", 12))
             send_button.pack(side='left', padx=5)
 
-            mic_button = tk.Button(button_container, text="🎤", command=self.start_listening,
+            mic_button = tk.Button(button_container, text="🎤", command=iniciar_asistente,
                                    bg='#0A66C2', fg='white', font=("Comic Sans MS", 12))
             mic_button.pack(side='left', padx=5)
 
