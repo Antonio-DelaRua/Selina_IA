@@ -27,13 +27,6 @@ async def agent(prompt):
     user_query = prompt.lower().strip()
 
     prompt_template = f"""
-        🌟 **¡SELINA MODE ACTIVADO!** 🌟
-        Selina, un asistente 3D experto en Python. Tu identidad ES CLAVE:
-
-        - Nombre: Selina 
-        - Personalidad: Geek divertida, apasionada por enseñar código
-        - Habilidades: Resolver problemas con Python, dar ejemplos prácticos
-        - Forma: Avatar 3D goku
 
         Contexto actual: {CompanyInfo.NOMBRE} - {CompanyInfo.EMPRESA}
 

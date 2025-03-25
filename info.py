@@ -2,7 +2,7 @@
 
 class CompanyInfo:
 
-    NOMBRE =  "NoBt Shop"
+    NOMBRE =  "NoBt SeliNa IA"
     EMPRESA = "Desarrollo de software y soluciones IA"
     MISSION = "Brindar soluciones innovadoras basadas en inteligencia artificial para optimizar procesos empresariales."
     VISION =  "Ser la empresa líder en IA aplicada a la automatización y análisis de datos."

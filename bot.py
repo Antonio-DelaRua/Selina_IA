@@ -156,19 +156,26 @@ def run_selina():
 
             if 'reproduce' in rec:
                 reproduce_musica(rec)
+
             elif 'busca' in rec:
                 buscar_info(rec)
+
             elif 'alarma' in rec:
                 activar_alarma(rec)
+
             elif 'cam' in rec:
                 talk("Enseguida")
                 capture()
+
             elif 'abre' in rec:
                 abrir_sitio(rec, sites)
+
             elif 'archivo' in rec:
                 abrir_archivo(rec, files)
+
             elif 'escribe' in rec:
                 escribir_nota()
+                
             elif 'salir' in rec:
                 talk("Saliendo del asistente")
                 break
