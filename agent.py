@@ -1,63 +1,63 @@
-import asyncio
-from langchain_ollama import OllamaLLM  # Para usar CodeLlama en local
+import json
+import aiohttp
 from model import HistoryEntry, PythonDB
-from info import CompanyInfo
+from fuzzywuzzy import process
 
+# Clave API
+OPENROUTER_API_KEY = "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"
 
-# 🚀 Cargar el modelo CodeLlama en local
-local_llm = OllamaLLM(
-    model="codellama:latest",
-    temperature=0.3,
-    num_predict=900,
-    repeat_penalty=1.2,
-    num_gpu_layers=20,
-)
+# Historial de la conversación
+conversation_history = []
 
-async def chat_with_codellama(prompt):
-    """Llama a CodeLlama en local de forma asíncrona para evitar bloqueos."""
+async def chat_with_bot(prompt):
     try:
-        loop = asyncio.get_running_loop()
-        response = await loop.run_in_executor(None, local_llm.invoke, prompt)
-        return response or "⚠️ No pude generar una respuesta. Inténtalo de nuevo."
+        async with aiohttp.ClientSession() as session:
+            # Configura el payload correctamente
+            payload = {
+                "model": "meta-llama/llama-3.3-70b-instruct:free",
+                "messages": [*conversation_history, {"role": "user", "content": prompt}],  # Agrega el prompt al historial
+                "max_tokens": 950,
+                "temperature": 0.7
+            }
+            
+            async with session.post(
+                url="https://openrouter.ai/api/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                    "Content-Type": "application/json",
+                    "HTTP-Referer": "<YOUR_SITE_URL>",
+                    "X-Title": "<YOUR_SITE_NAME>",
+                },
+                json=payload  # ✅ Usa json= en lugar de data=json.dumps()
+            ) as response:
+                response_data = await response.json()
+                message_content = response_data['choices'][0]['message']['content']
+                conversation_history.append({"role": "assistant", "content": message_content})  # Actualiza historial
+                return message_content
     except Exception as e:
-        print(f"❌ Error al llamar a CodeLlama: {e}")
-        return f"Error al llamar a CodeLlama: {e}"
+        return f"Error: {str(e)}"
 
 async def agent(prompt):
-    user_query = prompt.lower().strip()
-
-    prompt_template = f"""
-
-        Contexto actual: {CompanyInfo.NOMBRE} - {CompanyInfo.EMPRESA}
-
-        **Usuario pregunta:** {prompt}
-
-        Responde EN ESPAÑOL con:
-        Markdown claro + emojis relevantes
-        Máximo 3 párrafos
-        Ejemplos de código si son útiles
-    """
-
-    # ✅ Búsqueda rápida en FAQs
-    for keyword, answer in CompanyInfo.FAQS.items():
-        if keyword in user_query:
-            respuesta = f"📌 **Respuesta rápida:**\n{answer}"
-            return respuesta
-
-    # ✅ Optimización: Consultas en base de datos (evita repeticiones)
     try:
-        respuesta = PythonDB.get_by_prompt(prompt) or HistoryEntry.get_by_prompt(prompt)
-        if respuesta:
-            return respuesta.response
+        # 1. Buscar en respuestas predefinidas
+        predefined_query = PythonDB.get_by_prompt(prompt)
+        if predefined_query:
+            if not HistoryEntry.get_by_prompt(prompt):
+                HistoryEntry(prompt=prompt, response=predefined_query.response)
+            return predefined_query.response  # Retorna string
+            
+        # 2. Buscar en historial
+        history_query = HistoryEntry.get_by_prompt(prompt)
+        if history_query:
+            return history_query.response  # Retorna string
+            
+        # 3. Llamar a la API (¡Añade await aquí!)
+        api_response = await chat_with_bot(prompt)  # ✅ await es crítico
+        HistoryEntry(prompt=prompt, response=api_response)
+        return api_response  # Retorna string
+        
     except Exception as e:
-        print(f"⚠️ Error en la consulta de base de datos: {e}")
-
-    # 🔥 Generar respuesta con CodeLlama de forma asíncrona
-    response = await chat_with_codellama(prompt_template)  
-
-    # ✅ Guardar solo si no existe en historial
-    if not HistoryEntry.get_by_prompt(prompt):
-        HistoryEntry(prompt=prompt, response=response).save()
+        return f"Error en el agente: {str(e)}"
 
 
-    return response
+
