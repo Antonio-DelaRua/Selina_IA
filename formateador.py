@@ -48,85 +48,153 @@ def format_markdown(md_text):
 # Ejemplo de entrada Markdown (tu contenido)
 md_content = """
 
-¡Vamos con otro clásico de pruebas técnicas! Este ejercicio pone a prueba el manejo de estructuras de datos y lógica algorítmica.  
+## **Solución Paso a Paso**  
 
----
-
-### **Ejercicio: Anagramas**  
-
-Dadas dos cadenas de texto, escribe una función en Python que determine si son **anagramas**.  
-
-#### **Requisitos:**  
-1. Dos palabras son **anagramas** si tienen las mismas letras en distinta posición.  
-2. La comparación **no debe ser sensible a mayúsculas/minúsculas**.  
-3. Ignorar los espacios y caracteres especiales.  
-4. La solución debe ser **eficiente (O(n))**.  
-
----
-
-**Ejemplo de entrada:**  
-```python
-cadena1 = "Listen"
-cadena2 = "Silent"
-```
-**Salida esperada:**  
-```
-Son anagramas: True
-```
-
-Otro ejemplo:  
-```python
-cadena1 = "Hello"
-cadena2 = "Olelh"
-```
-**Salida esperada:**  
-```
-Son anagramas: True
-```
-
----
-
-### **Solución (O(n))**  
+### **Paso 1: Importar las librerías necesarias**  
+Python tiene una librería llamada `csv` que facilita la lectura y escritura de archivos CSV.  
 
 ```python
-from collections import Counter
-import re
+import csv
+from collections import defaultdict
+```
 
-def son_anagramas(cadena1, cadena2):
-    # Normalizar: convertir a minúsculas y eliminar caracteres que no sean letras
-    cadena1 = re.sub(r'[^a-z]', '', cadena1.lower())
-    cadena2 = re.sub(r'[^a-z]', '', cadena2.lower())
+- `csv`: Nos permite manejar archivos CSV de manera sencilla.  
+- `defaultdict`: Nos ayuda a almacenar datos sin necesidad de inicializar manualmente valores por defecto.  
 
-    # Comparar las frecuencias de letras usando Counter
-    return Counter(cadena1) == Counter(cadena2)
+---
 
-# Ejemplo de uso
-cadena1 = "Listen"
-cadena2 = "Silent"
-print(f"Son anagramas: {son_anagramas(cadena1, cadena2)}")
+### **Paso 2: Leer el archivo CSV y procesar los datos**  
+Vamos a leer el archivo `ventas.csv` y almacenar los datos en un diccionario.  
+
+```python
+ventas = defaultdict(lambda: {"cantidad": 0, "ingresos": 0})  
+
+with open("ventas.csv", newline='', encoding='utf-8') as archivo:
+    lector_csv = csv.reader(archivo)
+    next(lector_csv)  # Omitimos la primera fila (encabezado)
+    
+    for fila in lector_csv:
+        producto, cantidad, precio = fila[0], int(fila[1]), float(fila[2])
+        
+        # Acumulamos las cantidades y los ingresos
+        ventas[producto]["cantidad"] += cantidad
+        ventas[producto]["ingresos"] += cantidad * precio
+```
+
+### 🔹 **Explicación:**  
+- Usamos `defaultdict` para crear un diccionario donde cada producto tiene sus ventas y sus ingresos acumulados.  
+- Abrimos el archivo CSV en modo lectura (`open("ventas.csv", "r")`).  
+- `csv.reader(archivo)` lee cada línea del archivo como una lista.  
+- `next(lector_csv)` salta la primera fila porque es el encabezado.  
+- Iteramos sobre cada fila, obteniendo:  
+  - `producto` (nombre del producto)  
+  - `cantidad` (convertida a entero)  
+  - `precio` (convertido a flotante)  
+- Acumulamos la cantidad total vendida y los ingresos en el diccionario `ventas`.  
+
+---
+
+### **Paso 3: Encontrar el producto más vendido y el de mayores ingresos**  
+
+```python
+producto_mas_vendido = max(ventas.items(), key=lambda x: x[1]["cantidad"])
+producto_mas_ingresos = max(ventas.items(), key=lambda x: x[1]["ingresos"])
+
+print(f"Producto más vendido: {producto_mas_vendido[0]} ({producto_mas_vendido[1]['cantidad']} unidades)")
+print(f"Producto con más ingresos: {producto_mas_ingresos[0]} (${producto_mas_ingresos[1]['ingresos']:.2f})")
+```
+
+### 🔹 **Explicación:**  
+- `max(ventas.items(), key=lambda x: x[1]["cantidad"])`: Busca el producto con mayor cantidad vendida.  
+- `max(ventas.items(), key=lambda x: x[1]["ingresos"])`: Encuentra el producto con más ingresos.  
+- `print()`: Muestra los resultados en la consola.  
+
+---
+
+### **Paso 4: Guardar los resultados en un nuevo archivo CSV**  
+
+```python
+with open("resultados_ventas.csv", "w", newline='', encoding='utf-8') as archivo_salida:
+    escritor_csv = csv.writer(archivo_salida)
+    
+    # Escribir encabezado
+    escritor_csv.writerow(["Producto", "Cantidad Vendida", "Ingresos Totales"])
+    
+    # Escribir datos
+    for producto, datos in ventas.items():
+        escritor_csv.writerow([producto, datos["cantidad"], f"{datos['ingresos']:.2f}"])
+```
+
+### 🔹 **Explicación:**  
+- Abrimos un nuevo archivo `resultados_ventas.csv` en modo escritura.  
+- Escribimos la primera fila con los nombres de las columnas.  
+- Iteramos sobre el diccionario `ventas` para escribir los datos en el archivo.  
+
+---
+
+## **Código Completo**  
+
+```python
+import csv
+from collections import defaultdict
+
+# Diccionario para almacenar los datos
+ventas = defaultdict(lambda: {"cantidad": 0, "ingresos": 0})
+
+# Leer archivo CSV y procesar datos
+with open("ventas.csv", newline='', encoding='utf-8') as archivo:
+    lector_csv = csv.reader(archivo)
+    next(lector_csv)  # Saltar el encabezado
+
+    for fila in lector_csv:
+        producto, cantidad, precio = fila[0], int(fila[1]), float(fila[2])
+        ventas[producto]["cantidad"] += cantidad
+        ventas[producto]["ingresos"] += cantidad * precio
+
+# Encontrar productos destacados
+producto_mas_vendido = max(ventas.items(), key=lambda x: x[1]["cantidad"])
+producto_mas_ingresos = max(ventas.items(), key=lambda x: x[1]["ingresos"])
+
+print(f"Producto más vendido: {producto_mas_vendido[0]} ({producto_mas_vendido[1]['cantidad']} unidades)")
+print(f"Producto con más ingresos: {producto_mas_ingresos[0]} (${producto_mas_ingresos[1]['ingresos']:.2f})")
+
+# Guardar los resultados en un nuevo archivo CSV
+with open("resultados_ventas.csv", "w", newline='', encoding='utf-8') as archivo_salida:
+    escritor_csv = csv.writer(archivo_salida)
+    escritor_csv.writerow(["Producto", "Cantidad Vendida", "Ingresos Totales"])
+
+    for producto, datos in ventas.items():
+        escritor_csv.writerow([producto, datos["cantidad"], f"{datos['ingresos']:.2f}"])
 ```
 
 ---
 
-### **Explicación:**  
-1. **Normalización de cadenas:**  
-   - Convertimos a minúsculas (`lower()`).  
-   - Eliminamos espacios y caracteres especiales usando `re.sub(r'[^a-z]', '', texto)`.  
-2. **Comparación eficiente con `Counter` de `collections`**:  
-   - Cuenta la frecuencia de cada letra en ambas cadenas.  
-   - Si los `Counter` son iguales, las palabras son anagramas.  
+## **Ejemplo de Salida en Consola**  
+
+```
+Producto más vendido: Teclado (15 unidades)
+Producto con más ingresos: Laptop ($4900.00)
+```
+
+## **Ejemplo de Salida en `resultados_ventas.csv`**  
+
+```
+Producto,Cantidad Vendida,Ingresos Totales
+Laptop,7,4900.00
+Teclado,15,300.00
+Mouse,8,120.00
+Monitor,4,600.00
+```
 
 ---
 
-### **Eficiencia:**  
-✅ **Tiempo O(n)** (un solo recorrido para limpiar y otro para contar letras).  
-✅ **Espacio O(1)** (uso mínimo de memoria adicional).  
+## **¿Qué se aprende con este ejercicio?**  
+✅ **Manejo de archivos CSV** (lectura y escritura).  
+✅ **Uso de estructuras de datos avanzadas** (`defaultdict` para acumular información).  
+✅ **Uso de funciones de ordenación** (`max()` con `lambda`).  
+✅ **Bucles e iteraciones eficientes**.  
+✅ **Conversión de tipos de datos** (de cadena a `int` y `float`).  
 
----
-
-Este ejercicio es muy común en pruebas técnicas para evaluar **manejo de cadenas, estructuras de datos y optimización**.  
-
-🔥 ¿Te gustaría un nivel más difícil, como encontrar **todos los anagramas posibles en una lista de palabras**? 🚀
 
 """
 

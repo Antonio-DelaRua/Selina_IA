@@ -7,7 +7,7 @@ from movimientos import apply_gravity, move_to_edge, climb_animation
 import re
 import asyncio
 import threading
-from bot import run_selina, escuchar
+from bot import talk, escuchar, run_selina
 
 
 
@@ -16,13 +16,25 @@ response_window = None
 response_text_widget = None
 
 
+def escuchar_en_hilo():
 
+    threading.Thread(target=escuchar, daemon=True).start()
 
+# Iniciar el asistente en un hilo separado
 def iniciar_asistente():
-    """Función para iniciar run_selina() en un hilo separado"""
-    hilo_escucha = threading.Thread(target=escuchar, daemon=True)
-    hilo_escucha.start()  # Iniciar escucha en segundo plano
-    run_selina()
+    """Función que inicia la escucha y el asistente en paralelo"""
+    escuchar_en_hilo()  # Iniciar escucha en un hilo separado
+    threading.Thread(target=run_selina, daemon=True).start()  # Ejecutar comandos en otro hilo
+
+# Llamar a la función para iniciar el asistente en paralelo
+
+
+# Agregar hablar en un hilo separado para evitar bloqueo
+# def hablar_respuesta(text):
+#   threading.Thread(target=talk, args=(text,), daemon=True).start()
+
+
+
 
 # Función para manejar el doble clic en el muñeco
 def show_combined_window(root):
@@ -185,8 +197,8 @@ def show_combined_window(root):
                 self.update_response("Consultando...")
                 self.window.after(100, lambda: fetch_response(user_input, self))
 
-        def start_listening(self):
-            self.update_response("\n[Escuchando...]\n")
+        def start_listening(user_input, self):
+            self.window.after(100, lambda: fetch_response(user_input, self))
 
     return CombinedWindow(root)
 
@@ -194,10 +206,11 @@ def show_combined_window(root):
 
 def fetch_response(user_input, response_window_instance):
     def run_agent():
-        response = asyncio.run(agent(user_input))  # ✅ Corre la tarea en un hilo sin bloquear Tkinter
+        response = asyncio.run(agent(user_input))  # Obtener respuesta del asistente
         response_window_instance.update_response(response)
+       # hablar_respuesta(response)  # Hablar la respuesta usando el bot de voz
 
-    threading.Thread(target=run_agent, daemon=True).start()  # ✅ Corre en segundo plano
+    threading.Thread(target=run_agent, daemon=True).start()  # Ejecutar en segundo plano
 
 # Funciones para el movimiento del muñeco
 def start_move(event):
