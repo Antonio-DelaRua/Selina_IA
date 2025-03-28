@@ -156,7 +156,9 @@ def run_selina():
 
             if 'reproduce' in rec:
                 reproduce_musica(rec)
-
+            elif 'apaga' in rec:
+                subprocess.run("shutdown /s /t 5", shell=True)
+                talk("Apagando equipo")
             elif 'busca' in rec:
                 buscar_info(rec)
 

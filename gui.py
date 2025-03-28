@@ -30,8 +30,11 @@ def iniciar_asistente():
 iniciar_asistente()
 
 # Agregar hablar en un hilo separado para evitar bloqueo
-def hablar_respuesta(texto):
-    threading.Thread(target=talk, args=(texto,), daemon=True).start()
+def hablar_respuesta(text):
+    threading.Thread(target=talk, args=(text,), daemon=True).start()
+
+
+
 
 # Función para manejar el doble clic en el muñeco
 def show_combined_window(root):

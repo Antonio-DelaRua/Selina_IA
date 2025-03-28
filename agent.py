@@ -1,7 +1,7 @@
-import json
+
 import aiohttp
 from model import HistoryEntry, PythonDB
-from fuzzywuzzy import process
+
 
 # Clave API
 OPENROUTER_API_KEY = "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"
