@@ -1,7 +1,7 @@
 def format_markdown(md_text):
     """
     Formatea texto Markdown eliminando líneas con '---', ajustando saltos de párrafo,
-    eliminando etiquetas de lenguaje después de '```' (como 'bash') y manejando comillas internas.
+    eliminando etiquetas de lenguaje después de '```' y manejando comillas internas.
     """
     lines = md_text.split("\n")
     formatted_lines = []
@@ -24,11 +24,6 @@ def format_markdown(md_text):
         if stripped_line.startswith("```") and len(stripped_line) > 3:
             line = "```"
 
-        # Si la línea no está vacía y la anterior tampoco, añadir doble salto
-        if i > 0 and stripped_line and lines[i-1].strip() and not stripped_line.startswith("```"):
-            if formatted_lines and not formatted_lines[-1].endswith("\\n\\n"):
-                formatted_lines[-1] = formatted_lines[-1].replace("\\n", "\\n\\n")
-
         # Manejar comillas internas
         if '"' in line:
             line = line.replace('"', "'")
@@ -48,152 +43,102 @@ def format_markdown(md_text):
 # Ejemplo de entrada Markdown (tu contenido)
 md_content = """
 
-## **Solución Paso a Paso**  
+## 🚀 **¿Qué es uWSGI?**  
+**uWSGI** es un servidor de aplicaciones **WSGI** que permite ejecutar aplicaciones Python (Flask, Django, FastAPI) en producción.  
 
-### **Paso 1: Importar las librerías necesarias**  
-Python tiene una librería llamada `csv` que facilita la lectura y escritura de archivos CSV.  
+🔹 **¿Por qué usar uWSGI?**  
+✅ Es **rápido y eficiente**, con soporte para múltiples workers y threads.  
+✅ Compatible con **Nginx y Apache** como proxy reverso.  
+✅ Soporta múltiples protocolos (WSGI, HTTP, FastCGI, uWSGI, etc.).  
+✅ Más configurable que Gunicorn, pero más complejo de usar.  
+
+🔹 **Alternativas:**  
+- **Gunicorn** (más simple y usado con Flask/Django).  
+- **Daphne** (para Django con WebSockets).  
+- **Uvicorn** (para FastAPI con ASGI).  
+
+---
+
+## 🛠️ **Ejemplo: Ejecutar Flask con uWSGI**  
+
+📌 **1️⃣ Instalar uWSGI y Flask**  
+```sh
+pip install flask uwsgi
+```
+
+📌 **2️⃣ Crear la API en Flask**  
+📄 **`app.py`**  
 
 ```python
-import csv
-from collections import defaultdict
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "¡Hola desde Flask con uWSGI!"
+
+if __name__ == '__main__':
+    app.run()
 ```
 
-- `csv`: Nos permite manejar archivos CSV de manera sencilla.  
-- `defaultdict`: Nos ayuda a almacenar datos sin necesidad de inicializar manualmente valores por defecto.  
-
----
-
-### **Paso 2: Leer el archivo CSV y procesar los datos**  
-Vamos a leer el archivo `ventas.csv` y almacenar los datos en un diccionario.  
-
-```python
-ventas = defaultdict(lambda: {"cantidad": 0, "ingresos": 0})  
-
-with open("ventas.csv", newline='', encoding='utf-8') as archivo:
-    lector_csv = csv.reader(archivo)
-    next(lector_csv)  # Omitimos la primera fila (encabezado)
-    
-    for fila in lector_csv:
-        producto, cantidad, precio = fila[0], int(fila[1]), float(fila[2])
-        
-        # Acumulamos las cantidades y los ingresos
-        ventas[producto]["cantidad"] += cantidad
-        ventas[producto]["ingresos"] += cantidad * precio
+📌 **3️⃣ Ejecutar con uWSGI**  
+```sh
+uwsgi --http :8000 --wsgi-file app.py --callable app --processes 4 --threads 2
 ```
+🔹 `--http :8000` → Escucha en el puerto `8000`.  
+🔹 `--wsgi-file app.py` → Usa el archivo `app.py`.  
+🔹 `--callable app` → La aplicación se llama `app`.  
+🔹 `--processes 4` → Usa **4 procesos workers**.  
+🔹 `--threads 2` → Cada proceso usa **2 threads**.  
 
-### 🔹 **Explicación:**  
-- Usamos `defaultdict` para crear un diccionario donde cada producto tiene sus ventas y sus ingresos acumulados.  
-- Abrimos el archivo CSV en modo lectura (`open("ventas.csv", "r")`).  
-- `csv.reader(archivo)` lee cada línea del archivo como una lista.  
-- `next(lector_csv)` salta la primera fila porque es el encabezado.  
-- Iteramos sobre cada fila, obteniendo:  
-  - `producto` (nombre del producto)  
-  - `cantidad` (convertida a entero)  
-  - `precio` (convertido a flotante)  
-- Acumulamos la cantidad total vendida y los ingresos en el diccionario `ventas`.  
-
----
-
-### **Paso 3: Encontrar el producto más vendido y el de mayores ingresos**  
-
-```python
-producto_mas_vendido = max(ventas.items(), key=lambda x: x[1]["cantidad"])
-producto_mas_ingresos = max(ventas.items(), key=lambda x: x[1]["ingresos"])
-
-print(f"Producto más vendido: {producto_mas_vendido[0]} ({producto_mas_vendido[1]['cantidad']} unidades)")
-print(f"Producto con más ingresos: {producto_mas_ingresos[0]} (${producto_mas_ingresos[1]['ingresos']:.2f})")
+📌 **4️⃣ Acceder a la API**  
+Abre en el navegador:  
 ```
-
-### 🔹 **Explicación:**  
-- `max(ventas.items(), key=lambda x: x[1]["cantidad"])`: Busca el producto con mayor cantidad vendida.  
-- `max(ventas.items(), key=lambda x: x[1]["ingresos"])`: Encuentra el producto con más ingresos.  
-- `print()`: Muestra los resultados en la consola.  
-
----
-
-### **Paso 4: Guardar los resultados en un nuevo archivo CSV**  
-
-```python
-with open("resultados_ventas.csv", "w", newline='', encoding='utf-8') as archivo_salida:
-    escritor_csv = csv.writer(archivo_salida)
-    
-    # Escribir encabezado
-    escritor_csv.writerow(["Producto", "Cantidad Vendida", "Ingresos Totales"])
-    
-    # Escribir datos
-    for producto, datos in ventas.items():
-        escritor_csv.writerow([producto, datos["cantidad"], f"{datos['ingresos']:.2f}"])
-```
-
-### 🔹 **Explicación:**  
-- Abrimos un nuevo archivo `resultados_ventas.csv` en modo escritura.  
-- Escribimos la primera fila con los nombres de las columnas.  
-- Iteramos sobre el diccionario `ventas` para escribir los datos en el archivo.  
-
----
-
-## **Código Completo**  
-
-```python
-import csv
-from collections import defaultdict
-
-# Diccionario para almacenar los datos
-ventas = defaultdict(lambda: {"cantidad": 0, "ingresos": 0})
-
-# Leer archivo CSV y procesar datos
-with open("ventas.csv", newline='', encoding='utf-8') as archivo:
-    lector_csv = csv.reader(archivo)
-    next(lector_csv)  # Saltar el encabezado
-
-    for fila in lector_csv:
-        producto, cantidad, precio = fila[0], int(fila[1]), float(fila[2])
-        ventas[producto]["cantidad"] += cantidad
-        ventas[producto]["ingresos"] += cantidad * precio
-
-# Encontrar productos destacados
-producto_mas_vendido = max(ventas.items(), key=lambda x: x[1]["cantidad"])
-producto_mas_ingresos = max(ventas.items(), key=lambda x: x[1]["ingresos"])
-
-print(f"Producto más vendido: {producto_mas_vendido[0]} ({producto_mas_vendido[1]['cantidad']} unidades)")
-print(f"Producto con más ingresos: {producto_mas_ingresos[0]} (${producto_mas_ingresos[1]['ingresos']:.2f})")
-
-# Guardar los resultados en un nuevo archivo CSV
-with open("resultados_ventas.csv", "w", newline='', encoding='utf-8') as archivo_salida:
-    escritor_csv = csv.writer(archivo_salida)
-    escritor_csv.writerow(["Producto", "Cantidad Vendida", "Ingresos Totales"])
-
-    for producto, datos in ventas.items():
-        escritor_csv.writerow([producto, datos["cantidad"], f"{datos['ingresos']:.2f}"])
+http://localhost:8000/
 ```
 
 ---
 
-## **Ejemplo de Salida en Consola**  
+## 🔥 **uWSGI + Nginx (Producción)**  
+En producción, se usa **Nginx** como proxy reverso para manejar peticiones y mejorar rendimiento.  
 
-```
-Producto más vendido: Teclado (15 unidades)
-Producto con más ingresos: Laptop ($4900.00)
+📄 **Configurar Nginx (`/etc/nginx/sites-available/default`)**  
+```nginx
+server {
+    listen 80;
+
+    location / {
+        include uwsgi_params;
+        uwsgi_pass 127.0.0.1:8000;
+    }
+}
 ```
 
-## **Ejemplo de Salida en `resultados_ventas.csv`**  
+📌 **Ejecutar uWSGI con socket Unix**  
+```sh
+uwsgi --socket /tmp/uwsgi.sock --wsgi-file app.py --callable app --processes 4 --threads 2 --chmod-socket=666
+```
 
+📌 **Reiniciar Nginx**  
+```sh
+sudo systemctl restart nginx
 ```
-Producto,Cantidad Vendida,Ingresos Totales
-Laptop,7,4900.00
-Teclado,15,300.00
-Mouse,8,120.00
-Monitor,4,600.00
-```
+
+Ahora, Nginx manejará las peticiones y las enviará a uWSGI.
 
 ---
 
-## **¿Qué se aprende con este ejercicio?**  
-✅ **Manejo de archivos CSV** (lectura y escritura).  
-✅ **Uso de estructuras de datos avanzadas** (`defaultdict` para acumular información).  
-✅ **Uso de funciones de ordenación** (`max()` con `lambda`).  
-✅ **Bucles e iteraciones eficientes**.  
-✅ **Conversión de tipos de datos** (de cadena a `int` y `float`).  
+## 🎯 **¿Cuándo usar uWSGI?**  
+✅ Cuando necesitas **alto rendimiento** y personalización.  
+✅ Para ejecutar **Flask o Django en producción con Nginx**.  
+✅ Cuando necesitas compatibilidad con **FastCGI, HTTP y WSGI**.  
+
+---
+
+🚀 **Ejemplo real:**  
+Un **API REST en Flask** usa **uWSGI + Nginx** para manejar **miles de usuarios** con múltiples procesos y threads.  
+
 
 
 """
