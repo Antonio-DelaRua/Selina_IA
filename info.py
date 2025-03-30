@@ -35,42 +35,7 @@ class CompanyInfo:
         "contratación": "Puedes contactarnos por correo electrónico o a través de nuestra web. 📩🌐"
     }
 
-    @classmethod
-    def get_info(cls):
-        """
-        Devuelve toda la información corporativa estructurada
-        """
-        return f"""
-        **{cls.NOMBRE}** - _{cls.EMPRESA}_ 🚀
-
-        📌 **Misión:**  
-        {cls.MISSION}
-
-        🔭 **Visión:**  
-        {cls.VISION}
-
-        💎 **Valores:**  
-        {', '.join(cls.VALORES)}  
-
-        🛠 **Servicios Principales:**  
-        {chr(10).join(['• ' + servicio for servicio in cls.SERVICIOS])}
-
-        📞 **Contacto:**  
-        ✉️ {cls.CONTACTO["email"]}  
-        📱 {cls.CONTACTO["telefono"]}  
-        🏠 {cls.CONTACTO["direccion"]}  
-        🌐 [{cls.CONTACTO["sitio_web"]}]({cls.CONTACTO["sitio_web"]})
-        """
-
-    @classmethod
-    def get_team(cls):
-        """
-        Devuelve información del equipo con formato mejorado
-        """
-        return "\n".join(
-            [f"👤 **{member['nombre']}** - _{member['rol']}_\n   📌 {member['experiencia']}" 
-             for member in cls.EQUIPO]
-        )
+  
 
 if __name__ == "__main__":
     print(CompanyInfo.get_info())

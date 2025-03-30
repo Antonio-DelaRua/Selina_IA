@@ -34,7 +34,7 @@ async def agent(prompt):
 
         Responde EN ESPAÑOL con:
         Markdown claro + emojis relevantes
-        Máximo 3 párrafos
+        Máximo 1 párrafos
         Ejemplos de código si son útiles
     """
 

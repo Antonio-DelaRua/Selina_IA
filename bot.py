@@ -13,12 +13,17 @@ sites = {
     'youtube': 'https://www.youtube.com',
     'facebook': 'https://www.facebook.com',
     'whatsapp': 'https://web.whatsapp.com',
-    'cursos': 'https://freecodecamp.org/learn'
+    'cursos': 'https://freecodecamp.org/learn',
+    'deportes': 'https://www.as.com',
+    'netflix': 'https://www.netflix.com/es/',
+    'instagram': 'https://www.instagram.com/',
+    'github': 'https://github.com/',
+
 }
 
 files = {
-    'libro': 'but how u did know erazo.pdf',
-    'foto': 'luffy erazo.jpg'
+    'libro': 'buthowudidknow.pdf',
+    'foto': 'image.png'
 }
 
 contacts = {
@@ -107,7 +112,7 @@ def escuchar():
                         continue
 
                 print("👂 Escuchando...")
-                audio = listener.listen(source, timeout=5.0, phrase_time_limit=10)
+                audio = listener.listen(source, timeout=5, phrase_time_limit=5)
                 rec = listener.recognize_google(audio, language="es-ES").lower()  # Usar español de España
 
                 with lock:
@@ -149,26 +154,74 @@ def activar_alarma(rec):
                 break
 
 def abrir_sitio(rec, sites):
-    for site in sites:
+    """Abre un sitio web si está en la lista de sitios conocidos."""
+    rec = rec.lower()  # Convertir a minúsculas para evitar errores de comparación
+    
+    for site, url in sites.items():
         if site in rec:
-            print(f"🌐 Abriendo {site}: {sites[site]}")
-            subprocess.run(f'start chrome {sites[site]}', shell=True)
+            print(f"🌐 Abriendo {site}: {url}")
+            subprocess.run(f'start chrome {url}', shell=True)
             talk(f"Abriendo {site}")
+            return  # Salir después de encontrar el sitio correcto
+    
+    talk("No encontré ese sitio en mi lista.")
+
 
 def abrir_archivo(rec, files):
-    for file in files:
+    """Abre un archivo si está en la lista de archivos conocidos."""
+    rec = rec.lower()
+    
+    for file, path in files.items():
         if file in rec:
-            print(f"📂 Abriendo {file}: {files[file]}")
-            subprocess.Popen([files[file]], shell=True)
-            talk(f'Abriendo {file}')
+            if os.path.exists(path):  # Verifica si el archivo realmente existe
+                print(f"📂 Abriendo {file}: {path}")
+                subprocess.Popen([path], shell=True)
+                talk(f'Abriendo {file}')
+            else:
+                talk(f"No encontré el archivo {file}. Verifica que esté en la ubicación correcta.")
+            return  # Salir después de encontrar el archivo correcto
+    
+    talk("No encontré ese archivo en mi lista.")
 
 def escribir_nota():
     try:
-        with open("nota.txt", 'a') as f:
-            write(f)
-    except FileNotFoundError:
-        with open("nota.txt", 'a') as f:
-            write(f)
+        # Pedir al usuario el texto antes de abrir el archivo
+        talk("¿Qué quieres que escriba?")
+        rec_write = escuchar()
+
+        if rec_write:  # Asegurar que se obtuvo texto
+            with open("nota.txt", 'a') as f:
+                f.write(rec_write + os.linesep)  # Escribir el texto en el archivo
+
+            talk("Listo, puedes revisarlo")
+            sub.Popen(["notepad.exe", "nota.txt"], shell=True)  # Abre la nota en Windows
+        else:
+            talk("No entendí lo que dijiste.")
+    except Exception as e:
+        print(f"Error escribiendo la nota: {str(e)}")
+
+
+def procesar_comando(rec):
+    
+    comandos = {
+        "reproduce": reproduce_musica,
+        "busca": buscar_info,
+        "alarma": activar_alarma,
+        "cam": capture,
+        "abre": lambda x: abrir_sitio(x, sites),
+        "archivo": lambda x: abrir_archivo(x, files),
+        "escribe": escribir_nota,
+        "salir": lambda x: talk("Saliendo del asistente") or exit()
+    }
+
+    for clave, funcion in comandos.items():
+        if clave in rec:
+            funcion(rec)
+            return
+
+    talk("No entendí el comando")
+
+
 
 def run_selina():
     global ultimo_comando, ocupado
@@ -186,35 +239,15 @@ def run_selina():
         if rec:
             try:
                 print(f"⚙️ Procesando comando: {rec}")
-                
-                if re.match(r'reproduce .+', rec):
-                    reproduce_musica(rec)
-                elif re.match(r'busca .+', rec):
-                    buscar_info(rec)
-                elif 'reproduce' in rec:
-                    reproduce_musica(rec)
-                elif 'busca' in rec:
-                    buscar_info(rec)
-                elif 'alarma' in rec:
-                    activar_alarma(rec)
-                elif 'cam' in rec:
-                    talk("Enseguida")
-                    capture()
-                elif 'abre' in rec:
-                    abrir_sitio(rec, sites)
-                elif 'archivo' in rec:
-                    abrir_archivo(rec, files)
-                elif 'escribe' in rec:
-                    escribir_nota()
-                elif 'salir' in rec:
-                    talk("Saliendo del asistente")
+                procesar_comando(rec)  # 🔥 Llamamos a la función que ya maneja los comandos
             except Exception as e:
-                print(f"Error procesando comando: {str(e)}")
+                print(f"❌ Error procesando comando: {str(e)}")
             finally:
                 with lock:
                     ocupado = False
 
         time.sleep(0.2)
+
 
 
         

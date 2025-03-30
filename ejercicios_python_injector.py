@@ -638,7 +638,7 @@ if __name__ == "__main__":
 
         (
             "ejercicio11",
-            "#Ejercicio: Análisis de Ventas\n"
+            "# Ejercicio: Análisis de Ventas\n"
             "**Escribe un programa en Python que:**\n"
 
             "📚 Lea un archivo CSV con datos de ventas (cada fila tiene: nombre del producto, cantidad vendida y precio unitario).\n"
@@ -646,13 +646,13 @@ if __name__ == "__main__":
             "📚 Muestre el producto con mayores ventas en cantidad y en ingresos.\n"
             "📚 Guarde los resultados en un nuevo archivo CSV.\n\n"
             "**Datos de ejemplo (ventas.csv)**\n"
-            "Producto,Cantidad,Precio  \n\n"
-            "Laptop,5,700 \n"
-            "Teclado,10,20 \n"
-            "Mouse,8,15 \n"
-            "Monitor,4,150\n"
-            "Laptop,2,700 \n"
-            "Teclado,5,20 \n"
+            "Producto   |  Cantidad   |   Precio  \n\n"
+            "Laptop     |     5       |     700\n"
+            "Teclado    |     10      |     20\n"
+            "Mouse      |     8       |     15\n"
+            "Monitor    |     4       |     150\n"
+            "Laptop     |     2       |     700 \n"
+            "Teclado    |     5       |     20 \n"
             "\n"
             "### Objetivos del ejercicio: \n\n"
             "✅Manejo de archivos (lectura/escritura de CSV)\n"
