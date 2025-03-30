@@ -1593,6 +1593,469 @@ if __name__ == "__main__":
             "- *args y **kwargs permiten que el decorador sea genérico.\n"
         ),
 
+        (
+            "ejercicio36",
+            "# Ejercicio 36: Par o impar\n\n"
+            "Pide al usuario un número y determina si es par o impar.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            'numero = int(input("Ingresa un número: "))\n'
+            "if numero % 2 == 0:\n"
+            '    print(f"{numero} es par.")\n'
+            "else:\n"
+            '    print(f"{numero} es impar.")\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Usamos el operador % (módulo) para ver si el residuo de dividir entre 2 es 0.\n"
+            "- Ideal para practicar condicionales simples.\n"
+        ),
+
+        (
+            "ejercicio37",
+            "# Ejercicio 37: Calculadora de área\n\n"
+            "Pide al usuario elegir entre calcular el área de un círculo o un rectángulo, luego pide los datos necesarios y muestra el resultado.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            'opcion = input("¿Área de círculo (C) o rectángulo (R)? ").lower()\n\n'
+            'if opcion == "c":\n'
+            '    radio = float(input("Radio del círculo: "))\n'
+            "    area = 3.1416 * radio ** 2\n"
+            '    print(f"Área: {area:.2f}")\n'
+            'elif opcion == "r":\n'
+            '    base = float(input("Base del rectángulo: "))\n'
+            '    altura = float(input("Altura del rectángulo: "))\n'
+            "    area = base * altura\n"
+            '    print(f"Área: {area:.2f}")\n'
+            "else:\n"
+            '    print("Opción inválida.")\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Usamos lower() para manejar mayúsculas/minúsculas.\n"
+            "- Formateamos el resultado con :.2f para mostrar dos decimales.\n"
+        ),
+
+        (
+            "ejercicio38",
+            "# Ejercicio 38: Quiz de preguntas simples\n\n"
+            "Crea un cuestionario de 3 preguntas de opción múltiple (ej: capitales de países) y muestra el puntaje final.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "puntaje = 0\n\n"
+            'print("Responde las siguientes preguntas:")\n'
+            'print("1. ¿Cuál es la capital de Francia?")\n'
+            'print("a) Londres  b) París  c) Roma")\n'
+            'resp1 = input("Tu respuesta: ").lower()\n'
+            'if resp1 == "b":\n'
+            "    puntaje += 1\n\n"
+            'print("\n2. ¿Cuántos planetas hay en el sistema solar?")\n'
+            'print("a) 7  b) 8  c) 9")\n'
+            'resp2 = input("Tu respuesta: ").lower()\n'
+            'if resp2 == "b":\n'
+            "    puntaje += 1\n\n"
+            'print("\n3. ¿Qué lenguaje usamos en este curso?")\n'
+            'print("a) Java  b) Python  c) C++")\n'
+            'resp3 = input("Tu respuesta: ").lower()\n'
+            'if resp3 == "b":\n'
+            "    puntaje += 1\n\n"
+            'print(f"\nPuntaje final: {puntaje}/3")\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Cada pregunta tiene una respuesta correcta predefinida.\n"
+            "- Usamos un contador (puntaje) para llevar la cuenta de aciertos.\n"
+        ),
+
+        (
+            "ejercicio39",
+            "# Ejercicio 39: Contar elementos en una lista\n\n"
+            "Pide al usuario ingresar una lista de números separados por comas, luego pide un número específico y cuenta cuántas veces aparece.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            'entrada = input("Ingresa números separados por comas: ")\n'
+            'lista = [int(num) for num in entrada.split(",")]\n'
+            'busqueda = int(input("¿Qué número quieres contar? "))\n\n'
+            "conteo = lista.count(busqueda)\n"
+            'print(f"El número {busqueda} aparece {conteo} veces.")\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            '- split(",") divide la cadena en partes usando comas.\n'
+            "- count() es un método de listas que simplifica el conteo.\n"
+        ),
+
+        (
+            "ejercicio40",
+            "# Ejercicio 40: Búsqueda en profundidad (DFS) en grafos\n\n"
+            "Implementa el algoritmo DFS para recorrer un grafo representado como un diccionario de listas de adyacencia. El programa debe mostrar el orden de visita de los nodos.\n"
+            "\n"
+            "**Entrada de ejemplo**\n"
+            "```\n"
+            "grafo = {\n"
+            "    'A': ['B', 'C'],\n"
+            "    'B': ['D', 'E'],\n"
+            "    'C': ['F'],\n"
+            "    'D': [],\n"
+            "    'E': ['F'],\n"
+            "    'F': []\n"
+            "}\n"
+            "```\n"
+            "**Salida esperada (empezando desde 'A'):**\n"
+            "A -> B -> D -> E -> F -> C\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "def dfs(grafo, nodo_inicial):\n"
+            "    visitados = set()\n"
+            "    stack = [nodo_inicial]\n"
+            "    recorrido = []\n\n"
+            "    while stack:\n"
+            "        nodo = stack.pop()\n"
+            "        if nodo not in visitados:\n"
+            "            visitados.add(nodo)\n"
+            "            recorrido.append(nodo)\n"
+            "            # Agregar vecinos en orden inverso para mantener el orden lógico\n"
+            "            for vecino in reversed(grafo[nodo]):\n"
+            "                stack.append(vecino)\n"
+            "    return recorrido\n\n"
+            "grafo = {\n"
+            "    'A': ['B', 'C'],\n"
+            "    'B': ['D', 'E'],\n"
+            "    'C': ['F'],\n"
+            "    'D': [],\n"
+            "    'E': ['F'],\n"
+            "    'F': []\n"
+            "}\n"
+            'print("DFS:", " -> ".join(dfs(grafo, "A")))\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Usamos una pila (LIFO) para el recorrido.\n"
+            "- reversed() asegura que los vecinos se procesen en el orden correcto (ej: 'B' antes que 'C').\n"
+            "- Complejidad: O(V + E), donde V es el número de vértices y E el de aristas.\n"
+        ),
+
+        (
+            "ejercicio41",
+            "# Ejercicio 41: Validar correo electrónico con regex\n\n"
+            "Usa expresiones regulares para validar si una cadena es un correo electrónico válido.\n"
+            "**Reglas básicas:**\n"
+            "- Formato: nombre@dominio.extension\n"
+            "- Extensiones válidas: 2 a 4 letras (ej: .com, .org, .edu).\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "import re\n\n"
+            "def validar_email(email):\n"
+            "    patron = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$'\n"
+            "    return re.match(patron, email) is not None\n\n"
+            'emails = ["usuario@example.com", "invalido@.com", "nombre@dominio.extensionlarga"]\n'
+            "for email in emails:\n"
+            '    print(f"{email}: {"Válido" if validar_email(email) else "Inválido"}")\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- ^ y $ aseguran que toda la cadena cumple el patrón.\n"
+            "- [a-zA-Z]{2,4} valida extensiones de 2 a 4 caracteres.\n"
+            "**Componentes del patrón**\n"
+            "- [a-zA-Z0-9._%+-]+: Nombre del usuario.\n"
+            "- @[a-zA-Z0-9.-]+: Dominio.\n"
+            "- \.[a-zA-Z]{2,4}$: Extensión.\n"
+
+        ),
+
+        (
+            "ejercicio42",
+            "# Ejercicio 42: Gestor de tareas con archivos JSON\n\n"
+            "Crea un programa que permita:\n"
+            "- Agregar tareas (nombre y estado: pendiente/completada).\n"
+            "- Guardar las tareas en un archivo JSON.\n"
+            "- Cargar tareas desde el archivo.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "import json\n\n"
+            "def cargar_tareas(archivo):\n"
+            "    try:\n"
+            "        with open(archivo, 'r') as f:\n"
+            "            return json.load(f)\n"
+            "    except FileNotFoundError:\n"
+            "        return []\n\n"
+            "def guardar_tareas(tareas, archivo):\n"
+            "    with open(archivo, 'w') as f:\n"
+            "        json.dump(tareas, f, indent=4)\n\n"
+            "def agregar_tarea(nombre, tareas):\n"
+            '    tareas.append({"nombre": nombre, "completada": False})\n\n'
+            "# Ejemplo de uso:\n"
+            'archivo = "tareas.json"\n'
+            "tareas = cargar_tareas(archivo)\n\n"
+            'agregar_tarea("Aprender Python", tareas)\n'
+            'agregar_tarea("Hacer ejercicio", tareas)\n\n'
+            "guardar_tareas(tareas, archivo)\n"
+            'print("Tareas guardadas en "tareas.json".")\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- json.dump() y json.load() manejan la serialización de datos.\n"
+            "- Manejo de excepciones: FileNotFoundError para archivos inexistentes.\n"
+            '- Estructura del JSON: Lista de diccionarios con claves "nombre" y "completada".\n'
+        ),
+
+        (
+            "ejercicio43",
+            "# Ejercicio 43: (Threading básico)\n\n"
+            "Crea dos hilos que impriman números pares e impares del 1 al 10 simultáneamente.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "import threading\n\n"
+            "def imprimir_pares():\n"
+            "    for i in range(2, 11, 2):\n"
+            '        print(f"Par: {i}")\n\n'
+            "def imprimir_impares():\n"
+            "    for i in range(1, 11, 2):\n"
+            '        print(f"Impar: {i}")\n\n'
+            "hilo_pares = threading.Thread(target=imprimir_pares)\n"
+            "hilo_impares = threading.Thread(target=imprimir_impares)\n\n"
+            "hilo_pares.start()\n"
+            "hilo_impares.start()\n\n"
+            "hilo_pares.join()\n"
+            "hilo_impares.join()\n\n"
+            'print("Hilos terminados.")\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Threading: Permite ejecución concurrente (no paralela en CPython por el GIL).\n"
+            "- Sincronización: join() espera a que los hilos terminen.\n"
+            "- Salida: Los números pares e impares se mezclarán según el orden de ejecución.\n"
+        ),
+
+        (
+            "ejercicio44",
+            "# Ejercicio 44: Clases abstractas y herencia\n\n"
+            "Crea una clase abstracta Figura con métodos calcular_area() y calcular_perimetro(). Luego implementa las clases Circulo y Rectangulo heredando de Figura.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "from abc import ABC, abstractmethod\n"
+            "import math\n\n"
+            "class Figura(ABC):\n"
+            "    @abstractmethod\n"
+            "    def calcular_area(self):\n"
+            "        pass\n\n"
+            "    @abstractmethod\n"
+            "    def calcular_perimetro(self):\n"
+            "        pass\n\n"
+            "class Circulo(Figura):\n"
+            "    def __init__(self, radio):\n"
+            "        self.radio = radio\n\n"
+            "    def calcular_area(self):\n"
+            "        return math.pi * self.radio ** 2\n\n"
+            "    def calcular_perimetro(self):\n"
+            "        return 2 * math.pi * self.radio\n\n"
+            "class Rectangulo(Figura):\n"
+            "    def __init__(self, base, altura):\n"
+            "        self.base = base\n"
+            "        self.altura = altura\n\n"
+            "    def calcular_area(self):\n"
+            "        return self.base * self.altura\n\n"
+            "    def calcular_perimetro(self):\n"
+            "        return 2 * (self.base + self.altura)\n\n"
+            "# Ejemplo de uso:\n"
+            "circulo = Circulo(5)\n"
+            'print(f"Área del círculo: {circulo.calcular_area():.2f}")  # 78.54\n'
+            "rectangulo = Rectangulo(4, 7)\n"
+            'print(f"Perímetro del rectángulo: {rectangulo.calcular_perimetro()}")  # 22\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- ABC y @abstractmethod definen métodos que las subclases deben implementar.\n"
+            "- Cumple con el principio de abstracción en POO.\n"
+        ),
+
+        (
+            "ejercicio45",
+            "# Ejercicio 45: Merge Sort (algoritmo recursivo)\n\n"
+            "Implementa el algoritmo Merge Sort para ordenar una lista de números.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "def merge_sort(lista):\n"
+            "    if len(lista) > 1:\n"
+            "        medio = len(lista) // 2\n"
+            "        izquierda = lista[:medio]\n"
+            "        derecha = lista[medio:]\n\n"
+            "        merge_sort(izquierda)\n"
+            "        merge_sort(derecha)\n\n"
+            "        i = j = k = 0\n\n"
+            "        # Fusionar sublistas ordenadas\n"
+            "        while i < len(izquierda) and j < len(derecha):\n"
+            "            if izquierda[i] < derecha[j]:\n"
+            "                lista[k] = izquierda[i]\n"
+            "                i += 1\n"
+            "            else:\n"
+            "                lista[k] = derecha[j]\n"
+            "                j += 1\n"
+            "            k += 1\n\n"
+            "        # Elementos restantes\n"
+            "        while i < len(izquierda):\n"
+            "            lista[k] = izquierda[i]\n"
+            "            i += 1\n"
+            "            k += 1\n\n"
+            "        while j < len(derecha):\n"
+            "            lista[k] = derecha[j]\n"
+            "            j += 1\n"
+            "            k += 1\n\n"
+            "# Ejemplo:\n"
+            "lista = [38, 27, 43, 3, 9, 82, 10]\n"
+            "merge_sort(lista)\n"
+            'print("Lista ordenada:", lista)  # [3, 9, 10, 27, 38, 43, 82]\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Divide y vencerás: Divide la lista en mitades, ordena recursivamente y fusiona.\n"
+            "- Complejidad: O(n log n) en todos los casos.\n"
+        ),
+
+        (
+            "ejercicio46",
+            "# Ejercicio 46: Conexión a SQLite y CRUD\n\n"
+            "Crea una base de datos SQLite llamada estudiantes.db con una tabla Estudiante (id, nombre, edad). Implementa funciones para insertar, consultar y eliminar registros.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "import sqlite3\n\n"
+            "def crear_tabla():\n"
+            '    conexion = sqlite3.connect("estudiantes.db")\n'
+            "    cursor = conexion.cursor()\n"
+            "    cursor.execute('''CREATE TABLE IF NOT EXISTS Estudiante\n"
+            "                      (id INTEGER PRIMARY KEY, nombre TEXT, edad INTEGER)''')\n"
+            "    conexion.commit()\n"
+            "    conexion.close()\n\n"
+            "def insertar_estudiante(nombre, edad):\n"
+            '    conexion = sqlite3.connect("estudiantes.db")\n'
+            "    cursor = conexion.cursor()\n"
+            '    cursor.execute("INSERT INTO Estudiante (nombre, edad) VALUES (?, ?)", (nombre, edad))\n'
+            "    conexion.commit()\n"
+            "    conexion.close()\n\n"
+            "def consultar_estudiantes():\n"
+            '    conexion = sqlite3.connect("estudiantes.db")\n'
+            "    cursor = conexion.cursor()\n"
+            '    cursor.execute("SELECT * FROM Estudiante")\n'
+            "    estudiantes = cursor.fetchall()\n"
+            "    conexion.close()\n"
+            "    return estudiantes\n\n"
+            "# Ejemplo de uso:\n"
+            "crear_tabla()\n"
+            'insertar_estudiante("Ana", 22)\n'
+            'insertar_estudiante("Luis", 25)\n'
+            'print("Estudiantes:", consultar_estudiantes())  # [(1, "Ana", 22), (2, "Luis", 25)]\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- CRUD: Create (INSERT), Read (SELECT).\n"
+            "- Usa parámetros ? para evitar inyecciones SQL.\n"
+        ),
+
+        (
+            "ejercicio47",
+            "# Ejercicio 47: Consumo de API REST (OpenWeatherMap)\n\n"
+            "Usa la librería requests para obtener el clima actual de una ciudad usando la API de OpenWeatherMap. Necesitarás una API key (gratuita al registrarse).\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "import requests\n\n"
+            "def obtener_clima(ciudad, api_key):\n"
+            '    url = f"http://api.openweathermap.org/data/2.5/weather?q={ciudad}&appid={api_key}&units=metric"\n'
+            "    respuesta = requests.get(url)\n"
+            "    if respuesta.status_code == 200:\n"
+            "        datos = respuesta.json()\n"
+            '        temperatura = datos["main"]["temp"]\n'
+            '        clima = datos["weather"][0]["description"]\n'
+            '        return f"Clima en {ciudad}: {temperatura}°C, {clima.capitalize()}"\n'
+            "    else:\n"
+            '        return "Error al obtener datos"\n\n'
+            "# Ejemplo (reemplaza TU_API_KEY con tu clave):\n"
+            'api_key = "TU_API_KEY"\n'
+            'print(obtener_clima("Madrid", api_key))  # Ej: "Clima en Madrid: 18°C, Nubes dispersas"\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- API REST: Uso de endpoints y parámetros en la URL.\n"
+            "- JSON: Los datos de respuesta se parsean como diccionario.\n"
+        ),
+
+        (
+            "ejercicio48",
+            "# Ejercicio 48: Análisis de datos con Pandas\n\n"
+            "Carga un dataset desde un archivo CSV (ej: iris.csv) y muestra:\n"
+            "- Promedio de longitud de pétalos por especie.\n"
+            "- Máximo valor de ancho de sépalos.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "import pandas as pd\n\n"
+            "# Descargar el dataset desde la URL\n"
+            'url = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv"\n'
+            "datos = pd.read_csv(url)\n\n"
+            "# Promedio de longitud de pétalos por especie\n"
+            'promedio = datos.groupby("species")["petal_length"].mean()\n'
+            'print("Promedio por especie:\n", promedio)\n\n'
+            "# Máximo ancho de sépalos\n"
+            'max_ancho = datos["sepal_width"].max()\n'
+            'print("Máximo ancho de sépalos:", max_ancho)\n'
+            "```\n"
+            "Salida:\n"
+            "```\n"
+            "Promedio por especie:\n"
+            " species\n"
+            "setosa        1.464\n"
+            "versicolor    4.260\n"
+            "virginica     5.552\n\n"
+            "Máximo ancho de sépalos: 4.4\n"
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Pandas: Librería clave para análisis de datos.\n"
+            "- groupby() agrupa datos por categorías.\n"
+        ),
+
+        (
+            "ejercicio49",
+            "# Ejercicio 49: Concurrencia con asyncio\n\n"
+            "Crea dos tareas asíncronas que impriman números del 1-5 y letras A-E con delays de 1 segundo.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "import asyncio\n\n"
+            "async def imprimir_numeros():\n"
+            "    for i in range(1, 6):\n"
+            "        print(i)\n"
+            "        await asyncio.sleep(1)\n\n"
+            "async def imprimir_letras():\n"
+            '    for letra in "ABCDE":\n'
+            "        print(letra)\n"
+            "        await asyncio.sleep(1)\n\n"
+            "async def main():\n"
+            "    await asyncio.gather(imprimir_numeros(), imprimir_letras())\n\n"
+            "asyncio.run(main())\n"
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Asyncio: Maneja concurrencia con corrutinas y await.\n"
+            "- Salida: Números y letras se mezclan cada segundo.\n"
+        ),
+
+        (
+            "ejercicio50",
+            "# in progress"
+        ),
+
 
 
     ]

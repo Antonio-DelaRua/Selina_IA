@@ -183,6 +183,21 @@ historia, ver historial, abrir historia ---> para ver los ultimos 10 prompt
 - ejercicio33
 - ejercicio34
 - ejercicio35
+- ejercicio36
+- ejercicio37
+- ejercicio38
+- ejercicio39
+- ejercicio40
+- ejercicio41
+- ejercicio42
+- ejercicio43
+- ejercicio44
+- ejercicio45
+- ejercicio46
+- ejercicio47
+- ejercicio48
+- ejercicio49
+- ejercicio50
 
 
 
