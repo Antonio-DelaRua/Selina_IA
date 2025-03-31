@@ -2120,9 +2120,8 @@ if __name__ == "__main__":
 
         (
         "django",
-        "**¡Claro! Aquí tienes una explicación de Django junto con ejemplos en Markdown**:\n"
-        "\n"
-        " 🐍 **Django: El framework web en Python**\n"
+
+        "# 🐍 Django: El framework web en Python\n"
         "\n"
         "Django es un **framework de desarrollo web** de alto nivel y código abierto, diseñado para crear aplicaciones web de manera rápida, segura y escalable. Sigue el patrón **MTV (Model-Template-View)**, similar al **MVC (Model-View-Controller)**.\n"
         "\n"

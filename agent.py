@@ -26,24 +26,30 @@ async def chat_with_codellama(prompt):
 async def agent(prompt):
     user_query = prompt.lower().strip()
 
+    # 🔄 1. Determinar dinámicamente si incluir contexto de la empresa
+    contexto_empresa = ""
+    if any(keyword in user_query for keyword in ["empresa", "compania", CompanyInfo.NAME.lower()]):
+        contexto_empresa = f"\n\nContexto relevante:\n- Nombre: {CompanyInfo.NAME}\n- Sector: {CompanyInfo.INDUSTRY}\n- FAQs: {', '.join(CompanyInfo.FAQS.keys())}"
+
     prompt_template = f"""
+        **Instrucciones clave:**
+        1. Nunca menciones información de la empresa a menos que el usuario pregunte explícitamente
+        2. Si necesitas hacer referencia a datos internos, usa solo las FAQs cuando haya coincidencia exacta
+        3. Evita suposiciones sobre el contexto organizacional{contexto_empresa}
 
-        Contexto actual: {CompanyInfo.NOMBRE} - {CompanyInfo.EMPRESA}
+        **Consulta del usuario:** 
+        {prompt}
 
-        **Usuario pregunta:** {prompt}
-
-        Responde EN ESPAÑOL con:
-        Markdown claro + emojis relevantes
-        Máximo 1 párrafos
-        Ejemplos de código si son útiles
+        **Formato de respuesta requerido:**
+        - Español con emojis relevantes ✨
+        - Máximo 1 párrafo
+        - Código breve si es útil (```python)
     """
 
-    # ✅ Búsqueda rápida en FAQs
+    # ✅ 2. Búsqueda en FAQs con coincidencia exacta
     for keyword, answer in CompanyInfo.FAQS.items():
-        if keyword in user_query:
-            respuesta = f"📌 **Respuesta rápida:**\n{answer}"
-            return respuesta
-
+        if keyword.lower() == user_query:  # Coincidencia exacta
+            return f"🔍 **Respuesta oficial:**\n{answer}"
     # ✅ Optimización: Consultas en base de datos (evita repeticiones)
     try:
         respuesta = PythonDB.get_by_prompt(prompt) or HistoryEntry.get_by_prompt(prompt)

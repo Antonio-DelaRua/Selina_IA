@@ -47,8 +47,8 @@ ctrl + q  ------> cerrar aplicación
 kiv para moviles y tablet ( tactil )
 historia, ver historial, abrir historia ---> para ver los ultimos 10 prompt
 
-## PALABRAS CLAVE
 
+## PALABRAS CLAVE
 
  # bd_python
 - que es python y para que se utiliza?
@@ -204,9 +204,6 @@ historia, ver historial, abrir historia ---> para ver los ultimos 10 prompt
 
 me queda por documentar : {
 
-
-
-Servidores web: Nginx, Gunicorn, uWSGI.
 
 Monitorización: Prometheus, Grafana, Sentry.
 
