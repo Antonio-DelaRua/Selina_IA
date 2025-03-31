@@ -50,31 +50,38 @@ ocupado = False
 lock = threading.Lock()
 camara_activa = False
 confirmacion_pendiente = None
+alarma_activa = False
+hora_alarma = None
+alarma_thread = None
 
 
 def capture():
-    global camara_activa
-    camara_activa = True
     cap = cv2.VideoCapture(0)
-    
-    while camara_activa:
+    low_yellow = np.array([25, 192, 20], np.uint8)
+    high_yellow = np.array([30, 255, 255], np.uint8)
+
+    while True:
         ret, frame = cap.read()
         if not ret:
             break
-            
-        cv2.imshow('Cámara en vivo', frame)
-        
-        # Cerrar con la tecla 'q' o por comando de voz
-        if cv2.waitKey(1) & 0xFF == ord('q') or not camara_activa:
+
+        frame_HSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        yellow_mask = cv2.inRange(frame_HSV, low_yellow, high_yellow)
+
+        contours, _ = cv2.findContours(yellow_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        for c in contours:
+            area = cv2.contourArea(c)
+            if area > 1000:
+                new_contour = cv2.convexHull(c)
+                cv2.drawContours(frame, [new_contour], 0, (0, 255, 255), 3)
+
+        cv2.imshow('Detección de color', frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-            
-    cap.release()
-    cv2.destroyAllWindows()
-    camara_activa = False
-
 
     cap.release()
     cv2.destroyAllWindows()
+
 
 
 def write(f):
@@ -154,18 +161,34 @@ def buscar_info(rec):
     except Exception:
         talk("No encontré información sobre eso")
 
-def activar_alarma(rec):
-    num = rec.replace('alarma', '').strip()
-    talk(f"Alarma activada a las {num} horas")
-    while True:
+def verificar_alarma():
+    global alarma_activa
+    while alarma_activa:
         now = datetime.datetime.now().strftime('%H:%M')
-        if now == num:
+        if now == hora_alarma:
             print('¡DESPIERTA!')
             mixer.music.load("alarma.mp3")
             mixer.music.play()
-            if keyboard.read_key() == "s":
-                mixer.music.stop()
-                break
+            # Reproducir alarma hasta que se detenga
+            while mixer.music.get_busy() and alarma_activa:
+                time.sleep(0.1)
+            break
+        time.sleep(10)  # Verificar cada 10 segundos
+
+def activar_alarma(rec):
+    global alarma_activa, hora_alarma, alarma_thread
+    num = rec.replace('alarma', '').strip()
+    hora_alarma = num
+    
+    # Detener cualquier alarma previa
+    if alarma_thread and alarma_thread.is_alive():
+        alarma_activa = False
+        alarma_thread.join()
+    
+    alarma_activa = True
+    talk(f"Alarma activada a las {hora_alarma} horas")
+    alarma_thread = threading.Thread(target=verificar_alarma)
+    alarma_thread.start()
 
 def abrir_sitio(rec, sites):
     """Abre un sitio web si está en la lista de sitios conocidos."""
@@ -214,7 +237,9 @@ def escribir_nota():
         talk("No pude escribir la nota")
         print(f"Error: {str(e)}")
 
-
+def manejar_camara():
+    talk("Enseguida")
+    capture()
         
 def apagar_pc():
     talk("Apagando el sistema")
@@ -265,8 +290,9 @@ def procesar_comando(rec):
     comandos = {
         "reproduce": reproduce_musica,
         "busca": buscar_info,
+        "detener": lambda x: [globals().update(alarma_activa=False), mixer.music.stop(), talk("Alarma detenida")] if alarma_activa else None,
         "alarma": activar_alarma,
-        "camara": lambda x: capture(),
+        "camara":lambda x: capture(),
         "abre": lambda x: abrir_sitio(x, sites),
         "archivo": lambda x: abrir_archivo(x, files),
         "escribe": lambda x: escribir_nota(),
@@ -295,7 +321,7 @@ def run_selina():
         print("❌ Ya hay otro proceso usando el puerto 12345")
         return True  # Ya
 
-    global ultimo_comando, ocupado
+    global ultimo_comando, ocupado, alarma_activa
     mixer.init()
 
     while True:
@@ -310,7 +336,11 @@ def run_selina():
         if rec:
             try:
                 print(f"⚙️ Procesando comando: {rec}")
-                procesar_comando(rec)  # 🔥 Llamamos a la función que ya maneja los comandos
+                # Si es comando de alarma, manejar en hilo separado
+                if 'alarma' in rec or 'detener' in rec:
+                    threading.Thread(target=procesar_comando, args=(rec,)).start()
+                else:
+                    procesar_comando(rec)
             except Exception as e:
                 print(f"❌ Error procesando comando: {str(e)}")
             finally:
