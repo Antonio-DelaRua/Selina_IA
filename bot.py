@@ -22,6 +22,7 @@ sites = {
     'netflix': 'https://www.netflix.com/es/',
     'instagram': 'https://www.instagram.com/',
     'git': 'https://github.com/',
+    'motivación': 'https://www.youtube.com/watch?v=Pnf8Y0kE4Z8&ab_channel=MotiversityenEspa%C3%B1ol',
 
 }
 
@@ -53,7 +54,8 @@ confirmacion_pendiente = None
 alarma_activa = False
 hora_alarma = None
 alarma_thread = None
-
+reproduccion_pendiente = False
+alarma_pendiente = False
 
 def capture():
     cap = cv2.VideoCapture(0)
@@ -147,10 +149,21 @@ def escuchar():
     s.close()
     
 
-def reproduce_musica(rec):
-    music = rec.replace('reproduce', '').strip()
-    talk(f"Reproduciendo {music}")
-    pywhatkit.playonyt(music)
+def reproduce_musica(rec=None):
+    global reproduccion_pendiente
+    
+    if not reproduccion_pendiente:
+        # Primera parte: preguntar por la canción
+        reproduccion_pendiente = True
+        talk("¿Qué canción quieres escuchar?")
+        return
+    
+    # Segunda parte: recibir el título
+    if rec:
+        reproduccion_pendiente = False
+        music = rec.strip()
+        talk(f"Reproduciendo {music}")
+        pywhatkit.playonyt(music)
 
 def buscar_info(rec):
     search = rec.replace('busca', '').strip()
@@ -175,20 +188,40 @@ def verificar_alarma():
             break
         time.sleep(10)  # Verificar cada 10 segundos
 
-def activar_alarma(rec):
-    global alarma_activa, hora_alarma, alarma_thread
-    num = rec.replace('alarma', '').strip()
-    hora_alarma = num
+def activar_alarma(rec=None):
+    global alarma_activa, hora_alarma, alarma_thread, alarma_pendiente
     
-    # Detener cualquier alarma previa
-    if alarma_thread and alarma_thread.is_alive():
-        alarma_activa = False
-        alarma_thread.join()
+    if not alarma_pendiente:
+        # Primera parte: preguntar por la hora
+        alarma_pendiente = True
+        talk("¿A qué hora quieres la alarma?")
+        return
     
-    alarma_activa = True
-    talk(f"Alarma activada a las {hora_alarma} horas")
-    alarma_thread = threading.Thread(target=verificar_alarma)
-    alarma_thread.start()
+    # Segunda parte: recibir la hora
+    if rec:
+        alarma_pendiente = False
+        try:
+            # Limpiar y formatear la hora
+            hora = rec.replace(' ', '').replace(':', '')
+            if len(hora) != 4 or not hora.isdigit():
+                raise ValueError
+                
+            hora_formateada = f"{hora[:2]}:{hora[2:]}"
+            hora_alarma = hora_formateada
+            
+            # Detener cualquier alarma previa
+            if alarma_thread and alarma_thread.is_alive():
+                alarma_activa = False
+                alarma_thread.join()
+            
+            alarma_activa = True
+            talk(f"Alarma configurada a las {hora_formateada}")
+            alarma_thread = threading.Thread(target=verificar_alarma)
+            alarma_thread.start()
+            
+        except Exception as e:
+            talk("Formato de hora inválido. Intenta de nuevo")
+            alarma_pendiente = True  # Volver a preguntar
 
 def abrir_sitio(rec, sites):
     """Abre un sitio web si está en la lista de sitios conocidos."""
@@ -262,7 +295,15 @@ def confirmar_accion(accion):
     talk(f"¿Quieres {accion} el ordenador? Di sí o no")
 
 def procesar_comando(rec):
-    global confirmacion_pendiente
+    global confirmacion_pendiente, reproduccion_pendiente, alarma_activa, alarma_pendiente
+
+    if alarma_pendiente:
+        activar_alarma(rec)
+        return
+
+    if reproduccion_pendiente:
+        reproduce_musica(rec)
+        return
 
     # Manejar confirmación primero
     if confirmacion_pendiente:
@@ -288,10 +329,10 @@ def procesar_comando(rec):
 
     # Diccionario de comandos principal (fuera del bloque de confirmación)
     comandos = {
-        "reproduce": reproduce_musica,
+        "reproduce": lambda x: reproduce_musica(),  
         "busca": buscar_info,
         "detener": lambda x: [globals().update(alarma_activa=False), mixer.music.stop(), talk("Alarma detenida")] if alarma_activa else None,
-        "alarma": activar_alarma,
+        "alarma": lambda x: activar_alarma(),
         "camara":lambda x: capture(),
         "abre": lambda x: abrir_sitio(x, sites),
         "archivo": lambda x: abrir_archivo(x, files),
