@@ -30,7 +30,7 @@ def iniciar_asistente():
 
 
 # Agregar hablar en un hilo separado para evitar bloqueo
-# def hablar_respuesta(text):
+#def hablar_respuesta(text):
 #   threading.Thread(target=talk, args=(text,), daemon=True).start()
 
 
@@ -208,7 +208,7 @@ def fetch_response(user_input, response_window_instance):
     def run_agent():
         response = asyncio.run(agent(user_input))  # Obtener respuesta del asistente
         response_window_instance.update_response(response)
-       # hablar_respuesta(response)  # Hablar la respuesta usando el bot de voz
+        #hablar_respuesta(response)  # Hablar la respuesta usando el bot de voz
 
     threading.Thread(target=run_agent, daemon=True).start()  # Ejecutar en segundo plano
 

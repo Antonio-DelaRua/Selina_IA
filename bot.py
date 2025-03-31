@@ -5,7 +5,11 @@ from pygame import mixer
 import numpy as np
 import subprocess as sub
 import time
-import re
+import socket
+import platform
+import cv2
+
+
 
 # Diccionarios de sitios, archivos y contactos
 sites = {
@@ -17,13 +21,14 @@ sites = {
     'deportes': 'https://www.as.com',
     'netflix': 'https://www.netflix.com/es/',
     'instagram': 'https://www.instagram.com/',
-    'github': 'https://github.com/',
+    'git': 'https://github.com/',
 
 }
 
 files = {
     'libro': 'buthowudidknow.pdf',
-    'foto': 'image.png'
+    'foto': 'image.png',
+    'manual': 'manual_goku.pdf',
 }
 
 contacts = {
@@ -43,30 +48,30 @@ engine = pyttsx3.init()
 ultimo_comando = None
 ocupado = False
 lock = threading.Lock()
+camara_activa = False
+confirmacion_pendiente = None
+
 
 def capture():
+    global camara_activa
+    camara_activa = True
     cap = cv2.VideoCapture(0)
-    low_yellow = np.array([25, 192, 20], np.uint8)
-    high_yellow = np.array([30, 255, 255], np.uint8)
-
-    while True:
+    
+    while camara_activa:
         ret, frame = cap.read()
         if not ret:
             break
-
-        frame_HSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-        yellow_mask = cv2.inRange(frame_HSV, low_yellow, high_yellow)
-
-        contours, _ = cv2.findContours(yellow_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        for c in contours:
-            area = cv2.contourArea(c)
-            if area > 1000:
-                new_contour = cv2.convexHull(c)
-                cv2.drawContours(frame, [new_contour], 0, (0, 255, 255), 3)
-
-        cv2.imshow('Detección de color', frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+            
+        cv2.imshow('Cámara en vivo', frame)
+        
+        # Cerrar con la tecla 'q' o por comando de voz
+        if cv2.waitKey(1) & 0xFF == ord('q') or not camara_activa:
             break
+            
+    cap.release()
+    cv2.destroyAllWindows()
+    camara_activa = False
+
 
     cap.release()
     cv2.destroyAllWindows()
@@ -98,6 +103,15 @@ def talk(text):
 
 def escuchar():
     """Función que escucha y actualiza el último comando con mejoras"""
+
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.bind(("127.0.0.1", 54321))
+        print("✅ Selina está lista y escuchando en el puerto 54321")
+    except OSError:
+        print("❌ Ya hay otro proceso usando el puerto 54321")
+        return True  # Ya
+
     global ultimo_comando, ocupado
     with sr.Microphone() as source:
         listener.adjust_for_ambient_noise(source, duration=2)
@@ -123,8 +137,8 @@ def escuchar():
                 print("❌ No se detectó voz")
             except Exception as e:
                 print(f"Error: {str(e)}")
-
-
+    s.close()
+    
 
 def reproduce_musica(rec):
     music = rec.replace('reproduce', '').strip()
@@ -185,45 +199,102 @@ def abrir_archivo(rec, files):
 
 def escribir_nota():
     try:
-        # Pedir al usuario el texto antes de abrir el archivo
         talk("¿Qué quieres que escriba?")
-        rec_write = escuchar()
-
-        if rec_write:  # Asegurar que se obtuvo texto
-            with open("nota.txt", 'a') as f:
-                f.write(rec_write + os.linesep)  # Escribir el texto en el archivo
-
-            talk("Listo, puedes revisarlo")
-            sub.Popen(["notepad.exe", "nota.txt"], shell=True)  # Abre la nota en Windows
-        else:
-            talk("No entendí lo que dijiste.")
+        with sr.Microphone() as source:
+            audio = listener.listen(source, timeout=5)
+            texto = listener.recognize_google(audio, language='es-ES')
+            
+        with open("nota.txt", "a") as f:
+            f.write(texto + "\n")
+            
+        talk("Nota guardada correctamente")
+        sub.Popen("nota.txt", shell=True)
+        
     except Exception as e:
-        print(f"Error escribiendo la nota: {str(e)}")
+        talk("No pude escribir la nota")
+        print(f"Error: {str(e)}")
 
+
+        
+def apagar_pc():
+    talk("Apagando el sistema")
+    if platform.system() == "Windows":
+        os.system("shutdown /s /t 0")
+    else:
+        os.system("shutdown -h now")
+
+def reiniciar_pc():
+    talk("Reiniciando el sistema")
+    if platform.system() == "Windows":
+        os.system("shutdown /r /t 0")
+    else:
+        os.system("shutdown -r now")
+
+
+def confirmar_accion(accion):
+    global confirmacion_pendiente
+    confirmacion_pendiente = accion
+    talk(f"¿Quieres {accion} el ordenador? Di sí o no")
 
 def procesar_comando(rec):
-    
+    global confirmacion_pendiente
+
+    # Manejar confirmación primero
+    if confirmacion_pendiente:
+        rec = rec.lower()
+        if "si" in rec or "sí" in rec:
+            if confirmacion_pendiente == "apagar":
+                talk("Apagando el sistema")
+                if platform.system() == "Windows":
+                    os.system("shutdown /s /t 0")
+                else:
+                    os.system("shutdown -h now")
+            elif confirmacion_pendiente == "reiniciar":
+                talk("Reiniciando el sistema")
+                if platform.system() == "Windows":
+                    os.system("shutdown /r /t 0")
+                else:
+                    os.system("shutdown -r now")
+        elif "no" in rec:
+            talk("Operación cancelada")
+        
+        confirmacion_pendiente = None
+        return  # Salir después de manejar la confirmación
+
+    # Diccionario de comandos principal (fuera del bloque de confirmación)
     comandos = {
         "reproduce": reproduce_musica,
         "busca": buscar_info,
         "alarma": activar_alarma,
-        "cam": capture,
+        "camara": lambda x: capture(),
         "abre": lambda x: abrir_sitio(x, sites),
         "archivo": lambda x: abrir_archivo(x, files),
-        "escribe": escribir_nota,
-        "salir": lambda x: talk("Saliendo del asistente") or exit()
+        "escribe": lambda x: escribir_nota(),
+        "apagar": lambda x: confirmar_accion("apagar"),
+        "reiniciar": lambda x: confirmar_accion("reiniciar"),
+        "salir": lambda x: [talk("Saliendo del sistema"), exit()]
     }
 
+    # Buscar coincidencias en comandos
     for clave, funcion in comandos.items():
         if clave in rec:
             funcion(rec)
             return
 
+    # Manejar comandos no reconocidos
     talk("No entendí el comando")
 
 
 
 def run_selina():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.bind(("127.0.0.1", 12345))
+        print("✅ Selina está lista y escuchando en el puerto 12345")
+    except OSError:
+        print("❌ Ya hay otro proceso usando el puerto 12345")
+        return True  # Ya
+
     global ultimo_comando, ocupado
     mixer.init()
 
@@ -247,7 +318,7 @@ def run_selina():
                     ocupado = False
 
         time.sleep(0.2)
-
+    s.close()
 
 
         
