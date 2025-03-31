@@ -12,6 +12,14 @@ import cv2
 
 
 # Diccionarios de sitios, archivos y contactos
+
+canciones = {
+    'motivación': 'https://www.youtube.com/watch?v=Pnf8Y0kE4Z8&ab_channel=MotiversityenEspa%C3%B1ol',
+    'chill': 'https://www.youtube.com/watch?v=cq2Ef6rvL6g&t=3587s&ab_channel=RelaxChilloutMusic',
+    'estudiar': 'https://www.youtube.com/watch?v=DZ5LneDpTBc&ab_channel=musicforlife',
+    'relax': 'https://www.youtube.com/watch?v=LAqOdX5jgb4&ab_channel=JAZZ%26BLUES',
+}
+
 sites = {
     'google': 'https://www.google.com',
     'youtube': 'https://www.youtube.com',
@@ -23,13 +31,30 @@ sites = {
     'instagram': 'https://www.instagram.com/',
     'git': 'https://github.com/',
     'motivación': 'https://www.youtube.com/watch?v=Pnf8Y0kE4Z8&ab_channel=MotiversityenEspa%C3%B1ol',
+    'twitter': 'https://x.com/home',
+    'twitch': 'https://www.twitch.tv',
+    'tiktok': 'https://www.tiktok.com',
+    'spotify': 'https://open.spotify.com/',
+    'linkedin': 'https://www.linkedin.com',
+    'pinterest': 'https://www.pinterest.es',
+    'discord': 'https://discord.com',
+    'gmail': 'https://mail.google.com',
+    'drive': 'https://drive.google.com',
+    'notion': 'https://www.notion.so',
+    'canva': 'https://www.canva.com',
+    'stackoverflow': 'https://stackoverflow.com',
+    'freecodecamp': 'https://www.freecodecamp.org',
+
+
 
 }
 
 files = {
     'libro': 'buthowudidknow.pdf',
-    'foto': 'image.png',
+    'foto': 'logonobt.png',
     'manual': 'manual_goku.pdf',
+    'python': 'python.pdf',
+    'ejercicios': 'Ejercicios-Python.pdf',
 }
 
 contacts = {
@@ -45,7 +70,7 @@ listener.phrase_time_limit = 8  # Límite máximo de frase
 listener.non_speaking_duration = 0.5  # Silencios no considerados como pausas
 engine = pyttsx3.init()
 
-# Variable global para almacenar el último comando
+# Variable global 
 ultimo_comando = None
 ocupado = False
 lock = threading.Lock()
@@ -335,6 +360,7 @@ def procesar_comando(rec):
         "alarma": lambda x: activar_alarma(),
         "camara":lambda x: capture(),
         "abre": lambda x: abrir_sitio(x, sites),
+        "música": lambda x: abrir_sitio(x, canciones),
         "archivo": lambda x: abrir_archivo(x, files),
         "escribe": lambda x: escribir_nota(),
         "apagar": lambda x: confirmar_accion("apagar"),

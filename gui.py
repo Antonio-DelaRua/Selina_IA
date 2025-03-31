@@ -14,7 +14,7 @@ from bot import talk, escuchar, run_selina
 # Variables globales para la ventana de respuesta
 response_window = None
 response_text_widget = None
-
+window_abierta = False
 
 def escuchar_en_hilo():
 
@@ -38,24 +38,36 @@ def iniciar_asistente():
 
 # Función para manejar el doble clic en el muñeco
 def show_combined_window(root):
+    global window_abierta
+    if window_abierta:
+        return
+    window_abierta = True 
+
     class CombinedWindow:
         def __init__(self, parent):
+            self.parent = parent  # Guardar referencia al padre
             self.complete_text = ""
             self.window = tk.Toplevel(parent)
             self.window.title("NoBt GPT \U0001F4BB")
+            self.window.protocol("WM_DELETE_WINDOW", self.on_close)
 
+            # Configurar cursor al abrir
+            parent.config(cursor="watch")
+            self.window.after(500, lambda: parent.config(cursor=""))
+
+            # Configuración de geometría
             screen_width = root.winfo_screenwidth()
             screen_height = root.winfo_screenheight()
             window_width, window_height = 850, 750
             position_x = (screen_width // 2) - (window_width // 2)
             position_y = (screen_height // 2) - (window_height // 2)
             self.window.geometry(f"{window_width}x{window_height}+{position_x}+{position_y}")
-
             self.window.configure(bg='white')
-            
 
+            # Resto de la configuración de la ventana...
             frame = tk.Frame(self.window, bg='white')
             frame.pack(expand=True, fill='both')
+
 
             # Área de respuesta
             self.response_frame = tk.Frame(frame, bg='#ebe8e8', bd=0.5, relief='solid')
@@ -199,6 +211,12 @@ def show_combined_window(root):
 
         def start_listening(user_input, self):
             self.window.after(100, lambda: fetch_response(user_input, self))
+
+        def on_close(self):
+            global window_abierta
+            window_abierta = False
+            self.parent.config(cursor="")
+            self.window.destroy()
 
     return CombinedWindow(root)
 
