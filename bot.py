@@ -8,6 +8,9 @@ import time
 import socket
 import platform
 import cv2
+from ctypes import cast, POINTER
+from comtypes import CLSCTX_ALL
+from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 
 
 
@@ -44,7 +47,9 @@ sites = {
     'canva': 'https://www.canva.com',
     'stackoverflow': 'https://stackoverflow.com',
     'freecodecamp': 'https://www.freecodecamp.org',
-
+    'gpt': 'https://chatgpt.com/',
+    'udemy': 'https://www.udemy.com',
+    'modelos': 'https://openrouter.ai/',
 
 
 }
@@ -118,7 +123,24 @@ def write(f):
     talk("Listo, puedes revisarlo")
     sub.Popen("nota.txt", shell=True)
 
+def cambiar_volumen(accion):
+    devices = AudioUtilities.GetSpeakers()
+    interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+    volume = cast(interface, POINTER(IAudioEndpointVolume))
 
+    current_volume = volume.GetMasterVolumeLevelScalar()  # Obtener volumen actual (0.0 a 1.0)
+
+    if accion == "subir":
+        nuevo_volumen = min(1.0, current_volume + 0.1)  # Aumenta en 10%
+        talk("Subiendo el volumen")
+    elif accion == "bajar":
+        nuevo_volumen = max(0.0, current_volume - 0.1)  # Disminuye en 10%
+        talk("Bajando el volumen")
+    else:
+        return
+
+    volume.SetMasterVolumeLevelScalar(nuevo_volumen, None)
+    print(f"🔊 Volumen ajustado a {int(nuevo_volumen * 100)}%")
 
 def talk(text):
     """Función para que el asistente hable bloqueando la escucha"""
@@ -194,7 +216,7 @@ def buscar_info(rec):
     search = rec.replace('busca', '').strip()
     try:
         wikipedia.set_lang("es")
-        wiki = wikipedia.summary(search, sentences=1)
+        wiki = wikipedia.summary(search, sentences=2)
         talk(wiki)
     except Exception:
         talk("No encontré información sobre eso")
@@ -332,37 +354,39 @@ def procesar_comando(rec):
 
     # Manejar confirmación primero
     if confirmacion_pendiente:
-        rec = rec.lower()
-        if "si" in rec or "sí" in rec:
+        rec = rec.lower().strip()
+        if rec in ["sí", "si", "sí.", "si.", "sí por favor", "sí claro"]:
             if confirmacion_pendiente == "apagar":
                 talk("Apagando el sistema")
                 if platform.system() == "Windows":
-                    os.system("shutdown /s /t 0")
+                    subprocess.run("shutdown /s /t 0", shell=True)
                 else:
-                    os.system("shutdown -h now")
+                    subprocess.run("shutdown -h now", shell=True)
             elif confirmacion_pendiente == "reiniciar":
                 talk("Reiniciando el sistema")
                 if platform.system() == "Windows":
-                    os.system("shutdown /r /t 0")
+                    subprocess.run("shutdown /r /t 0", shell=True)
                 else:
-                    os.system("shutdown -r now")
-        elif "no" in rec:
+                    subprocess.run("shutdown -r now", shell=True)
+        elif rec in ["no", "no gracias", "no quiero"]:
             talk("Operación cancelada")
         
-        confirmacion_pendiente = None
+        confirmacion_pendiente = None  # Resetear confirmación
         return  # Salir después de manejar la confirmación
 
-    # Diccionario de comandos principal (fuera del bloque de confirmación)
+    # Diccionario de comandos
     comandos = {
         "reproduce": lambda x: reproduce_musica(),  
         "busca": buscar_info,
         "detener": lambda x: [globals().update(alarma_activa=False), mixer.music.stop(), talk("Alarma detenida")] if alarma_activa else None,
         "alarma": lambda x: activar_alarma(),
-        "camara":lambda x: capture(),
+        "cámara":lambda x: capture(),
         "abre": lambda x: abrir_sitio(x, sites),
         "música": lambda x: abrir_sitio(x, canciones),
         "archivo": lambda x: abrir_archivo(x, files),
         "escribe": lambda x: escribir_nota(),
+        "sube volumen": lambda x: cambiar_volumen("subir"),
+        "baja volumen": lambda x: cambiar_volumen("bajar"),
         "apagar": lambda x: confirmar_accion("apagar"),
         "reiniciar": lambda x: confirmar_accion("reiniciar"),
         "salir": lambda x: [talk("Saliendo del sistema"), exit()]
@@ -376,7 +400,6 @@ def procesar_comando(rec):
 
     # Manejar comandos no reconocidos
     talk("No entendí el comando")
-
 
 
 def run_selina():
