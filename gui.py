@@ -14,11 +14,14 @@ response_text_widget = None
 window_abierta = False
 
 # Función para manejar el doble clic en el muñeco
-def show_combined_window(root):
+def show_combined_window(root, muneco_label, images):
     global window_abierta
     if window_abierta:
         return
     window_abierta = True 
+
+    muneco_label.config(image=images["muneco_active"])
+    muneco_label.image = images["muneco_active"]
 
     class CombinedWindow:
         def __init__(self, parent):
@@ -96,8 +99,8 @@ def show_combined_window(root):
 
             # Añadir etiqueta de estado
             self.estado_asistente = tk.StringVar()
-            self.estado_asistente.set("Estado: Inactivo")
-            self.estado_label = tk.Label(self.window, textvariable=self.estado_asistente, font=("Comic Sans MS", 12), bg='white')
+            self.estado_asistente.set("Chat Voz: Inactivo")
+            self.estado_label = tk.Label(self.window, textvariable=self.estado_asistente, font=("Comic Sans MS", 12), bg='white', foreground="grey")
             self.estado_label.pack(pady=10)
 
             # Pasar la referencia de estado_asistente a bot.py
@@ -201,6 +204,8 @@ def show_combined_window(root):
             global window_abierta
             window_abierta = False
             self.parent.config(cursor="")
+            muneco_label.config(image=images["muneco"])
+            muneco_label.image = images["muneco"]
             self.window.destroy()
 
     return CombinedWindow(root)
@@ -239,23 +244,44 @@ def do_move(event, muneco_label, root):
 
     muneco_label.place(x=x, y=y)
 
-def show_animation_menu(event, root, muneco_label, fall_images, walk_images, climb_images, fly_image, muneco_photo):
+def show_animation_menu(event, root, muneco_label, fall_images, walk_images, climb_images, fly_image, muneco_photo, muneco_active_image):
     def select_animation(animation):
+
         global animacion_id  # Usamos una variable global para rastrear la animación activa
 
+        
+        animacion_id = apply_gravity(muneco_label, root, fall_images, muneco_photo, muneco_active_image, window_abierta)
         # Si hay una animación en curso, la cancelamos
         if "animacion_id" in globals() and animacion_id:
             root.after_cancel(animacion_id)
 
+        
+
         # Ejecutamos la animación seleccionada
+        if "animacion_id" in globals() and animacion_id:
+            root.after_cancel(animacion_id)
+
+        # Corrección: Cada animación dentro de su condición
         if animation == "Gravedad":
-            animacion_id = apply_gravity(muneco_label, root, fall_images, muneco_photo)
+            animacion_id = apply_gravity(
+                muneco_label, root, fall_images, 
+                muneco_photo, muneco_active_image, window_abierta  # <-- Parámetro añadido
+            )
         elif animation == "Mover a la izquierda":
-            animacion_id = move_to_edge("left", muneco_label, root, walk_images, muneco_photo)
+            animacion_id = move_to_edge(
+                "left", muneco_label, root, walk_images, 
+                muneco_photo, muneco_active_image, window_abierta  # <-- Parámetro añadido
+            )
         elif animation == "Mover a la derecha":
-            animacion_id = move_to_edge("right", muneco_label, root, walk_images, muneco_photo)
+            animacion_id = move_to_edge(
+                "right", muneco_label, root, walk_images,
+                muneco_photo, muneco_active_image, window_abierta  # <-- Parámetro añadido
+            )
         elif animation == "Escalar":
-            animacion_id = climb_animation(muneco_label, root, climb_images, fly_image, muneco_photo)
+            animacion_id = climb_animation(
+                muneco_label, root, climb_images, fly_image,
+                muneco_photo, muneco_active_image, window_abierta  # <-- Parámetro añadido
+            )
 
         animation_menu.destroy()
 
@@ -300,21 +326,20 @@ def show_animation_menu(event, root, muneco_label, fall_images, walk_images, cli
 # Función para cargar imágenes
 def load_images():
     image_paths = {
-        "muneco": "img/muneco.png",
+        "muneco": "img/muneco.png",          # Imagen normal
+        "muneco_active": "img/muneco1.png",  # Imagen activa (al iniciar)
         "fall": ["img/fall_1.png", "img/fall_2.png", "img/fall_3.png"],
-        "walk_left": ["img/walk_left_1.png", "img/walk_left_2.png" , "img/walk_left_3.png"],
+        "walk_left": ["img/walk_left_1.png", "img/walk_left_2.png", "img/walk_left_3.png"],
         "climb": ["img/climb_1.png", "img/climb_2.png", "img/climb_3.png"],
         "fly": "img/volar.png"
     }
 
     images = {}
-
     for key, paths in image_paths.items():
         if isinstance(paths, list):
             images[key] = [ImageTk.PhotoImage(Image.open(path).resize((200, 200), Image.LANCZOS)) for path in paths]
         else:
             images[key] = ImageTk.PhotoImage(Image.open(paths).resize((200, 200), Image.LANCZOS))
-
     return images
 
 # Función para configurar la interfaz gráfica
@@ -346,6 +371,7 @@ def setup_gui(root):
 
     muneco_label = tk.Label(root, image=muneco_photo, bg='white')
     muneco_label.current_after_id = None  # Nuevo atributo para controlar las animaciones
+    
 
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
@@ -353,12 +379,16 @@ def setup_gui(root):
     initial_y = (screen_height // 2) - (200 // 2)
     muneco_label.place(x=initial_x, y=initial_y)
 
-    root.after(100, apply_gravity, muneco_label, root, fall_images, muneco_photo)
+    root.after(100, apply_gravity, muneco_label, root, fall_images, images["muneco"], images["muneco_active"], window_abierta)
 
     muneco_label.bind("<Button-1>", start_move)
     muneco_label.bind("<B1-Motion>", lambda event: do_move(event, muneco_label, root))
-    muneco_label.bind("<Double-1>", lambda event: show_combined_window(root))
-    muneco_label.bind("<ButtonRelease-3>", lambda event: show_animation_menu(event, root, muneco_label, fall_images, walk_images, climb_images, fly_image, muneco_photo))
+    muneco_label.bind("<Double-1>", lambda event: show_combined_window(root, muneco_label, images))
+    muneco_label.bind("<ButtonRelease-3>", lambda event: show_animation_menu(
+    event, root, muneco_label, 
+    fall_images, walk_images, climb_images, 
+    fly_image, muneco_photo, images["muneco_active"]  # <- Añadir imagen activa
+))
     
     # Bind Ctrl+Q to close the application
     root.bind("<Control-q>", lambda event: [print("Bye Bye Camarada"), root.destroy()])
@@ -367,5 +397,5 @@ def setup_gui(root):
 
 if __name__ == "__main__":
     root = tk.Tk()
-    setup_gui(root)
+    muneco_label, images = setup_gui(root)
     root.mainloop()
