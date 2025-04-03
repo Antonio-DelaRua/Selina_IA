@@ -12,8 +12,6 @@ from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 
-
-
 # Diccionarios de sitios, archivos y contactos
 
 canciones = {
@@ -50,8 +48,6 @@ sites = {
     'gpt': 'https://chatgpt.com/',
     'udemy': 'https://www.udemy.com',
     'modelos': 'https://openrouter.ai/',
-
-
 }
 
 files = {
@@ -86,6 +82,14 @@ hora_alarma = None
 alarma_thread = None
 reproduccion_pendiente = False
 alarma_pendiente = False
+asistente_activo = False  # Variable para controlar el estado del asistente
+
+# Variable global para el estado del asistente
+estado_asistente = None
+
+def set_estado_asistente(estado):
+    global estado_asistente
+    estado_asistente = estado
 
 def capture():
     cap = cv2.VideoCapture(0)
@@ -113,8 +117,6 @@ def capture():
 
     cap.release()
     cv2.destroyAllWindows()
-
-
 
 def write(f):
     talk("¿Qué quieres que escriba?")
@@ -144,21 +146,22 @@ def cambiar_volumen(accion):
 
 def talk(text):
     """Función para que el asistente hable bloqueando la escucha"""
-    global ocupado
+    global ocupado, estado_asistente
     with lock:
         ocupado = True
     
     print(f"🗣️ {text}")
+    estado_asistente.set(f"🗣️ {text}")
     engine.say(text)
     engine.runAndWait()
     
     with lock:
         ocupado = False
-
-
+        estado_asistente.set("Estado: Inactivo")
 
 def escuchar():
     """Función que escucha y actualiza el último comando con mejoras"""
+    global estado_asistente, asistente_activo
 
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -175,13 +178,14 @@ def escuchar():
         listener.phrase_time_limit = 5  # Límite de tiempo por frase
         listener.energy_threshold = 3000  # Ajuste más preciso
 
-        while True:
+        while asistente_activo:
             try:
                 with lock:
                     if ocupado:
                         continue
 
                 print("👂 Escuchando...")
+                estado_asistente.set("👂 Escuchando...")
                 audio = listener.listen(source, timeout=5, phrase_time_limit=5)
                 rec = listener.recognize_google(audio, language="es-ES").lower()  # Usar español de España
 
@@ -191,10 +195,11 @@ def escuchar():
 
             except sr.UnknownValueError:
                 print("❌ No se detectó voz")
+                estado_asistente.set("❌ No se detectó voz")
             except Exception as e:
                 print(f"Error: {str(e)}")
+                estado_asistente.set(f"Error: {str(e)}")
     s.close()
-    
 
 def reproduce_musica(rec=None):
     global reproduccion_pendiente
@@ -283,7 +288,6 @@ def abrir_sitio(rec, sites):
     
     talk("No encontré ese sitio en mi lista.")
 
-
 def abrir_archivo(rec, files):
     """Abre un archivo si está en la lista de archivos conocidos."""
     rec = rec.lower()
@@ -320,7 +324,7 @@ def escribir_nota():
 def manejar_camara():
     talk("Enseguida")
     capture()
-        
+
 def apagar_pc():
     talk("Apagando el sistema")
     if platform.system() == "Windows":
@@ -335,14 +339,13 @@ def reiniciar_pc():
     else:
         os.system("shutdown -r now")
 
-
 def confirmar_accion(accion):
     global confirmacion_pendiente
     confirmacion_pendiente = accion
     talk(f"¿Quieres {accion} el ordenador? Di sí o no")
 
 def procesar_comando(rec):
-    global confirmacion_pendiente, reproduccion_pendiente, alarma_activa, alarma_pendiente
+    global confirmacion_pendiente, reproduccion_pendiente, alarma_activa, alarma_pendiente, asistente_activo
 
     if alarma_pendiente:
         activar_alarma(rec)
@@ -380,7 +383,7 @@ def procesar_comando(rec):
         "busca": buscar_info,
         "detener": lambda x: [globals().update(alarma_activa=False), mixer.music.stop(), talk("Alarma detenida")] if alarma_activa else None,
         "alarma": lambda x: activar_alarma(),
-        "cámara":lambda x: capture(),
+        "cámara": lambda x: capture(),
         "abre": lambda x: abrir_sitio(x, sites),
         "música": lambda x: abrir_sitio(x, canciones),
         "archivo": lambda x: abrir_archivo(x, files),
@@ -389,7 +392,7 @@ def procesar_comando(rec):
         "baja volumen": lambda x: cambiar_volumen("bajar"),
         "apagar": lambda x: confirmar_accion("apagar"),
         "reiniciar": lambda x: confirmar_accion("reiniciar"),
-        "salir": lambda x: [talk("Saliendo del sistema"), exit()]
+        "salir": lambda x: [talk("bye bye"), detener_asistente()]
     }
 
     # Buscar coincidencias en comandos
@@ -401,8 +404,20 @@ def procesar_comando(rec):
     # Manejar comandos no reconocidos
     talk("No entendí el comando")
 
+def detener_asistente():
+    global asistente_activo
+    asistente_activo = False
+    talk("El asistente se ha detenido")
+
+def iniciar_asistente():
+    global asistente_activo
+    asistente_activo = True
+    threading.Thread(target=escuchar, daemon=True).start()
+    threading.Thread(target=run_selina, daemon=True).start()
 
 def run_selina():
+    global estado_asistente
+
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.bind(("127.0.0.1", 12345))
@@ -414,7 +429,7 @@ def run_selina():
     global ultimo_comando, ocupado, alarma_activa
     mixer.init()
 
-    while True:
+    while asistente_activo:
         rec = None
         
         with lock:
@@ -426,6 +441,7 @@ def run_selina():
         if rec:
             try:
                 print(f"⚙️ Procesando comando: {rec}")
+                estado_asistente.set(f"⚙️ Procesando comando: {rec}")
                 # Si es comando de alarma, manejar en hilo separado
                 if 'alarma' in rec or 'detener' in rec:
                     threading.Thread(target=procesar_comando, args=(rec,)).start()
@@ -433,12 +449,11 @@ def run_selina():
                     procesar_comando(rec)
             except Exception as e:
                 print(f"❌ Error procesando comando: {str(e)}")
+                estado_asistente.set(f"❌ Error procesando comando: {str(e)}")
             finally:
                 with lock:
                     ocupado = False
+                    estado_asistente.set("Estado: Inactivo")
 
         time.sleep(0.2)
     s.close()
-
-
-        

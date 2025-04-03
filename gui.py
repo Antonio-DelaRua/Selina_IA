@@ -1,40 +1,17 @@
-
 import tkinter as tk
-from tkinter import Toplevel, Text, Button, Frame
+from tkinter import Toplevel, Text, Button, Frame, Label
 from PIL import Image, ImageTk
 from agent import agent
 from movimientos import apply_gravity, move_to_edge, climb_animation
 import re
 import asyncio
 import threading
-from bot import talk, escuchar, run_selina
-
-
+from bot import talk, set_estado_asistente, iniciar_asistente
 
 # Variables globales para la ventana de respuesta
 response_window = None
 response_text_widget = None
 window_abierta = False
-
-def escuchar_en_hilo():
-
-    threading.Thread(target=escuchar, daemon=True).start()
-
-# Iniciar el asistente en un hilo separado
-def iniciar_asistente():
-    """Función que inicia la escucha y el asistente en paralelo"""
-    escuchar_en_hilo()  # Iniciar escucha en un hilo separado
-    threading.Thread(target=run_selina, daemon=True).start()  # Ejecutar comandos en otro hilo
-
-# Llamar a la función para iniciar el asistente en paralelo
-
-
-# Agregar hablar en un hilo separado para evitar bloqueo
-#def hablar_respuesta(text):
-#   threading.Thread(target=talk, args=(text,), daemon=True).start()
-
-
-
 
 # Función para manejar el doble clic en el muñeco
 def show_combined_window(root):
@@ -58,7 +35,7 @@ def show_combined_window(root):
             # Configuración de geometría
             screen_width = root.winfo_screenwidth()
             screen_height = root.winfo_screenheight()
-            window_width, window_height = 850, 750
+            window_width, window_height = 800, 750
             position_x = (screen_width // 2) - (window_width // 2)
             position_y = (screen_height // 2) - (window_height // 2)
             self.window.geometry(f"{window_width}x{window_height}+{position_x}+{position_y}")
@@ -67,7 +44,6 @@ def show_combined_window(root):
             # Resto de la configuración de la ventana...
             frame = tk.Frame(self.window, bg='white')
             frame.pack(expand=True, fill='both')
-
 
             # Área de respuesta
             self.response_frame = tk.Frame(frame, bg='#ebe8e8', bd=0.5, relief='solid')
@@ -117,6 +93,15 @@ def show_combined_window(root):
             self.text_widget.bind("<Return>", lambda event: self.send_message())
 
             self.window.after(100, lambda: self.text_widget.focus_set())
+
+            # Añadir etiqueta de estado
+            self.estado_asistente = tk.StringVar()
+            self.estado_asistente.set("Estado: Inactivo")
+            self.estado_label = tk.Label(self.window, textvariable=self.estado_asistente, font=("Comic Sans MS", 12), bg='white')
+            self.estado_label.pack(pady=10)
+
+            # Pasar la referencia de estado_asistente a bot.py
+            set_estado_asistente(self.estado_asistente)
 
         def setup_text_styles(self):
             self.response_text_widget.tag_configure("code", font=("Courier", 12, "bold"), background="#f4f4f4")
@@ -220,8 +205,6 @@ def show_combined_window(root):
 
     return CombinedWindow(root)
 
-
-
 def fetch_response(user_input, response_window_instance):
     def run_agent():
         response = asyncio.run(agent(user_input))  # Obtener respuesta del asistente
@@ -255,7 +238,6 @@ def do_move(event, muneco_label, root):
         y = virtual_height - muneco_label.winfo_height()
 
     muneco_label.place(x=x, y=y)
-
 
 def show_animation_menu(event, root, muneco_label, fall_images, walk_images, climb_images, fly_image, muneco_photo):
     def select_animation(animation):
@@ -314,7 +296,8 @@ def show_animation_menu(event, root, muneco_label, fall_images, walk_images, cli
     Button(animation_menu, text="izquierda", command=lambda: select_animation("Mover a la izquierda"), **button_config).pack(pady=10, padx=20)
     Button(animation_menu, text="derecha", command=lambda: select_animation("Mover a la derecha"), **button_config).pack(pady=10, padx=20)
     Button(animation_menu, text="Escalar", command=lambda: select_animation("Escalar"), **button_config).pack(pady=10, padx=20)
-    # Función para cargar imágenes
+
+# Función para cargar imágenes
 def load_images():
     image_paths = {
         "muneco": "img/muneco.png",
@@ -333,7 +316,6 @@ def load_images():
             images[key] = ImageTk.PhotoImage(Image.open(paths).resize((200, 200), Image.LANCZOS))
 
     return images
-
 
 # Función para configurar la interfaz gráfica
 def setup_gui(root):
@@ -371,7 +353,6 @@ def setup_gui(root):
     initial_y = (screen_height // 2) - (200 // 2)
     muneco_label.place(x=initial_x, y=initial_y)
 
-
     root.after(100, apply_gravity, muneco_label, root, fall_images, muneco_photo)
 
     muneco_label.bind("<Button-1>", start_move)
@@ -381,7 +362,6 @@ def setup_gui(root):
     
     # Bind Ctrl+Q to close the application
     root.bind("<Control-q>", lambda event: [print("Bye Bye Camarada"), root.destroy()])
-    
 
     return muneco_label, images
 
