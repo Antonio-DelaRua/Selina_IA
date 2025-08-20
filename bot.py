@@ -456,4 +456,4 @@ def run_selina():
                     estado_asistente.set("Estado: Inactivo")
 
         time.sleep(0.2)
-    s.close()
+    s.close()       
