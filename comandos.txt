@@ -1,0 +1,53 @@
+
+
+
+reproduce {
+    - te pregunta que cancion quieres escuchar y ya le dices el titulo y el te la pone en youtube
+
+}
+
+busca {
+    - {palabra que quieras buscar} te lo buscara en la wikipedia
+}
+
+alarma {
+    te pregunta a que hora la quieres y se la tendras que decir primero 2 digitos y depues los otros 2 por ejemplo 18 15
+}
+
+para detener la alarma { detener}
+
+camara { abre la camara web}
+
+abre {
+    - google
+    - youtube
+    - facebook
+    - twitter
+    - instagram
+    - whatsapp
+    - gmail
+    - spotify
+    - netflix
+    - discord
+    - modelos
+    - udemy
+    - gpt
+    - stackoverflow
+    - canva
+    - notion
+    - udemy
+    - freecodecamp
+    - tiktok
+    - twicht
+    - git
+    - motivacion
+    - deportes
+}
+
+archivo {
+    - libro
+    - foto
+    - manual
+    - python
+    - ejercicios
+}
