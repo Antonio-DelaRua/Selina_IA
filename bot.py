@@ -288,6 +288,17 @@ def abrir_sitio(rec, sites):
     
     talk("No encontré ese sitio en mi lista.")
 
+def cerrar_web():
+    if platform.system() == "Windows":
+        os.system("taskkill /IM chrome.exe /F")
+        talk("Cerrando el navegador Chrome")
+    elif platform.system() == "Darwin":
+        os.system("pkill Chrome")
+        talk("Cerrando el navegador Chrome")
+    else:
+        os.system("pkill chrome")
+        talk("Cerrando el navegador Chrome")
+
 def abrir_archivo(rec, files):
     """Abre un archivo si está en la lista de archivos conocidos."""
     rec = rec.lower()
@@ -385,6 +396,7 @@ def procesar_comando(rec):
         "alarma": lambda x: activar_alarma(),
         "cámara": lambda x: capture(),
         "abre": lambda x: abrir_sitio(x, sites),
+        "cerrar web": lambda x: cerrar_web(),
         "música": lambda x: abrir_sitio(x, canciones),
         "archivo": lambda x: abrir_archivo(x, files),
         "escribe": lambda x: escribir_nota(),
@@ -392,7 +404,7 @@ def procesar_comando(rec):
         "baja volumen": lambda x: cambiar_volumen("bajar"),
         "apagar": lambda x: confirmar_accion("apagar"),
         "reiniciar": lambda x: confirmar_accion("reiniciar"),
-        "salir": lambda x: [talk("bye bye"), detener_asistente()]
+        "salir": lambda x: [talk("bye bye"), detener_asistente()],
     }
 
     # Buscar coincidencias en comandos
