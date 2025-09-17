@@ -48,6 +48,7 @@ sites = {
     'gpt': 'https://chatgpt.com/',
     'udemy': 'https://www.udemy.com',
     'modelos': 'https://openrouter.ai/',
+    'manual': 'https://www.notion.so/BD_Selina-271f48680df180a2971ae5201b6a7205?source=copy_link',
 }
 
 files = {
