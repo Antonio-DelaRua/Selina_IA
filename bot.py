@@ -176,7 +176,7 @@ def escuchar():
         listener.adjust_for_ambient_noise(source, duration=2)
         listener.pause_threshold = 0.8  # Reducir pausa necesaria entre frases
         listener.phrase_time_limit = 5  # Límite de tiempo por frase
-        listener.energy_threshold = 3000  # Ajuste más preciso
+        listener.energy_threshold = 5000  # Ajuste más preciso
 
         while asistente_activo:
             try:
