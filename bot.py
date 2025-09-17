@@ -11,6 +11,8 @@ import cv2
 from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
+from comtypes import CLSCTX_ALL
+import ctypes
 
 # Diccionarios de sitios, archivos y contactos
 
@@ -351,6 +353,53 @@ def reiniciar_pc():
     else:
         os.system("shutdown -r now")
 
+def abrir_configuracion():
+    subprocess.run("start ms-settings:", shell=True)
+
+def abrir_terminal():
+    subprocess.run("start cmd", shell=True)
+
+def abrir_descargas():
+    # Intenta primero con Descargas y luego con Downloads
+    possible_folders = ["Descargas", "Downloads"]
+    found = False
+    for folder in possible_folders:
+        downloads_path = os.path.join(os.path.expanduser("~"), folder)
+        if os.path.exists(downloads_path):
+            subprocess.run(f'start "" "{downloads_path}"', shell=True)
+            found = True
+            break
+    if not found:
+        talk("No se encontró la carpeta de descargas en tu usuario.")
+
+def abrir_documentos():
+    possible_folders = ["Documents", "Documentos"]
+    for folder in possible_folders:
+        documents_path = os.path.join(os.path.expanduser("~"), folder)
+        if os.path.isdir(documents_path):
+            subprocess.run(f'explorer "{documents_path}"', shell=True)
+            return
+    talk("No se encontró la carpeta de documentos en tu usuario.")
+
+def abrir_imagenes():
+    possible_folders = ["Imágenes", "Pictures"]
+    for folder in possible_folders:
+        images_path = os.path.join(os.path.expanduser("~"), folder)
+        if os.path.isdir(images_path):
+            subprocess.run(f'explorer "{images_path}"', shell=True)
+            return
+    talk("No se encontró la carpeta de imágenes en tu usuario.")
+
+def quitar_sonido():
+    devices = AudioUtilities.GetSpeakers()
+    interface = devices.Activate(
+        IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+    volume = ctypes.cast(interface, ctypes.POINTER(IAudioEndpointVolume))
+    volume.SetMasterVolumeLevelScalar(0.0, None)  # Volumen al 0%
+
+def abrir_vscode():
+    subprocess.run("code", shell=True)
+
 def confirmar_accion(accion):
     global confirmacion_pendiente
     confirmacion_pendiente = accion
@@ -401,10 +450,17 @@ def procesar_comando(rec):
         "música": lambda x: abrir_sitio(x, canciones),
         "archivo": lambda x: abrir_archivo(x, files),
         "escribe": lambda x: escribir_nota(),
+        "código": lambda x: abrir_vscode(),
+        "terminal": lambda x: abrir_terminal(),
+        "descargas": lambda x: abrir_descargas(),
+        "documentos": lambda x: abrir_documentos(),
+        "imágenes": lambda x: abrir_imagenes(),
+        "mute": lambda x: quitar_sonido(),
         "sube volumen": lambda x: cambiar_volumen("subir"),
         "baja volumen": lambda x: cambiar_volumen("bajar"),
         "apagar": lambda x: confirmar_accion("apagar"),
         "reiniciar": lambda x: confirmar_accion("reiniciar"),
+        "configuración": lambda x: abrir_configuracion(),
         "salir": lambda x: [talk("bye bye"), detener_asistente()],
     }
 
