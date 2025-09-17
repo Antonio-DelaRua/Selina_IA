@@ -207,7 +207,7 @@ def reproduce_musica(rec=None):
     if not reproduccion_pendiente:
         # Primera parte: preguntar por la canción
         reproduccion_pendiente = True
-        talk("¿Qué canción quieres escuchar?")
+        talk("¿dime?")
         return
     
     # Segunda parte: recibir el título
@@ -414,7 +414,7 @@ def procesar_comando(rec):
             return
 
     # Manejar comandos no reconocidos
-    talk("No entendí el comando")
+    
 
 def detener_asistente():
     global asistente_activo
