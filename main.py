@@ -1,6 +1,7 @@
 import tkinter as tk
 from gui import setup_gui
 
+
 def main():
     try:
         root = tk.Tk()
@@ -12,7 +13,7 @@ def main():
     except Exception as e:
         print(f"Error durante la ejecución del programa: {e}")
     finally:
-        print("Cerrando el programa")
+        print("Hasta pronto")
 
 if __name__ == "__main__":
     main()

@@ -39,20 +39,16 @@
 
 
 
+![alt text](image.png)
+
+
 ## CMD
 ctrl + q  ------> cerrar aplicación
 kiv para moviles y tablet ( tactil )
+historia, ver historial, abrir historia ---> para ver los ultimos 10 prompt
+
 
 ## PALABRAS CLAVE
-
-
-# predefinidos alias_dic
-- hola
-- entorno virtual
-- git 
-- react
-- ruxx
-- angular
 
  # bd_python
 - que es python y para que se utiliza?
@@ -147,28 +143,67 @@ kiv para moviles y tablet ( tactil )
 - ejercicio8
 - ejercicio9
 - ejercicio10
+- ejercicio11
+- ejercicio12
+- ejercicio13
+- ejercicio14
+- ejercicio15
+- arquitectura
+- rabbitmq
+- kafka
+- cqrs
+- event sourcing
+- docker
+- aws
+- gcp
+- azure
+- github actions
+- gitlab
+- jenkins
+- nginx
+- gunicorn
+- uwsgi
+- ejercicio16
+- ejercicio17
+- ejercicio18
+- ejercicio19
+- ejercicio20
+- ejercicio21
+- ejercicio22
+- ejercicio23
+- ejercicio24
+- ejercicio25
+- ejercicio26
+- ejercicio27
+- ejercicio28
+- ejercicio29
+- ejercicio30
+- ejercicio31
+- ejercicio32
+- ejercicio33
+- ejercicio34
+- ejercicio35
+- ejercicio36
+- ejercicio37
+- ejercicio38
+- ejercicio39
+- ejercicio40
+- ejercicio41
+- ejercicio42
+- ejercicio43
+- ejercicio44
+- ejercicio45
+- ejercicio46
+- ejercicio47
+- ejercicio48
+- ejercicio49
+- ejercicio50
 
 
 
 
 me queda por documentar : {
 
-Arquitectura limpia (Clean Architecture): Separación de capas (dominio, aplicación, infraestructura).
-
-Microservicios vs Monolito: Cuándo elegir cada uno.
-
-Event-Driven Architecture: Uso de brokers como RabbitMQ, Kafka.
-
-CQRS y Event Sourcing: Diseño para sistemas complejos.
-
-7. DevOps y Deployment
-Contenedores: Docker, Docker Compose.
-
-Cloud: AWS (EC2, S3, Lambda), GCP, Azure.
-
-CI/CD: GitHub Actions, GitLab CI, Jenkins.
-
-Servidores web: Nginx, Gunicorn, uWSGI.
 
 Monitorización: Prometheus, Grafana, Sentry.
 
@@ -203,3 +238,9 @@ Web Scraping: BeautifulSoup, Scrapy, Selenium.
 
 
 }
+
+
+
+
+
+

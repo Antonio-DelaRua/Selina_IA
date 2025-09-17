@@ -1,91 +1,69 @@
-import requests
-import json
-import threading
+import asyncio
+from langchain_ollama import OllamaLLM  # Para usar CodeLlama en local
 from model import HistoryEntry, PythonDB
-from alias_dic import predefined_answers
-from fuzzywuzzy import process
+from info import CompanyInfo
 
-# Direct API Key
-OPENROUTER_API_KEY = "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"
 
-# Historial de la conversación
-conversation_history = []
+# 🚀 Cargar el modelo CodeLlama en local
+local_llm = OllamaLLM(
+    model="codellama:latest",
+    temperature=0.3,
+    num_predict=900,
+    repeat_penalty=1.2,
+    num_gpu_layers=20,
+)
 
-def chat_with_bot(prompt):
-    global conversation_history
-    conversation_history.append({"role": "user", "content": prompt})
-
+async def chat_with_codellama(prompt):
+    """Llama a CodeLlama en local de forma asíncrona para evitar bloqueos."""
     try:
-        response = requests.post(
-            url="https://openrouter.ai/api/v1/chat/completions",
-            headers={
-                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-                "Content-Type": "application/json",
-                "HTTP-Referer": "<YOUR_SITE_URL>",  # Opcional. URL del sitio para rankings en openrouter.ai.
-                "X-Title": "<YOUR_SITE_NAME>",  # Opcional. Título del sitio para rankings en openrouter.ai.
-            },
-            data=json.dumps({
-                "model": "meta-llama/llama-3.3-70b-instruct:free",
-                "messages": conversation_history,
-                "max_tokens": 950,
-                "temperature": 0.5
-            })
-        )
-
-        print("Respuesta de la API recibida")
-
-        if response.status_code == 401:
-            print("Error de autenticación: Verifica tu clave de API.")
-            return "Error de autenticación: Verifica tu clave de API."
-        elif response.status_code != 200:
-            print(f"Error en la respuesta de la API: {response.status_code} - {response.text}")
-            return f"Error en la respuesta de la API: {response.status_code} - {response.text}"
-
-        response_data = response.json()
-        message_content = response_data.get('choices', [{}])[0].get('message', {}).get('content', '')
-        conversation_history.append({"role": "assistant", "content": message_content})
-
-        return message_content
+        loop = asyncio.get_running_loop()
+        response = await loop.run_in_executor(None, local_llm.invoke, prompt)
+        return response or "⚠️ No pude generar una respuesta. Inténtalo de nuevo."
     except Exception as e:
-        print(f"Error al llamar a la API de OpenRouter: {e}")
-        return f"Error al llamar a la API de OpenRouter: {e}"
+        print(f"❌ Error al llamar a CodeLlama: {e}")
+        return f"Error al llamar a CodeLlama: {e}"
 
-def find_closest_match(prompt):
-    match, score = process.extractOne(prompt, predefined_answers.keys())
-    if score > 80:  # Umbral de similitud
-        return match
-    return None
+async def agent(prompt):
+    user_query = prompt.lower().strip()
 
-def agent(prompt):
-    # Buscar el prompt más cercano en las respuestas predefinidas
-    closest_match = find_closest_match(prompt)
-    if closest_match:
-        response = predefined_answers[closest_match]
-        if not HistoryEntry.get_by_prompt(closest_match):
-            HistoryEntry(prompt=closest_match, response=response)
-        return response
+    # 🔄 1. Determinar dinámicamente si incluir contexto de la empresa
+    contexto_empresa = ""
+    if any(keyword in user_query for keyword in ["empresa", "compania", CompanyInfo.NAME.lower()]):
+        contexto_empresa = f"\n\nContexto relevante:\n- Nombre: {CompanyInfo.NAME}\n- Sector: {CompanyInfo.INDUSTRY}\n- FAQs: {', '.join(CompanyInfo.FAQS.keys())}"
 
-    # Buscar en la tabla de prompts predefinidos (PythonDB)
+    prompt_template = f"""
+        **Instrucciones clave:**
+        1. Nunca menciones información de la empresa a menos que el usuario pregunte explícitamente
+        2. Si necesitas hacer referencia a datos internos, usa solo las FAQs cuando haya coincidencia exacta
+        3. Evita suposiciones sobre el contexto organizacional{contexto_empresa}
+
+        **Consulta del usuario:** 
+        {prompt}
+
+        **Formato de respuesta requerido:**
+        - Español con emojis relevantes ✨
+        - Máximo 1 párrafo
+        - Código breve si es útil (```python)
+    """
+
+    # ✅ 2. Búsqueda en FAQs con coincidencia exacta
+    for keyword, answer in CompanyInfo.FAQS.items():
+        if keyword.lower() == user_query:  # Coincidencia exacta
+            return f"🔍 **Respuesta oficial:**\n{answer}"
+    # ✅ Optimización: Consultas en base de datos (evita repeticiones)
     try:
-        predefined_query = PythonDB.get_by_prompt(prompt)
-        if predefined_query:
-            response = predefined_query.response
-            if not HistoryEntry.get_by_prompt(prompt):
-                HistoryEntry(prompt=prompt, response=response)
-            return response
+        respuesta = PythonDB.get_by_prompt(prompt) or HistoryEntry.get_by_prompt(prompt)
+        if respuesta:
+            return respuesta.response
     except Exception as e:
-        print(f"Error al consultar la python_db: {e}")
+        print(f"⚠️ Error en la consulta de base de datos: {e}")
 
-    # Buscar en la base de datos de historial
-    try:
-        query = HistoryEntry.get_by_prompt(prompt)
-        if query:
-            return query.response
-    except Exception as e:
-        print(f"Error al consultar el historial: {e}")
+    # 🔥 Generar respuesta con CodeLlama de forma asíncrona
+    response = await chat_with_codellama(prompt_template)  
 
-    # Si no se encuentra en ningún lado, llamar a la API del modelo
-    response = chat_with_bot(prompt)
+    # ✅ Guardar solo si no existe en historial
     if not HistoryEntry.get_by_prompt(prompt):
-        HistoryEntry(prompt=prompt, response=response)
+        HistoryEntry(prompt=prompt, response=response).save()
+
+
     return response

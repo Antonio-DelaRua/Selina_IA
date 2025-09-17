@@ -636,6 +636,1427 @@ if __name__ == "__main__":
             "Este ejercicio es muy común en pruebas técnicas para evaluar **manejo de cadenas, estructuras de datos y optimización**.  \n"
         ),      
 
+        (
+            "ejercicio11",
+            "# Ejercicio: Análisis de Ventas\n"
+            "**Escribe un programa en Python que:**\n"
+
+            "📚 Lea un archivo CSV con datos de ventas (cada fila tiene: nombre del producto, cantidad vendida y precio unitario).\n"
+            "📚 Calcule el total de ingresos por producto.\n"
+            "📚 Muestre el producto con mayores ventas en cantidad y en ingresos.\n"
+            "📚 Guarde los resultados en un nuevo archivo CSV.\n\n"
+            "**Datos de ejemplo (ventas.csv)**\n"
+            "Producto   |  Cantidad   |   Precio  \n\n"
+            "Laptop     |     5       |     700\n"
+            "Teclado    |     10      |     20\n"
+            "Mouse      |     8       |     15\n"
+            "Monitor    |     4       |     150\n"
+            "Laptop     |     2       |     700 \n"
+            "Teclado    |     5       |     20 \n"
+            "\n"
+            "### Objetivos del ejercicio: \n\n"
+            "✅Manejo de archivos (lectura/escritura de CSV)\n"
+            "✅ Uso de diccionarios para acumular datos\n"
+            "✅ Operaciones con listas y cadenas\n"
+            "✅ Iteraciones y condiciones\n"
+            "\n"
+            "### Solución :"
+            "**Paso 1: Importar las librerías necesarias**  \n\n"
+            "Python tiene una librería llamada `csv` que facilita la lectura y escritura de archivos CSV.  \n"
+            "\n"
+            "```\n\n"
+            "import csv\n\n"
+            "from collections import defaultdict\n"
+            "```\n"
+            "\n"
+            "- `csv`: Nos permite manejar archivos CSV de manera sencilla.  \n\n"
+            "- `defaultdict`: Nos ayuda a almacenar datos sin necesidad de inicializar manualmente valores por defecto.  \n"
+            "\n"
+            "**Paso 2: Leer el archivo CSV y procesar los datos**  \n\n"
+            "Vamos a leer el archivo `ventas.csv` y almacenar los datos en un diccionario.  \n"
+            "\n"
+            "```\n\n"
+            "ventas = defaultdict(lambda: {'cantidad': 0, 'ingresos': 0})  \n"
+            "\n"
+            "with open('ventas.csv', newline='', encoding='utf-8') as archivo:\n\n"
+            "    lector_csv = csv.reader(archivo)\n\n"
+            "    next(lector_csv)  # Omitimos la primera fila (encabezado)\n"
+            "    \n"
+            "    for fila in lector_csv:\n\n"
+            "        producto, cantidad, precio = fila[0], int(fila[1]), float(fila[2])\n"
+            "        \n"
+            "        # Acumulamos las cantidades y los ingresos\n\n"
+            "        ventas[producto]['cantidad'] += cantidad\n\n"
+            "        ventas[producto]['ingresos'] += cantidad * precio\n"
+            "```\n"
+            "\n"
+            "### 🔹 **Explicación:**  \n\n"
+            "- Usamos `defaultdict` para crear un diccionario donde cada producto tiene sus ventas y sus ingresos acumulados.  \n\n"
+            "- Abrimos el archivo CSV en modo lectura (`open('ventas.csv', 'r')`).  \n\n"
+            "- `csv.reader(archivo)` lee cada línea del archivo como una lista.  \n\n"
+            "- `next(lector_csv)` salta la primera fila porque es el encabezado.  \n\n"
+            "- Iteramos sobre cada fila, obteniendo:  \n\n"
+            "  - `producto` (nombre del producto)  \n\n"
+            "  - `cantidad` (convertida a entero)  \n\n"
+            "  - `precio` (convertido a flotante)  \n\n"
+            "- Acumulamos la cantidad total vendida y los ingresos en el diccionario `ventas`.  \n"
+            "\n"
+            "**Paso 3: Encontrar el producto más vendido y el de mayores ingresos**  \n"
+            "\n"
+            "```\n\n"
+            "producto_mas_vendido = max(ventas.items(), key=lambda x: x[1]['cantidad'])\n\n"
+            "producto_mas_ingresos = max(ventas.items(), key=lambda x: x[1]['ingresos'])\n"
+            "\n"
+            "print(f'Producto más vendido: {producto_mas_vendido[0]} ({producto_mas_vendido[1]['cantidad']} unidades)')\n\n"
+            "print(f'Producto con más ingresos: {producto_mas_ingresos[0]} (${producto_mas_ingresos[1]['ingresos']:.2f})')\n"
+            "```\n"
+            "\n"
+            "### 🔹 **Explicación:**  \n\n"
+            "- `max(ventas.items(), key=lambda x: x[1]['cantidad'])`: Busca el producto con mayor cantidad vendida.  \n\n"
+            "- `max(ventas.items(), key=lambda x: x[1]['ingresos'])`: Encuentra el producto con más ingresos.  \n\n"
+            "- `print()`: Muestra los resultados en la consola.  \n"
+            "\n"
+            "**Paso 4: Guardar los resultados en un nuevo archivo CSV**  \n"
+            "\n"
+            "```\n\n"
+            "with open('resultados_ventas.csv', 'w', newline='', encoding='utf-8') as archivo_salida:\n\n"
+            "    escritor_csv = csv.writer(archivo_salida)\n"
+            "    \n"
+            "    # Escribir encabezado\n\n"
+            "    escritor_csv.writerow(['Producto', 'Cantidad Vendida', 'Ingresos Totales'])\n"
+            "    \n"
+            "    # Escribir datos\n\n"
+            "    for producto, datos in ventas.items():\n\n"
+            "        escritor_csv.writerow([producto, datos['cantidad'], f'{datos['ingresos']:.2f}'])\n"
+            "```\n"
+            "\n"
+            "### 🔹 **Explicación:**  \n\n"
+            "- Abrimos un nuevo archivo `resultados_ventas.csv` en modo escritura.  \n\n"
+            "- Escribimos la primera fila con los nombres de las columnas.  \n\n"
+            "- Iteramos sobre el diccionario `ventas` para escribir los datos en el archivo.  \n"
+            "\n"
+            "**Código Completo**  \n"
+            "\n"
+            "```\n\n"
+            "import csv\n\n"
+            "from collections import defaultdict\n"
+            "\n"
+            "# Diccionario para almacenar los datos\n\n"
+            "ventas = defaultdict(lambda: {'cantidad': 0, 'ingresos': 0})\n"
+            "\n"
+            "# Leer archivo CSV y procesar datos\n\n"
+            "with open('ventas.csv', newline='', encoding='utf-8') as archivo:\n\n"
+            "    lector_csv = csv.reader(archivo)\n\n"
+            "    next(lector_csv)  # Saltar el encabezado\n"
+            "\n"
+            "    for fila in lector_csv:\n\n"
+            "        producto, cantidad, precio = fila[0], int(fila[1]), float(fila[2])\n\n"
+            "        ventas[producto]['cantidad'] += cantidad\n\n"
+            "        ventas[producto]['ingresos'] += cantidad * precio\n"
+            "\n"
+            "# Encontrar productos destacados\n\n"
+            "producto_mas_vendido = max(ventas.items(), key=lambda x: x[1]['cantidad'])\n\n"
+            "producto_mas_ingresos = max(ventas.items(), key=lambda x: x[1]['ingresos'])\n"
+            "\n"
+            "print(f'Producto más vendido: {producto_mas_vendido[0]} ({producto_mas_vendido[1]['cantidad']} unidades)')\n\n"
+            "print(f'Producto con más ingresos: {producto_mas_ingresos[0]} (${producto_mas_ingresos[1]['ingresos']:.2f})')\n"
+            "\n"
+            "# Guardar los resultados en un nuevo archivo CSV\n\n"
+            "with open('resultados_ventas.csv', 'w', newline='', encoding='utf-8') as archivo_salida:\n\n"
+            "    escritor_csv = csv.writer(archivo_salida)\n\n"
+            "    escritor_csv.writerow(['Producto', 'Cantidad Vendida', 'Ingresos Totales'])\n"
+            "\n"
+            "    for producto, datos in ventas.items():\n\n"
+            "        escritor_csv.writerow([producto, datos['cantidad'], f'{datos['ingresos']:.2f}'])\n"
+            "```\n"
+            "\n"
+            "**Ejemplo de Salida en Consola**  \n"
+            "\n"
+            "```\n\n"
+            "Producto más vendido: Teclado (15 unidades)\n\n"
+            "Producto con más ingresos: Laptop ($4900.00)\n"
+            "```\n"
+            "\n"
+            "**Ejemplo de Salida en `resultados_ventas.csv`**  \n"
+            "\n"
+            "```\n\n"
+            "Producto,Cantidad Vendida,Ingresos Totales\n\n"
+            "Laptop,7,4900.00\n\n"
+            "Teclado,15,300.00\n\n"
+            "Mouse,8,120.00\n\n"
+            "Monitor,4,600.00\n"
+            "```\n"
+            "\n"
+            "**¿Qué se aprende con este ejercicio?**  \n\n"
+            "✅ **Manejo de archivos CSV** (lectura y escritura).  \n\n"
+            "✅ **Uso de estructuras de datos avanzadas** (`defaultdict` para acumular información).  \n\n"
+            "✅ **Uso de funciones de ordenación** (`max()` con `lambda`).  \n\n"
+            "✅ **Bucles e iteraciones eficientes**.  \n\n"
+            "✅ **Conversión de tipos de datos** (de cadena a `int` y `float`).  \n"
+            "\n"
+        ),
+
+        (
+            "ejercicio12",
+            "# 📌 Ejercicio 12:  \n\n"
+            "Escribe una función en Python llamada `numeros_faltantes` que tome una lista de números enteros ordenados de forma ascendente y devuelva una lista con los números que faltan en la secuencia.  \n"
+            "\n"
+            "**Ejemplo 1:**  \n"
+            "```\n"
+            "entrada = [1, 2, 4, 6, 7, 10]\n\n"
+            "salida = [3, 5, 8, 9]\n"
+            "```  \n"
+            "**Ejemplo 2:**  \n"
+            "```\n"
+            "entrada = [10, 11, 12, 14, 16]\n\n"
+            "salida = [13, 15]\n"
+            "```\n"
+            "\n"
+            "### ✨ **Solución Explicada**:\n\n"
+            "Aquí tienes la solución con una explicación paso a paso:\n"
+            "\n"
+            "```\n"
+            "def numeros_faltantes(lista):\n\n"
+            "    if not lista:  # Si la lista está vacía, retornamos una lista vacía\n\n"
+            "        return []\n"
+            "\n"
+            "    inicio = lista[0]  # Primer número de la lista\n\n"
+            "    fin = lista[-1]    # Último número de la lista\n"
+            "    \n"
+            "    # Generamos un conjunto con todos los números en el rango de la secuencia\n\n"
+            "    conjunto_completo = set(range(inicio, fin + 1))\n"
+            "    \n"
+            "    # Convertimos la lista de entrada en un conjunto\n\n"
+            "    conjunto_lista = set(lista)\n"
+            "    \n"
+            "    # La diferencia entre ambos conjuntos nos da los números faltantes\n\n"
+            "    faltantes = sorted(conjunto_completo - conjunto_lista)\n"
+            "    \n"
+            "    return faltantes\n"
+            "\n"
+            "# Pruebas\n\n"
+            "print(numeros_faltantes([1, 2, 4, 6, 7, 10]))  # ➝ [3, 5, 8, 9]\n\n"
+            "print(numeros_faltantes([10, 11, 12, 14, 16])) # ➝ [13, 15]\n\n"
+            "print(numeros_faltantes([]))                   # ➝ []\n\n"
+            "print(numeros_faltantes([5, 6, 7, 8]))         # ➝ []\n"
+            "```\n"
+            "\n"
+            "🔍 **Explicación del Código**:\n\n"
+            "1. **Verificación de lista vacía**: Si la lista está vacía, simplemente retornamos `[]`.\n\n"
+            "2. **Encontramos el rango completo**: Usamos `range(inicio, fin+1)` para generar todos los números desde el primero hasta el último de la lista.\n\n"
+            "3. **Creamos conjuntos**: Convertimos la lista dada en un `set()` para poder compararla con el conjunto completo.\n\n"
+            "4. **Diferencia de conjuntos**: Restamos ambos conjuntos (`conjunto_completo - conjunto_lista`) para obtener los números faltantes.\n\n"
+            "5. **Devolvemos los valores ordenados**: Convertimos el resultado en una lista ordenada.\n"
+            "\n"
+            "Este tipo de ejercicio evalúa el conocimiento sobre:\n\n"
+            "✅ Manipulación de listas y conjuntos  \n\n"
+            "✅ Uso de `range()` y operaciones de conjuntos  \n\n"
+            "✅ Eficiencia en la solución (uso de conjuntos en vez de bucles anidados)\n"
+        ),
+
+        (
+            "ejercicio13",
+            "# 📌 Ejercicio 13  \n\n"
+            "Escribe una función en Python llamada `rango_faltante_mas_largo` que tome una lista de números enteros ordenados y devuelva el **rango continuo de números faltantes más largo** dentro de la secuencia.\n"
+            "**Ejemplo 1:**  \n"
+            "```\n"
+            "entrada = [1, 2, 4, 6, 7, 10, 11, 12, 15]\n\n"
+            "salida = [5, 6]\n"
+            "```\n"
+            "**Explicación:** Los números faltantes son `[3, 5, 8, 9, 13, 14]`, pero el rango más largo es `[5, 6]` con longitud 2.\n"
+            "\n"
+            "**Ejemplo 2:**  \n"
+            "```\n\n"
+            "entrada = [10, 11, 12, 14, 16, 17, 18, 20, 21, 22]\n\n"
+            "salida = [13, 14]\n"
+            "```\n\n"
+            "> Explicación: Los números faltantes son `[13, 15, 19]`, pero el rango más largo es `[13, 14]` con longitud 2.\n"
+            "\n"
+            "### ✨ **Solución Explicada**:\n"
+            "\n"
+            "```\n\n"
+            "def rango_faltante_mas_largo(lista):\n\n"
+            "    if not lista:\n\n"
+            "        return []\n"
+            "\n"
+            "    inicio, fin = lista[0], lista[-1]\n\n"
+            "    conjunto_lista = set(lista)\n"
+            "    \n"
+            "    max_rango = []\n\n"
+            "    actual_rango = []\n"
+            "\n"
+            "    for num in range(inicio, fin + 1):\n\n"
+            "        if num not in conjunto_lista:\n\n"
+            "            actual_rango.append(num)\n\n"
+            "        else:\n\n"
+            "            if len(actual_rango) > len(max_rango):\n\n"
+            "                max_rango = actual_rango\n\n"
+            "            actual_rango = []  # Reiniciamos la lista\n"
+            "\n"
+            "    # Verificación final por si el rango más largo está al final de la iteración\n\n"
+            "    if len(actual_rango) > len(max_rango):\n\n"
+            "        max_rango = actual_rango\n"
+            "\n"
+            "    return max_rango\n"
+            "\n"
+            "# Pruebas\n\n"
+            "print(rango_faltante_mas_largo([1, 2, 4, 6, 7, 10, 11, 12, 15]))  # ➝ [5, 6]\n\n"
+            "print(rango_faltante_mas_largo([10, 11, 12, 14, 16, 17, 18, 20, 21, 22]))  # ➝ [13, 14]\n\n"
+            "print(rango_faltante_mas_largo([1, 3, 5, 7, 9]))  # ➝ [2, 3]\n\n"
+            "print(rango_faltante_mas_largo([5, 6, 7, 8]))  # ➝ []\n\n"
+            "print(rango_faltante_mas_largo([]))  # ➝ []\n"
+            "```\n"
+            "\n"
+            "🔍 **Explicación del Código**:\n\n"
+            "1. **Verificación de lista vacía**: Si la lista está vacía, retornamos `[]`.\n\n"
+            "2. **Generamos el rango completo**: Desde `inicio` hasta `fin` usando `range()`.\n\n"
+            "3. **Recorremos el rango**:\n\n"
+            "   - Si encontramos un número faltante, lo agregamos a `actual_rango`.\n\n"
+            "   - Si encontramos un número que **sí está en la lista**, verificamos si `actual_rango` es más largo que `max_rango`, y luego lo reiniciamos.\n\n"
+            "4. **Verificación final**: Por si el rango más largo termina justo al final del bucle.\n\n"
+            "5. **Retornamos el rango más largo de números faltantes**.\n"
+            "\n"
+            "📈 **Complejidad del Algoritmo**:\n\n"
+            "- La solución usa un **único recorrido (O(n))**, ya que iteramos la lista una vez.\n\n"
+            "- El uso de `set(lista)` nos permite hacer búsquedas en **O(1)** en lugar de O(n).\n"
+            "\n"
+            "💡 **Este tipo de ejercicio evalúa**:\n\n"
+            "✅ Manipulación eficiente de listas  \n\n"
+            "✅ Algoritmos de búsqueda de secuencias  \n\n"
+            "✅ Complejidad computacional  \n"  
+        ),
+
+        (
+            "ejercicio14",
+            "# 📌 Ejercicio 14  \n\n"
+            "Escribe una función en Python llamada `subarreglo_maximo` que encuentre la **subsecuencia contigua** con la **mayor suma** dentro de una lista de números enteros (puede contener positivos y negativos).  \n"
+
+            "**Ejemplo 1:**  \n"
+            "```\n\n"
+            "entrada = [-2, 1, -3, 4, -1, 2, 1, -5, 4]\n\n"
+            "salida = [4, -1, 2, 1]  # Suma = 6\n"
+            "```\n"
+
+            "**Ejemplo 2:**  \n"
+            "```\n\n"
+            "entrada = [5, -2, 3, -1, 6, -3, 2, -5, 4]\n\n"
+            "salida = [5, -2, 3, -1, 6]  # Suma = 11\n"
+            "```\n"
+
+            "**Ejemplo 3:**  \n"
+            "```\n\n"
+            "entrada = [-1, -2, -3, -4]\n\n"
+            "salida = [-1]  # Si todos son negativos, devolvemos el mayor\n"
+            "```\n"
+
+            '### ✨ Solución Explicada (Usando Kadane"s Algorithm):\n'
+
+            "```\n\n"
+            "def subarreglo_maximo(arr):\n\n"
+            "    if not arr:\n\n"
+            "        return []\n"
+            "\n"
+            "    max_suma = arr[0]\n\n"
+            "    actual_suma = arr[0]\n"
+            "    \n"
+            "    inicio, fin = 0, 0\n\n"
+            "    temp_inicio = 0\n"
+            "\n"
+            "    for i in range(1, len(arr)):\n\n"
+            "        if arr[i] > actual_suma + arr[i]:  \n\n"
+            "            actual_suma = arr[i]\n\n"
+            "            temp_inicio = i  # Iniciamos nueva sublista\n\n"
+            "        else:\n\n"
+            "            actual_suma += arr[i]  \n"
+            "\n"
+            "        if actual_suma > max_suma:\n\n"
+            "            max_suma = actual_suma\n\n"
+            "            inicio = temp_inicio\n\n"
+            "            fin = i  # Marcamos el final del mejor subarreglo\n"
+            "\n"
+            "    return arr[inicio:fin+1]  # Devolvemos la sublista con mayor suma\n"
+            "\n"
+            "# Pruebas\n\n"
+            "print(subarreglo_maximo([-2, 1, -3, 4, -1, 2, 1, -5, 4]))  # ➝ [4, -1, 2, 1]\n\n"
+            "print(subarreglo_maximo([5, -2, 3, -1, 6, -3, 2, -5, 4]))  # ➝ [5, -2, 3, -1, 6]\n\n"
+            "print(subarreglo_maximo([-1, -2, -3, -4]))  # ➝ [-1]\n\n"
+            "print(subarreglo_maximo([1, 2, 3, 4, 5]))  # ➝ [1, 2, 3, 4, 5]\n\n"
+            "print(subarreglo_maximo([]))  # ➝ []\n"
+            "```\n"
+            "\n"
+            "🔍 **Explicación del Código**:\n\n"
+            "1. **Inicializamos variables**:\n\n"
+            "   - `max_suma` almacena la mayor suma encontrada.\n\n"
+            "   - `actual_suma` mantiene la suma de la subsecuencia actual.\n\n"
+            "   - `inicio`, `fin` y `temp_inicio` nos permiten rastrear los índices del mejor subarreglo.\n\n"
+            "2. **Recorremos la lista**:\n\n"
+            "   - Decidimos si agregar el número actual a la suma o **empezar una nueva subsecuencia**.\n\n"
+            "   - Si la nueva suma supera la `max_suma`, actualizamos los índices.\n\n"
+            "3. **Devolvemos la subsecuencia con mayor suma**.\n"
+            "\n"
+            "📈 **Complejidad del Algoritmo**:\n\n"
+            "- **O(n)** → Kadane’s Algorithm resuelve este problema en **tiempo lineal**.\n"
+            "\n"
+            "💡 **Este ejercicio evalúa**:\n\n"
+            "✅ Algoritmos de programación dinámica  \n\n"
+            "✅ Manipulación eficiente de listas  \n\n"
+            "✅ Manejo de secuencias y sumas  \n"
+        ),
+
+        (
+            "ejercicio15",
+            "## 📌 **Ejercicio: Suma de Dígitos Recursiva (Raíz Digital)**  \n\n"
+            "**Ejemplo 1:**  \n"
+            "```\n"
+            "entrada = 9875\n"
+            "salida = 2\n"
+            "```\n"
+            "**Explicación:**\n"
+            "9 + 8 + 7 + 5 = **29**\n"
+            "2 + 9 = **11** \n"
+            "1 + 1 = **2** \n"
+            "\n"
+            "**Ejemplo 2:**\n"
+            "```\n\n"
+            "entrada = 1234\n\n"
+            "salida = 1\n"
+            "```\n\n"
+            "**Explicación:**  \n"
+            "1 + 2 + 3 + 4 = **10** \n"
+            "1 + 0 = **1**  \n"
+            "\n"
+            "**Ejemplo 3:**  \n"
+            "```\n\n"
+            "entrada = 9\n\n"
+            "salida = 9\n"
+            "```\n\n"
+            "**Explicación:** Es un solo dígito, así que se devuelve tal cual.\n"
+            "\n"
+            "✨ **Solución Explicada (Versión Recursiva)**:\n"
+            "```\n\n"
+            "def raiz_digital(n):\n\n"
+            "    if n < 10:  # Si ya es un solo dígito, lo devolvemos\n\n"
+            "        return n\n\n"
+            "    suma = sum(int(digito) for digito in str(n))  # Sumamos los dígitos\n\n"
+            "    return raiz_digital(suma)  # Llamamos a la función recursivamente\n"
+            "\n"
+            "# Pruebas\n\n"
+            "print(raiz_digital(9875))  # ➝ 2\n\n"
+            "print(raiz_digital(1234))  # ➝ 1\n\n"
+            "print(raiz_digital(9))     # ➝ 9\n\n"
+            "print(raiz_digital(99999)) # ➝ 9\n\n"
+            "print(raiz_digital(100))   # ➝ 1\n"
+            "```\n"
+            "\n"
+            "🔍 **Explicación del Código**:\n\n"
+            "1. **Caso base**: Si `n` ya es un solo dígito, se devuelve tal cual.\n\n"
+            "2. **Convertimos el número en una lista de dígitos** (`str(n)`) y los sumamos.\n\n"
+            "3. **Llamamos a la función recursivamente** con la nueva suma hasta llegar a un solo dígito.\n"
+            "\n"
+            "📈 **Complejidad del Algoritmo**:\n\n"
+            "- **O(log n)** → Porque en cada paso reducimos la cantidad de dígitos.\n"
+            "\n"
+            "💡 **Este ejercicio ayuda a practicar**:  \n\n"
+            "✅ Recursión  \n\n"
+            "✅ Manipulación de números y strings  \n\n"
+            "✅ Algoritmos matemáticos básicos  \n"
+        ),
+
+        (
+            "ejercicio16",
+            "# Ejercicio 16: Conversión de temperatura\n"
+            "### Crea un programa que convierta grados Celsius a Fahrenheit.\n"
+            "El usuario debe ingresar la temperatura en Celsius y el programa mostrará el equivalente en Fahrenheit.\n"
+            "```\n"
+            "Fórmula: F = (C × 9/5) + 32\n"
+            "```\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            'celsius = float(input("Ingresa la temperatura en Celsius: "))'
+            "fahrenheit = (celsius * 9/5) + 32\n"
+            'print(f"{celsius}°C equivalen a {fahrenheit}°F")\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Usamos input() para recibir la temperatura en Celsius y float() para convertirla a decimal.\n"
+            "- Aplicamos la fórmula de conversión.\n"
+            "- Usamos una f-string para formatear la salida con los valores.\n"
+        ),
+
+        (
+            "ejercicio17",
+            "# Ejercicio 17: Número primo\n\n"
+            "### Descripción\n"
+            "Verifica si un numero ingresado por el usuario es primo o no\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            'numero = int(input("Ingresa un número: "))\n'
+            "es_primo = True\n\n"
+            "if numero <= 1:\n"
+            "    es_primo = False\n"
+            "else:\n"
+            "    for i in range(2, int(numero**0.5) + 1):\n"
+            "        if numero % i == 0:\n"
+            "            es_primo = False\n"
+            "            break\n\n"
+            'print(f"¿{numero} es primo? {es_primo}")\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Un número primo es mayor que 1 y solo divisible por 1 y sí mismo.\n"
+            "- Iteramos desde 2 hasta la raíz cuadrada del número (optimización para reducir iteraciones).\n"
+            "- Si el número es divisible por algún valor en ese rango, no es primo.\n"
+        ),
+
+        (
+            "ejercicio18",
+            "# Ejercicio 18: Invertir una cadena\n\n"
+            "### Descripción\n"
+            "Escribe un programa que invierta una cadena ingresada por el usuario.\n"
+            "**Ejemplo:** 'hola' -> 'aloh'\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            'cadena = input("Ingresa una cadena: ")\n'
+            'invertida = ""\n\n'
+            "for caracter in cadena:\n"
+            "    invertida = caracter + invertida\n\n"
+            'print(f"Cadena invertida: {invertida}")\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Usamos un bucle for para recorrer cada carácter de la cadena original.\n"
+            "- En cada iteración, concatenamos el carácter al principio de la cadena invertida.\n"
+            "- Alternativamente, se podría usar cadena[::-1], pero este método enseña el proceso manual.\n"
+        ),
+
+        (
+            "ejercicio19",
+            "# Ejercicio 19: Fibonacci simple\n\n"
+            "Genera los primeros n términos de la secuencia de Fibonacci, donde n es ingresado por el usuario.\n"
+            "La secuencia comienza con 0 y 1, y cada término siguiente es la suma de los dos anteriores.\n"
+            "\n"
+            "**Ejemplo:** Si n = 5, la salida es [0, 1, 1, 2, 3].\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            'n = int(input("Ingresa cuántos términos de Fibonacci quieres: "))\n'
+            "fibonacci = [0, 1]\n\n"
+            "for i in range(2, n):\n"
+            "    siguiente = fibonacci[i-1] + fibonacci[i-2]\n"
+            "    fibonacci.append(siguiente)\n\n"
+            'print(f"Primeros {n} términos:", fibonacci[:n])\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Inicializamos la lista con los primeros dos valores: [0, 1].\n"
+            "- Usamos un bucle para calcular cada nuevo término sumando los dos anteriores.\n"
+            "- Si el usuario ingresa n <= 2, usamos fibonacci[:n] para evitar errores.\n"
+        ),
+
+        (
+            "ejercicio20",
+            "# Ejercicio 20: Tabla de multiplicar\n\n"
+            "Imprime la tabla de multiplicar de un número ingresado por el usuario, desde el 1 hasta el 10.\n"
+            "**Ejemplo:** Para 5, la salida debe ser 5x1=5, 5x2=10, ..., 5x10=50.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            'numero = int(input("Ingresa un número: "))\n\n'
+            "for i in range(1, 11):\n"
+            '    print(f"{numero}x{i} = {numero * i}")\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Usamos un bucle for con range(1, 11) para iterar del 1 al 10.\n"
+            "- En cada iteración, calculamos el producto y usamos f-strings para formatear la salida.\n"
+            "- Ideal para practicar bucles y formateo de cadenas.\n"
+
+        ),
+
+        (
+            "ejercicio21",
+            "# Ejercicio 21: Suma de dígitos\n\n"
+            "Calcula la suma de los dígitos de un número entero ingresado por el usuario.\n"
+            "**Ejemplo:** Si el número es 1234, la suma es 1 + 2 + 3 + 4 = 10.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            'numero = input("Ingresa un número entero: ")\n'
+            "suma = 0\n\n"
+            "for digito in numero:\n"
+            "    suma += int(digito)\n\n"
+            'print(f"Suma de los dígitos: {suma}")\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Tratamos el número como una cadena para iterar sobre cada dígito.\n"
+            "- Convertimos cada dígito a entero y lo sumamos.\n"
+            "- Alternativa numérica: usar % 10 y divisiones para extraer dígitos (ejercicio avanzado).\n"
+
+        ),
+
+        (
+            "ejercicio22",
+            "# Ejercicio 22: Adivina el número\n\n"
+            "Crea un juego donde el programa genera un número aleatorio entre 1 y 100, y el usuario debe adivinarlo.\n"
+            "\n"
+            'El programa da pistas como "muy alto" o "muy bajo" hasta que el usuario acierte.\n'
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "import random\n\n"
+            "numero_secreto = random.randint(1, 100)\n"
+            "intentos = 0\n\n"
+            "while True:\n"
+            '    intento = int(input("Adivina el número (1-100): "))\n'
+            "    intentos += 1\n\n"
+            "    if intento < numero_secreto:\n"
+            '        print("Demasiado bajo ⬇")\n'
+            "    elif intento > numero_secreto:\n"
+            '        print("Demasiado alto ⬆")\n'
+            "    else:\n"
+            '        print(f"¡Correcto! Lo lograste en {intentos} intentos.")\n'
+            "        break\n"
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Usamos random.randint() para generar el número aleatorio.\n"
+            "- El bucle while True se repite hasta que el usuario acierta.\n"
+            "- Contamos los intentos para dar retroalimentación al final.\n"
+        ),
+
+        (
+            "ejercicio23",
+            "# Ejercicio 23: Factorial de un número (usando recursión)\n\n"
+            "Calcula el factorial de un número usando una función recursiva.\n"
+            "El factorial de n (n!) es el producto de todos los enteros positivos desde 1 hasta n.\n"
+            "\n"
+            "**Ejemplo:** 5! = 5 × 4 × 3 × 2 × 1 = 120.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "def factorial(n):\n"
+            "    if n == 0 or n == 1:\n"
+            "        return 1\n"
+            "    else:\n"
+            "        return n * factorial(n-1)\n\n"
+            'numero = int(input("Ingresa un número: "))\n'
+            'print(f"{numero}! = {factorial(numero)}")\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- La recursión se basa en que n! = n × (n-1)!, con caso base 0! = 1 y 1! = 1.\n"
+            "- Si n es 0 o 1, retorna 1. En otro caso, llama a la función con n-1.\n"
+        ),
+
+        (
+            "ejercicio24",
+            "# Ejercicio 24: Filtrar números pares de una lista\n\n"
+            "Crea una lista con números del 1 al 20 y luego filtra solo los números pares usando comprensión de listas.\n"
+            "Salida esperada: [2, 4, 6, ..., 20].\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "numeros = list(range(1, 21))\n"
+            "pares = [num for num in numeros if num % 2 == 0]\n"
+            'print("Números pares:", pares)\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- range(1, 21) genera números del 1 al 20.\n"
+            "- La comprensión de listas ([num for ...]) filtra los elementos que cumplen num % 2 == 0.\n"
+            "- Ideal para enseñar sintaxis compacta y eficiente.\n"
+        ),
+
+        (
+            "ejercicio25",
+            "# Ejercicio 25: Combinar dos diccionarios\n\n"
+            "Combina dos diccionarios sumando los valores de las claves repetidas.\n"
+            "Ejemplo:\n"
+            "dict1 = {'a': 10, 'b': 20}\n"
+            "dict2 = {'b': 30, 'c': 40}\n\n"
+            "Resultado: {'a': 10, 'b': 50, 'c': 40}.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "dict1 = {'a': 10, 'b': 20}\n"
+            "dict2 = {'b': 30, 'c': 40}\n"
+            "resultado = {}\n\n"
+            "#Combinar claves únicas de ambos diccionarios\n"
+            "for key in dict1.keys() | dict2.keys():\n"
+            "    resultado[key] = dict1.get(key, 0) + dict2.get(key, 0)\n\n"
+            'print("Diccionario combinado:", resultado)\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- dict1.keys() | dict2.keys() obtiene todas las claves únicas de ambos diccionarios.\n"
+            "- get(key, 0) devuelve 0 si la clave no existe en un diccionario.\n"
+            "- Sumamos los valores de cada clave para combinarlos.\n"
+        ),
+
+        (
+            "ejercicio26",
+            "# Ejercicio 26: Validar año bisiesto\n\n"
+            "Determina si un año ingresado por el usuario es bisiesto.\n"
+            "\n"
+            "### Reglas:\n"
+            "- Divisible por 4 → Bisiesto.\n"
+            "- Excepto si es divisible por 100 → No bisiesto.\n"
+            "- A menos que también sea divisible por 400 → Bisiesto.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            'anio = int(input("Ingresa un año: "))\n\n'
+            'es_bisiesto = (anio % 4 == 0 and anio % 100 != 0) or (anio % 400 == 0)\n'
+            'print(f"¿{anio} es bisiesto? {es_bisiesto}")\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Usamos operadores lógicos para aplicar las reglas en una sola línea.\n"
+            "- Ejemplo: 2000 es bisiesto (divisible por 400), pero 1900 no (divisible por 100 pero no por 400).\n"
+        ),
+
+        (
+            "ejercicio27",
+            "# Ejercicio 27: Ordenar lista con Bubble Sort\n\n"
+            "Implementa el algoritmo de Bubble Sort para ordenar una lista de números ingresada por el usuario.\n"
+            "Ejemplo: [5, 3, 8, 1] → [1, 3, 5, 8].\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "lista = [5, 3, 8, 1, 2]\n"
+            "n = len(lista)\n\n"
+            "for i in range(n):\n"
+            "    for j in range(0, n-i-1):\n"
+            "        if lista[j] > lista[j+1]:\n"
+            "            lista[j], lista[j+1] = lista[j+1], lista[j]  # Intercambiar\n\n"
+            'print("Lista ordenada:", lista)\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Bubble Sort compara elementos adyacentes y los intercambia si están en orden incorrecto.\n"
+            "- El bucle externo controla las pasadas completas, y el interno recorre la lista reduciendo el rango en cada pasada (n-i-1).\n"
+            "- Útil para enseñar algoritmos de ordenamiento básicos.\n"
+            "\n"
+
+        ),
+
+        (
+            "ejercicio28",
+            "# Ejercicio 28: Contar palabras en un archivo\n\n"
+            "Crea un programa que lea un archivo de texto (.txt) y cuente cuántas veces aparece cada palabra. Ignora mayúsculas/minúsculas y signos de puntuación.\n"
+            'Ejemplo de salida: {"python": 5, "hola": 3, ...}.\n'
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "import string\n\n"
+            "def contar_palabras(nombre_archivo):\n"
+            "    contador = {}\n"
+            "    with open(nombre_archivo, 'r') as archivo:\n"
+            "        texto = archivo.read().lower()\n"
+            "        # Eliminar signos de puntuación\n"
+            "        texto = texto.translate(str.maketrans('', '', string.punctuation))\n"
+            "        palabras = texto.split()\n\n"
+            "        for palabra in palabras:\n"
+            "            contador[palabra] = contador.get(palabra, 0) + 1\n"
+            "    return contador\n\n"
+            '# Ejecución (asegúrate de tener el archivo "ejemplo.txt")\n'
+            'resultado = contar_palabras("ejemplo.txt")\n'
+            'print("Frecuencia de palabras:", resultado)\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Usamos translate() y string.punctuation para eliminar signos de puntuación.\n"
+            "- contador.get(palabra, 0) evita errores si la palabra no está en el diccionario.\n"
+            "- Ideal para enseñar manejo de archivos y limpieza de datos.\n"
+        ),
+
+        (
+            "ejercicio29",
+            "# Ejercicio 29: Cifrado César\n\n"
+            "Implementa un cifrado César que desplace cada letra de un mensaje por un número fijo de posiciones en el alfabeto.\n"
+            'Ejemplo: Con desplazamiento 3, "HOLA" → "KROD".\n'
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "def cifrado_cesar(texto, desplazamiento):\n"
+            "    resultado = []\n"
+            "    for letra in texto:\n"
+            "        if letra.isalpha():\n"
+            "            ascii_base = ord('a') if letra.islower() else ord('A')\n"
+            "            nueva_letra = chr((ord(letra) - ascii_base + desplazamiento) % 26 + ascii_base)\n"
+            "            resultado.append(nueva_letra)\n"
+            "        else:\n"
+            "            resultado.append(letra)\n"
+            "    return ''.join(resultado)\n\n"
+            'texto = input("Ingresa el texto: ")\n'
+            'desplazamiento = int(input("Desplazamiento: ")\n'
+            'print("Texto cifrado:", cifrado_cesar(texto, desplazamiento))\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Usamos ord() y chr() para convertir entre caracteres y valores ASCII.\n"
+            '- % 26 asegura que el desplazamiento "dé la vuelta" (ej: la z + 1 → a).\n'
+            "- Se conservan espacios y caracteres no alfabéticos.\n"
+        ),
+
+        (
+            "ejercicio30",
+            "# Ejercicio 30: Calculadora de edad\n\n"
+            "Pide al usuario su fecha de nacimiento (dd/mm/aaaa) y calcula su edad en años.\n"
+            "Ejemplo: Si hoy es 15/04/2024 y nació el 20/05/2000 → 23 años.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "from datetime import datetime\n\n"
+            "def calcular_edad(fecha_nac):\n"
+            "    hoy = datetime.now()\n"
+            '    nacimiento = datetime.strptime(fecha_nac, "%d/%m/%Y")\n\n'
+            "    edad = hoy.year - nacimiento.year\n"
+            "    # Ajustar si aún no ha pasado el cumpleaños este año\n"
+            "    if (hoy.month, hoy.day) < (nacimiento.month, nacimiento.day):\n"
+            "        edad -= 1\n"
+            "    return edad\n\n"
+            'fecha = input("Ingresa tu fecha de nacimiento (dd/mm/aaaa): ")\n'
+            'print(f"Tienes {calcular_edad(fecha)} años.")\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Usamos datetime para manejar fechas.\n"
+            "- strptime convierte la cadena de entrada en un objeto fecha.\n"
+            "- El ajuste resta 1 año si el cumpleaños aún no ha ocurrido en el año actual.\n"
+        ),
+
+        (
+            "ejercicio31",
+            "# Ejercicio 31: Validar contraseña segura\n\n"
+            "Verifica si una contraseña tiene al menos 8 caracteres, una mayúscula, una minúscula, y un número.\n"
+            "Ejemplo:\n"
+            "Contraseña: Python3 → Válida.\n"
+            "Contraseña: hola → Inválida.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "def es_contraseña_segura(password):\n"
+            "    if len(password) < 8:\n"
+            "        return False\n"
+            "    tiene_mayuscula = any(c.isupper() for c in password)\n"
+            "    tiene_minuscula = any(c.islower() for c in password)\n"
+            "    tiene_numero = any(c.isdigit() for c in password)\n"
+            "    return tiene_mayuscula and tiene_minuscula and tiene_numero\n\n"
+            'password = input("Ingresa tu contraseña: ")\n'
+            'print("¿Es segura?", es_contraseña_segura(password))\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Usamos any() para verificar al menos un carácter cumple cada condición.\n"
+            "- Combina comprobaciones de longitud y tipos de caracteres.\n"
+        ),
+
+        (
+            "ejercicio32",
+            "# Ejercicio 32: Búsqueda binaria (recursiva)\n\n"
+            "Implementa el algoritmo de búsqueda binaria de forma recursiva para encontrar un elemento en una lista ordenada.\n"
+            "Si el elemento existe, devuelve su índice; si no, devuelve -1.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "def busqueda_binaria(lista, elemento, inicio=0, fin=None):\n"
+            "    if fin is None:\n"
+            "        fin = len(lista) - 1\n"
+            "    if inicio > fin:\n"
+            "        return -1\n\n"
+            "    medio = (inicio + fin) // 2\n\n"
+            "    if lista[medio] == elemento:\n"
+            "        return medio\n"
+            "    elif lista[medio] < elemento:\n"
+            "        return busqueda_binaria(lista, elemento, medio + 1, fin)\n"
+            "    else:\n"
+            "        return busqueda_binaria(lista, elemento, inicio, medio - 1)\n\n"
+            "# Ejemplo de uso:\n"
+            "lista_ordenada = [2, 5, 8, 12, 16, 23, 38, 45]\n"
+            "elemento = 23\n"
+            "indice = busqueda_binaria(lista_ordenada, elemento)\n"
+            'print(f"El elemento {elemento} está en el índice {indice}" if indice != -1 else "No encontrado")\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- La búsqueda binaria divide la lista en mitades hasta encontrar el elemento.\n"
+            "- Complejidad: O(log n), mucho más eficiente que una búsqueda lineal (O(n)).\n"
+            "- Requiere que la lista esté preordenada.\n"
+
+        ),
+
+        (
+            "ejercicio33",
+            "# Ejercicio 33: Implementar una pila (Stack) con clases\n\n"
+            "Crea una clase Pila que permita:\n"
+            "- Añadir elementos (push).\n"
+            "- Eliminar el último elemento añadido (pop).\n"
+            "- Verificar si está vacía.\n"
+            '- Validar si una cadena de paréntesis está balanceada (ej: "(()())" → válida, "())(" → inválida).\n'
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "class Pila:\n"
+            "    def __init__(self):\n"
+            "        self.elementos = []\n\n"
+            "    def push(self, elemento):\n"
+            "        self.elementos.append(elemento)\n\n"
+            "    def pop(self):\n"
+            "        if not self.esta_vacia():\n"
+            "            return self.elementos.pop()\n"
+            "        return None\n\n"
+            "    def esta_vacia(self):\n"
+            "        return len(self.elementos) == 0\n\n"
+            "def parentesis_balanceados(cadena):\n"
+            "    pila = Pila()\n"
+            "    for caracter in cadena:\n"
+            "        if caracter == '(':\n"
+            "            pila.push(caracter)\n"
+            "        elif caracter == ')':\n"
+            "            if pila.esta_vacia():\n"
+            "                return False\n"
+            "            pila.pop()\n"
+            "    return pila.esta_vacia()\n\n"
+            "# Ejemplo:\n"
+            'cadena = "(()()())"\n'
+            'print(f"¿` {cadena} ` está balanceada? {parentesis_balanceados(cadena)}")\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- La clase Pila usa una lista interna para almacenar elementos.\n"
+            "- Para validar paréntesis, cada ( se apila y cada ) desapila si hay correspondencia.\n"
+            "- Si la pila está vacía al final, la cadena es válida.\n"
+        ),
+        
+        (
+            "ejercicio34",
+            "# Ejercicio 34: Generador de números primos (Criba de Eratóstenes)\n\n"
+            "Implementa el algoritmo de la Criba de Eratóstenes para generar todos los primos menores o iguales a n.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "def criba_eratostenes(n):\n"
+            "    if n < 2:\n"
+            "        return []\n"
+            "    sieve = [True] * (n + 1)\n"
+            "    sieve[0] = sieve[1] = False\n"
+            "    for numero in range(2, int(n**0.5) + 1):\n"
+            "        if sieve[numero]:\n"
+            "            for multiplo in range(numero*numero, n+1, numero):\n"
+            "                sieve[multiplo] = False\n"
+            "    return [i for i, es_primo in enumerate(sieve) if es_primo]\n\n"
+            "# Ejemplo:\n"
+            "n = 30\n"
+            'print(f"Primos ≤ {n}: {criba_eratostenes(n)}")\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- El algoritmo marca los múltiplos de cada primo empezando desde 2.\n"
+            "- Complejidad: O(n log log n), mucho más eficiente que verificar cada número individualmente.\n"
+            "- Usado en problemas de teoría de números y optimización.\n"
+        ),
+
+        (
+            "ejercicio35",
+            "# Ejercicio 35: Decorador para medir tiempo de ejecución\n\n"
+            "Crea un decorador que mida el tiempo de ejecución de una función y lo imprima.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "import time\n\n"
+            "def medir_tiempo(func):\n"
+            "    def wrapper(*args, **kwargs):\n"
+            "        inicio = time.time()\n"
+            "        resultado = func(*args, **kwargs)\n"
+            "        fin = time.time()\n"
+            '        print(f"Tiempo de ejecución de {func.__name__}: {fin - inicio:.4f} segundos")\n'
+            "        return resultado\n"
+            "    return wrapper\n\n"
+            "@medir_tiempo\n"
+            "def funcion_ejemplo(n):\n"
+            "    suma = 0\n"
+            "    for i in range(n):\n"
+            "        suma += i\n"
+            "    return suma\n\n"
+            "# Ejemplo:\n"
+            "funcion_ejemplo(1_000_000)\n"
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Los decoradores envuelven funciones para añadir funcionalidad (en este caso, medir tiempo).\n"
+            "- Útil para optimizar código y diagnosticar cuellos de botella.\n"
+            "- *args y **kwargs permiten que el decorador sea genérico.\n"
+        ),
+
+        (
+            "ejercicio36",
+            "# Ejercicio 36: Par o impar\n\n"
+            "Pide al usuario un número y determina si es par o impar.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            'numero = int(input("Ingresa un número: "))\n'
+            "if numero % 2 == 0:\n"
+            '    print(f"{numero} es par.")\n'
+            "else:\n"
+            '    print(f"{numero} es impar.")\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Usamos el operador % (módulo) para ver si el residuo de dividir entre 2 es 0.\n"
+            "- Ideal para practicar condicionales simples.\n"
+        ),
+
+        (
+            "ejercicio37",
+            "# Ejercicio 37: Calculadora de área\n\n"
+            "Pide al usuario elegir entre calcular el área de un círculo o un rectángulo, luego pide los datos necesarios y muestra el resultado.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            'opcion = input("¿Área de círculo (C) o rectángulo (R)? ").lower()\n\n'
+            'if opcion == "c":\n'
+            '    radio = float(input("Radio del círculo: "))\n'
+            "    area = 3.1416 * radio ** 2\n"
+            '    print(f"Área: {area:.2f}")\n'
+            'elif opcion == "r":\n'
+            '    base = float(input("Base del rectángulo: "))\n'
+            '    altura = float(input("Altura del rectángulo: "))\n'
+            "    area = base * altura\n"
+            '    print(f"Área: {area:.2f}")\n'
+            "else:\n"
+            '    print("Opción inválida.")\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Usamos lower() para manejar mayúsculas/minúsculas.\n"
+            "- Formateamos el resultado con :.2f para mostrar dos decimales.\n"
+        ),
+
+        (
+            "ejercicio38",
+            "# Ejercicio 38: Quiz de preguntas simples\n\n"
+            "Crea un cuestionario de 3 preguntas de opción múltiple (ej: capitales de países) y muestra el puntaje final.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "puntaje = 0\n\n"
+            'print("Responde las siguientes preguntas:")\n'
+            'print("1. ¿Cuál es la capital de Francia?")\n'
+            'print("a) Londres  b) París  c) Roma")\n'
+            'resp1 = input("Tu respuesta: ").lower()\n'
+            'if resp1 == "b":\n'
+            "    puntaje += 1\n\n"
+            'print("\n2. ¿Cuántos planetas hay en el sistema solar?")\n'
+            'print("a) 7  b) 8  c) 9")\n'
+            'resp2 = input("Tu respuesta: ").lower()\n'
+            'if resp2 == "b":\n'
+            "    puntaje += 1\n\n"
+            'print("\n3. ¿Qué lenguaje usamos en este curso?")\n'
+            'print("a) Java  b) Python  c) C++")\n'
+            'resp3 = input("Tu respuesta: ").lower()\n'
+            'if resp3 == "b":\n'
+            "    puntaje += 1\n\n"
+            'print(f"\nPuntaje final: {puntaje}/3")\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Cada pregunta tiene una respuesta correcta predefinida.\n"
+            "- Usamos un contador (puntaje) para llevar la cuenta de aciertos.\n"
+        ),
+
+        (
+            "ejercicio39",
+            "# Ejercicio 39: Contar elementos en una lista\n\n"
+            "Pide al usuario ingresar una lista de números separados por comas, luego pide un número específico y cuenta cuántas veces aparece.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            'entrada = input("Ingresa números separados por comas: ")\n'
+            'lista = [int(num) for num in entrada.split(",")]\n'
+            'busqueda = int(input("¿Qué número quieres contar? "))\n\n'
+            "conteo = lista.count(busqueda)\n"
+            'print(f"El número {busqueda} aparece {conteo} veces.")\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            '- split(",") divide la cadena en partes usando comas.\n'
+            "- count() es un método de listas que simplifica el conteo.\n"
+        ),
+
+        (
+            "ejercicio40",
+            "# Ejercicio 40: Búsqueda en profundidad (DFS) en grafos\n\n"
+            "Implementa el algoritmo DFS para recorrer un grafo representado como un diccionario de listas de adyacencia. El programa debe mostrar el orden de visita de los nodos.\n"
+            "\n"
+            "**Entrada de ejemplo**\n"
+            "```\n"
+            "grafo = {\n"
+            "    'A': ['B', 'C'],\n"
+            "    'B': ['D', 'E'],\n"
+            "    'C': ['F'],\n"
+            "    'D': [],\n"
+            "    'E': ['F'],\n"
+            "    'F': []\n"
+            "}\n"
+            "```\n"
+            "**Salida esperada (empezando desde 'A'):**\n"
+            "A -> B -> D -> E -> F -> C\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "def dfs(grafo, nodo_inicial):\n"
+            "    visitados = set()\n"
+            "    stack = [nodo_inicial]\n"
+            "    recorrido = []\n\n"
+            "    while stack:\n"
+            "        nodo = stack.pop()\n"
+            "        if nodo not in visitados:\n"
+            "            visitados.add(nodo)\n"
+            "            recorrido.append(nodo)\n"
+            "            # Agregar vecinos en orden inverso para mantener el orden lógico\n"
+            "            for vecino in reversed(grafo[nodo]):\n"
+            "                stack.append(vecino)\n"
+            "    return recorrido\n\n"
+            "grafo = {\n"
+            "    'A': ['B', 'C'],\n"
+            "    'B': ['D', 'E'],\n"
+            "    'C': ['F'],\n"
+            "    'D': [],\n"
+            "    'E': ['F'],\n"
+            "    'F': []\n"
+            "}\n"
+            'print("DFS:", " -> ".join(dfs(grafo, "A")))\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Usamos una pila (LIFO) para el recorrido.\n"
+            "- reversed() asegura que los vecinos se procesen en el orden correcto (ej: 'B' antes que 'C').\n"
+            "- Complejidad: O(V + E), donde V es el número de vértices y E el de aristas.\n"
+        ),
+
+        (
+            "ejercicio41",
+            "# Ejercicio 41: Validar correo electrónico con regex\n\n"
+            "Usa expresiones regulares para validar si una cadena es un correo electrónico válido.\n"
+            "**Reglas básicas:**\n"
+            "- Formato: nombre@dominio.extension\n"
+            "- Extensiones válidas: 2 a 4 letras (ej: .com, .org, .edu).\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "import re\n\n"
+            "def validar_email(email):\n"
+            "    patron = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$'\n"
+            "    return re.match(patron, email) is not None\n\n"
+            'emails = ["usuario@example.com", "invalido@.com", "nombre@dominio.extensionlarga"]\n'
+            "for email in emails:\n"
+            '    print(f"{email}: {"Válido" if validar_email(email) else "Inválido"}")\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- ^ y $ aseguran que toda la cadena cumple el patrón.\n"
+            "- [a-zA-Z]{2,4} valida extensiones de 2 a 4 caracteres.\n"
+            "**Componentes del patrón**\n"
+            "- [a-zA-Z0-9._%+-]+: Nombre del usuario.\n"
+            "- @[a-zA-Z0-9.-]+: Dominio.\n"
+            "- \.[a-zA-Z]{2,4}$: Extensión.\n"
+
+        ),
+
+        (
+            "ejercicio42",
+            "# Ejercicio 42: Gestor de tareas con archivos JSON\n\n"
+            "Crea un programa que permita:\n"
+            "- Agregar tareas (nombre y estado: pendiente/completada).\n"
+            "- Guardar las tareas en un archivo JSON.\n"
+            "- Cargar tareas desde el archivo.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "import json\n\n"
+            "def cargar_tareas(archivo):\n"
+            "    try:\n"
+            "        with open(archivo, 'r') as f:\n"
+            "            return json.load(f)\n"
+            "    except FileNotFoundError:\n"
+            "        return []\n\n"
+            "def guardar_tareas(tareas, archivo):\n"
+            "    with open(archivo, 'w') as f:\n"
+            "        json.dump(tareas, f, indent=4)\n\n"
+            "def agregar_tarea(nombre, tareas):\n"
+            '    tareas.append({"nombre": nombre, "completada": False})\n\n'
+            "# Ejemplo de uso:\n"
+            'archivo = "tareas.json"\n'
+            "tareas = cargar_tareas(archivo)\n\n"
+            'agregar_tarea("Aprender Python", tareas)\n'
+            'agregar_tarea("Hacer ejercicio", tareas)\n\n'
+            "guardar_tareas(tareas, archivo)\n"
+            'print("Tareas guardadas en "tareas.json".")\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- json.dump() y json.load() manejan la serialización de datos.\n"
+            "- Manejo de excepciones: FileNotFoundError para archivos inexistentes.\n"
+            '- Estructura del JSON: Lista de diccionarios con claves "nombre" y "completada".\n'
+        ),
+
+        (
+            "ejercicio43",
+            "# Ejercicio 43: (Threading básico)\n\n"
+            "Crea dos hilos que impriman números pares e impares del 1 al 10 simultáneamente.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "import threading\n\n"
+            "def imprimir_pares():\n"
+            "    for i in range(2, 11, 2):\n"
+            '        print(f"Par: {i}")\n\n'
+            "def imprimir_impares():\n"
+            "    for i in range(1, 11, 2):\n"
+            '        print(f"Impar: {i}")\n\n'
+            "hilo_pares = threading.Thread(target=imprimir_pares)\n"
+            "hilo_impares = threading.Thread(target=imprimir_impares)\n\n"
+            "hilo_pares.start()\n"
+            "hilo_impares.start()\n\n"
+            "hilo_pares.join()\n"
+            "hilo_impares.join()\n\n"
+            'print("Hilos terminados.")\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Threading: Permite ejecución concurrente (no paralela en CPython por el GIL).\n"
+            "- Sincronización: join() espera a que los hilos terminen.\n"
+            "- Salida: Los números pares e impares se mezclarán según el orden de ejecución.\n"
+        ),
+
+        (
+            "ejercicio44",
+            "# Ejercicio 44: Clases abstractas y herencia\n\n"
+            "Crea una clase abstracta Figura con métodos calcular_area() y calcular_perimetro(). Luego implementa las clases Circulo y Rectangulo heredando de Figura.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "from abc import ABC, abstractmethod\n"
+            "import math\n\n"
+            "class Figura(ABC):\n"
+            "    @abstractmethod\n"
+            "    def calcular_area(self):\n"
+            "        pass\n\n"
+            "    @abstractmethod\n"
+            "    def calcular_perimetro(self):\n"
+            "        pass\n\n"
+            "class Circulo(Figura):\n"
+            "    def __init__(self, radio):\n"
+            "        self.radio = radio\n\n"
+            "    def calcular_area(self):\n"
+            "        return math.pi * self.radio ** 2\n\n"
+            "    def calcular_perimetro(self):\n"
+            "        return 2 * math.pi * self.radio\n\n"
+            "class Rectangulo(Figura):\n"
+            "    def __init__(self, base, altura):\n"
+            "        self.base = base\n"
+            "        self.altura = altura\n\n"
+            "    def calcular_area(self):\n"
+            "        return self.base * self.altura\n\n"
+            "    def calcular_perimetro(self):\n"
+            "        return 2 * (self.base + self.altura)\n\n"
+            "# Ejemplo de uso:\n"
+            "circulo = Circulo(5)\n"
+            'print(f"Área del círculo: {circulo.calcular_area():.2f}")  # 78.54\n'
+            "rectangulo = Rectangulo(4, 7)\n"
+            'print(f"Perímetro del rectángulo: {rectangulo.calcular_perimetro()}")  # 22\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- ABC y @abstractmethod definen métodos que las subclases deben implementar.\n"
+            "- Cumple con el principio de abstracción en POO.\n"
+        ),
+
+        (
+            "ejercicio45",
+            "# Ejercicio 45: Merge Sort (algoritmo recursivo)\n\n"
+            "Implementa el algoritmo Merge Sort para ordenar una lista de números.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "def merge_sort(lista):\n"
+            "    if len(lista) > 1:\n"
+            "        medio = len(lista) // 2\n"
+            "        izquierda = lista[:medio]\n"
+            "        derecha = lista[medio:]\n\n"
+            "        merge_sort(izquierda)\n"
+            "        merge_sort(derecha)\n\n"
+            "        i = j = k = 0\n\n"
+            "        # Fusionar sublistas ordenadas\n"
+            "        while i < len(izquierda) and j < len(derecha):\n"
+            "            if izquierda[i] < derecha[j]:\n"
+            "                lista[k] = izquierda[i]\n"
+            "                i += 1\n"
+            "            else:\n"
+            "                lista[k] = derecha[j]\n"
+            "                j += 1\n"
+            "            k += 1\n\n"
+            "        # Elementos restantes\n"
+            "        while i < len(izquierda):\n"
+            "            lista[k] = izquierda[i]\n"
+            "            i += 1\n"
+            "            k += 1\n\n"
+            "        while j < len(derecha):\n"
+            "            lista[k] = derecha[j]\n"
+            "            j += 1\n"
+            "            k += 1\n\n"
+            "# Ejemplo:\n"
+            "lista = [38, 27, 43, 3, 9, 82, 10]\n"
+            "merge_sort(lista)\n"
+            'print("Lista ordenada:", lista)  # [3, 9, 10, 27, 38, 43, 82]\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Divide y vencerás: Divide la lista en mitades, ordena recursivamente y fusiona.\n"
+            "- Complejidad: O(n log n) en todos los casos.\n"
+        ),
+
+        (
+            "ejercicio46",
+            "# Ejercicio 46: Conexión a SQLite y CRUD\n\n"
+            "Crea una base de datos SQLite llamada estudiantes.db con una tabla Estudiante (id, nombre, edad). Implementa funciones para insertar, consultar y eliminar registros.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "import sqlite3\n\n"
+            "def crear_tabla():\n"
+            '    conexion = sqlite3.connect("estudiantes.db")\n'
+            "    cursor = conexion.cursor()\n"
+            "    cursor.execute('''CREATE TABLE IF NOT EXISTS Estudiante\n"
+            "                      (id INTEGER PRIMARY KEY, nombre TEXT, edad INTEGER)''')\n"
+            "    conexion.commit()\n"
+            "    conexion.close()\n\n"
+            "def insertar_estudiante(nombre, edad):\n"
+            '    conexion = sqlite3.connect("estudiantes.db")\n'
+            "    cursor = conexion.cursor()\n"
+            '    cursor.execute("INSERT INTO Estudiante (nombre, edad) VALUES (?, ?)", (nombre, edad))\n'
+            "    conexion.commit()\n"
+            "    conexion.close()\n\n"
+            "def consultar_estudiantes():\n"
+            '    conexion = sqlite3.connect("estudiantes.db")\n'
+            "    cursor = conexion.cursor()\n"
+            '    cursor.execute("SELECT * FROM Estudiante")\n'
+            "    estudiantes = cursor.fetchall()\n"
+            "    conexion.close()\n"
+            "    return estudiantes\n\n"
+            "# Ejemplo de uso:\n"
+            "crear_tabla()\n"
+            'insertar_estudiante("Ana", 22)\n'
+            'insertar_estudiante("Luis", 25)\n'
+            'print("Estudiantes:", consultar_estudiantes())  # [(1, "Ana", 22), (2, "Luis", 25)]\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- CRUD: Create (INSERT), Read (SELECT).\n"
+            "- Usa parámetros ? para evitar inyecciones SQL.\n"
+        ),
+
+        (
+            "ejercicio47",
+            "# Ejercicio 47: Consumo de API REST (OpenWeatherMap)\n\n"
+            "Usa la librería requests para obtener el clima actual de una ciudad usando la API de OpenWeatherMap. Necesitarás una API key (gratuita al registrarse).\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "import requests\n\n"
+            "def obtener_clima(ciudad, api_key):\n"
+            '    url = f"http://api.openweathermap.org/data/2.5/weather?q={ciudad}&appid={api_key}&units=metric"\n'
+            "    respuesta = requests.get(url)\n"
+            "    if respuesta.status_code == 200:\n"
+            "        datos = respuesta.json()\n"
+            '        temperatura = datos["main"]["temp"]\n'
+            '        clima = datos["weather"][0]["description"]\n'
+            '        return f"Clima en {ciudad}: {temperatura}°C, {clima.capitalize()}"\n'
+            "    else:\n"
+            '        return "Error al obtener datos"\n\n'
+            "# Ejemplo (reemplaza TU_API_KEY con tu clave):\n"
+            'api_key = "TU_API_KEY"\n'
+            'print(obtener_clima("Madrid", api_key))  # Ej: "Clima en Madrid: 18°C, Nubes dispersas"\n'
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- API REST: Uso de endpoints y parámetros en la URL.\n"
+            "- JSON: Los datos de respuesta se parsean como diccionario.\n"
+        ),
+
+        (
+            "ejercicio48",
+            "# Ejercicio 48: Análisis de datos con Pandas\n\n"
+            "Carga un dataset desde un archivo CSV (ej: iris.csv) y muestra:\n"
+            "- Promedio de longitud de pétalos por especie.\n"
+            "- Máximo valor de ancho de sépalos.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "import pandas as pd\n\n"
+            "# Descargar el dataset desde la URL\n"
+            'url = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv"\n'
+            "datos = pd.read_csv(url)\n\n"
+            "# Promedio de longitud de pétalos por especie\n"
+            'promedio = datos.groupby("species")["petal_length"].mean()\n'
+            'print("Promedio por especie:\n", promedio)\n\n'
+            "# Máximo ancho de sépalos\n"
+            'max_ancho = datos["sepal_width"].max()\n'
+            'print("Máximo ancho de sépalos:", max_ancho)\n'
+            "```\n"
+            "Salida:\n"
+            "```\n"
+            "Promedio por especie:\n"
+            " species\n"
+            "setosa        1.464\n"
+            "versicolor    4.260\n"
+            "virginica     5.552\n\n"
+            "Máximo ancho de sépalos: 4.4\n"
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Pandas: Librería clave para análisis de datos.\n"
+            "- groupby() agrupa datos por categorías.\n"
+        ),
+
+        (
+            "ejercicio49",
+            "# Ejercicio 49: Concurrencia con asyncio\n\n"
+            "Crea dos tareas asíncronas que impriman números del 1-5 y letras A-E con delays de 1 segundo.\n"
+            "\n"
+            "### Solución\n"
+            "```\n"
+            "import asyncio\n\n"
+            "async def imprimir_numeros():\n"
+            "    for i in range(1, 6):\n"
+            "        print(i)\n"
+            "        await asyncio.sleep(1)\n\n"
+            "async def imprimir_letras():\n"
+            '    for letra in "ABCDE":\n'
+            "        print(letra)\n"
+            "        await asyncio.sleep(1)\n\n"
+            "async def main():\n"
+            "    await asyncio.gather(imprimir_numeros(), imprimir_letras())\n\n"
+            "asyncio.run(main())\n"
+            "```\n"
+            "\n"
+            "**Explicación**\n"
+            "- Asyncio: Maneja concurrencia con corrutinas y await.\n"
+            "- Salida: Números y letras se mezclan cada segundo.\n"
+        ),
+
+        (
+            "ejercicio50",
+            "# in progress"
+        ),
+
+
 
     ]
 

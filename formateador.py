@@ -1,7 +1,7 @@
 def format_markdown(md_text):
     """
     Formatea texto Markdown eliminando líneas con '---', ajustando saltos de párrafo,
-    eliminando etiquetas de lenguaje después de '```' (como 'bash') y manejando comillas internas.
+    eliminando etiquetas de lenguaje después de '```' y manejando comillas internas.
     """
     lines = md_text.split("\n")
     formatted_lines = []
@@ -24,11 +24,6 @@ def format_markdown(md_text):
         if stripped_line.startswith("```") and len(stripped_line) > 3:
             line = "```"
 
-        # Si la línea no está vacía y la anterior tampoco, añadir doble salto
-        if i > 0 and stripped_line and lines[i-1].strip() and not stripped_line.startswith("```"):
-            if formatted_lines and not formatted_lines[-1].endswith("\\n\\n"):
-                formatted_lines[-1] = formatted_lines[-1].replace("\\n", "\\n\\n")
-
         # Manejar comillas internas
         if '"' in line:
             line = line.replace('"', "'")
@@ -48,85 +43,103 @@ def format_markdown(md_text):
 # Ejemplo de entrada Markdown (tu contenido)
 md_content = """
 
-¡Vamos con otro clásico de pruebas técnicas! Este ejercicio pone a prueba el manejo de estructuras de datos y lógica algorítmica.  
+## 🚀 **¿Qué es uWSGI?**  
+**uWSGI** es un servidor de aplicaciones **WSGI** que permite ejecutar aplicaciones Python (Flask, Django, FastAPI) en producción.  
+
+🔹 **¿Por qué usar uWSGI?**  
+✅ Es **rápido y eficiente**, con soporte para múltiples workers y threads.  
+✅ Compatible con **Nginx y Apache** como proxy reverso.  
+✅ Soporta múltiples protocolos (WSGI, HTTP, FastCGI, uWSGI, etc.).  
+✅ Más configurable que Gunicorn, pero más complejo de usar.  
+
+🔹 **Alternativas:**  
+- **Gunicorn** (más simple y usado con Flask/Django).  
+- **Daphne** (para Django con WebSockets).  
+- **Uvicorn** (para FastAPI con ASGI).  
 
 ---
 
-### **Ejercicio: Anagramas**  
+## 🛠️ **Ejemplo: Ejecutar Flask con uWSGI**  
 
-Dadas dos cadenas de texto, escribe una función en Python que determine si son **anagramas**.  
-
-#### **Requisitos:**  
-1. Dos palabras son **anagramas** si tienen las mismas letras en distinta posición.  
-2. La comparación **no debe ser sensible a mayúsculas/minúsculas**.  
-3. Ignorar los espacios y caracteres especiales.  
-4. La solución debe ser **eficiente (O(n))**.  
-
----
-
-**Ejemplo de entrada:**  
-```python
-cadena1 = "Listen"
-cadena2 = "Silent"
-```
-**Salida esperada:**  
-```
-Son anagramas: True
+📌 **1️⃣ Instalar uWSGI y Flask**  
+```sh
+pip install flask uwsgi
 ```
 
-Otro ejemplo:  
-```python
-cadena1 = "Hello"
-cadena2 = "Olelh"
-```
-**Salida esperada:**  
-```
-Son anagramas: True
-```
-
----
-
-### **Solución (O(n))**  
+📌 **2️⃣ Crear la API en Flask**  
+📄 **`app.py`**  
 
 ```python
-from collections import Counter
-import re
+from flask import Flask
 
-def son_anagramas(cadena1, cadena2):
-    # Normalizar: convertir a minúsculas y eliminar caracteres que no sean letras
-    cadena1 = re.sub(r'[^a-z]', '', cadena1.lower())
-    cadena2 = re.sub(r'[^a-z]', '', cadena2.lower())
+app = Flask(__name__)
 
-    # Comparar las frecuencias de letras usando Counter
-    return Counter(cadena1) == Counter(cadena2)
+@app.route('/')
+def home():
+    return "¡Hola desde Flask con uWSGI!"
 
-# Ejemplo de uso
-cadena1 = "Listen"
-cadena2 = "Silent"
-print(f"Son anagramas: {son_anagramas(cadena1, cadena2)}")
+if __name__ == '__main__':
+    app.run()
+```
+
+📌 **3️⃣ Ejecutar con uWSGI**  
+```sh
+uwsgi --http :8000 --wsgi-file app.py --callable app --processes 4 --threads 2
+```
+🔹 `--http :8000` → Escucha en el puerto `8000`.  
+🔹 `--wsgi-file app.py` → Usa el archivo `app.py`.  
+🔹 `--callable app` → La aplicación se llama `app`.  
+🔹 `--processes 4` → Usa **4 procesos workers**.  
+🔹 `--threads 2` → Cada proceso usa **2 threads**.  
+
+📌 **4️⃣ Acceder a la API**  
+Abre en el navegador:  
+```
+http://localhost:8000/
 ```
 
 ---
 
-### **Explicación:**  
-1. **Normalización de cadenas:**  
-   - Convertimos a minúsculas (`lower()`).  
-   - Eliminamos espacios y caracteres especiales usando `re.sub(r'[^a-z]', '', texto)`.  
-2. **Comparación eficiente con `Counter` de `collections`**:  
-   - Cuenta la frecuencia de cada letra en ambas cadenas.  
-   - Si los `Counter` son iguales, las palabras son anagramas.  
+## 🔥 **uWSGI + Nginx (Producción)**  
+En producción, se usa **Nginx** como proxy reverso para manejar peticiones y mejorar rendimiento.  
+
+📄 **Configurar Nginx (`/etc/nginx/sites-available/default`)**  
+```nginx
+server {
+    listen 80;
+
+    location / {
+        include uwsgi_params;
+        uwsgi_pass 127.0.0.1:8000;
+    }
+}
+```
+
+📌 **Ejecutar uWSGI con socket Unix**  
+```sh
+uwsgi --socket /tmp/uwsgi.sock --wsgi-file app.py --callable app --processes 4 --threads 2 --chmod-socket=666
+```
+
+📌 **Reiniciar Nginx**  
+```sh
+sudo systemctl restart nginx
+```
+
+Ahora, Nginx manejará las peticiones y las enviará a uWSGI.
 
 ---
 
-### **Eficiencia:**  
-✅ **Tiempo O(n)** (un solo recorrido para limpiar y otro para contar letras).  
-✅ **Espacio O(1)** (uso mínimo de memoria adicional).  
+## 🎯 **¿Cuándo usar uWSGI?**  
+✅ Cuando necesitas **alto rendimiento** y personalización.  
+✅ Para ejecutar **Flask o Django en producción con Nginx**.  
+✅ Cuando necesitas compatibilidad con **FastCGI, HTTP y WSGI**.  
 
 ---
 
-Este ejercicio es muy común en pruebas técnicas para evaluar **manejo de cadenas, estructuras de datos y optimización**.  
+🚀 **Ejemplo real:**  
+Un **API REST en Flask** usa **uWSGI + Nginx** para manejar **miles de usuarios** con múltiples procesos y threads.  
 
-🔥 ¿Te gustaría un nivel más difícil, como encontrar **todos los anagramas posibles en una lista de palabras**? 🚀
+
 
 """
 
