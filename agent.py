@@ -36,48 +36,27 @@ class VectorStore:
     def load_embeddings_from_db(self):
         """Cargar embeddings guardados en PythonDB + History"""
         Session = sessionmaker(bind=engine)
-        session = Session()
-        all_entries = []
-        
-        try:
-            # Cargar de PythonDB
+        with Session() as session:
             python_entries = session.query(PythonDB).filter(PythonDB.embedding.isnot(None)).all()
-            for e in python_entries:
-                try:
-                    emb = np.array(json.loads(e.embedding), dtype=np.float32)
-                    all_entries.append({
-                        'embedding': emb,
-                        'response': e.response,
-                        'prompt': e.prompt,
-                        'source': 'python_db',
-                        'id': e.id
-                    })
-                except Exception as e:
-                    logger.warning(f"Error cargando embedding de PythonDB: {e}")
-                    continue
-            
-            # Cargar de History
             history_entries = session.query(History).filter(History.embedding.isnot(None)).all()
-            for e in history_entries:
+            
+            all_entries = []
+            for entry in python_entries + history_entries:
                 try:
-                    emb = np.array(json.loads(e.embedding), dtype=np.float32)
+                    emb = np.array(json.loads(entry.embedding), dtype=np.float32)
                     all_entries.append({
                         'embedding': emb,
-                        'response': e.response,
-                        'prompt': e.prompt,
-                        'source': 'history',
-                        'id': e.id
+                        'response': entry.response,
+                        'prompt': entry.prompt,
+                        'source': 'python_db' if isinstance(entry, PythonDB) else 'history',
+                        'id': entry.id
                     })
+                except json.JSONDecodeError as e:
+                    logger.warning(f"Error cargando embedding de {type(entry).__name__}: {e}")
                 except Exception as e:
-                    logger.warning(f"Error cargando embedding de History: {e}")
-                    continue
-                    
-        except Exception as e:
-            logger.error(f"Error en load_embeddings_from_db: {e}")
-        finally:
-            session.close()
+                    logger.error(f"Error procesando entrada de {type(entry).__name__}: {e}")
             
-        return all_entries
+            return all_entries
 
     def build_or_load_faiss_index(self):
         """Construye o carga el índice FAISS desde disco"""
@@ -246,7 +225,7 @@ async def agent(prompt):
             logger.info("✅ Respuesta encontrada en base de datos exacta")
             return f"📚 **Respuesta encontrada en base de datos:**\n{db_response.response}"
     except Exception as e:
-        logger.error(f"⚠️ Error en consulta SQL: {e}")
+        logger.error(f"⚠️ Error en consulta SQL: {e} - Consulta: {user_query}")
 
     # 4️⃣ Si no hay coincidencia, usar CodeLlama
     logger.info("🤖 Generando respuesta con LLM")
@@ -281,5 +260,5 @@ Eres un asistente de IA especializado en desarrollo de software. Responde de man
         return f"💡 **Respuesta generada por IA:**\n{response}"
         
     except Exception as e:
-        logger.error(f"❌ Error en el agente: {e}")
+        logger.error(f"❌ Error en el agente: {e} - Consulta: {user_query}")
         return f"❌ Lo siento, ocurrió un error al procesar tu pregunta: {str(e)}"
