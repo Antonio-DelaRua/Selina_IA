@@ -1,1 +1,4 @@
 mcp-client
+sentence-transformers
+faiss-cpu
+numpy

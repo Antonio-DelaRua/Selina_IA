@@ -11,7 +11,6 @@ import cv2
 from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
-from comtypes import CLSCTX_ALL
 import ctypes
 
 # Diccionarios de sitios, archivos y contactos
@@ -131,7 +130,7 @@ def write(f):
 def cambiar_volumen(accion):
     devices = AudioUtilities.GetSpeakers()
     interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
-    volume = cast(interface, POINTER(IAudioEndpointVolume))
+    volume = ctypes.cast(interface, ctypes.POINTER(IAudioEndpointVolume))
 
     current_volume = volume.GetMasterVolumeLevelScalar()  # Obtener volumen actual (0.0 a 1.0)
 
@@ -456,7 +455,7 @@ def procesar_comando(rec):
         "documentos": lambda x: abrir_documentos(),
         "imágenes": lambda x: abrir_imagenes(),
         "mute": lambda x: quitar_sonido(),
-        "sube volumen": lambda x: cambiar_volumen("subir"),
+        "sube el volumen": lambda x: cambiar_volumen("subir"),
         "baja volumen": lambda x: cambiar_volumen("bajar"),
         "apagar": lambda x: confirmar_accion("apagar"),
         "reiniciar": lambda x: confirmar_accion("reiniciar"),
