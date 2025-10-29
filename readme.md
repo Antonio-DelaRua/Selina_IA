@@ -99,6 +99,191 @@ Un chat GPT dentro de un avatar3D con animaciones y mucho más.
 - **Web Scraping**:
   - BeautifulSoup, Scrapy, Selenium.
 
+
+
+📚 Guía de Uso de Herramientas MCP en NoBt GPT
+🎯 ¿Qué son las Herramientas MCP?
+Las Herramientas MCP son funciones especializadas que te ayudan con tareas específicas de programación. Piensa en ellas como "asistentes especializados" dentro de tu aplicación.
+
+🚀 Cómo Acceder a las Herramientas
+Paso 1: Abrir el Chat
+Haz doble clic en el muñeco de la aplicación
+
+Se abrirá una ventana de chat
+
+En la parte inferior verás: 💡 Usa /mcp help para herramientas
+
+Paso 2: Ver Herramientas Disponibles
+Escribe en el chat:
+
+text
+/mcp help
+Verás una lista de todas las herramientas disponibles.
+
+🛠️ Herramientas Disponibles
+1. 🔍 Análisis de Código
+Para qué sirve: Analizar y mejorar tu código Python.
+
+Cómo usarla:
+
+text
+/mcp {"tool": "code_analysis", "arguments": {"code": "tu código aquí"}}
+Ejemplo práctico:
+
+text
+/mcp {"tool": "code_analysis", "arguments": {"code": "def suma(a, b):\n    return a + b"}}
+Te ayudará con:
+
+✅ Explicar qué hace tu código
+
+✅ Sugerir mejoras
+
+✅ Encontrar errores potenciales
+
+✅ Mostrar una versión mejorada
+
+2. 📖 Explicar Conceptos
+Para qué sirve: Aprender sobre temas de programación.
+
+Cómo usarla:
+
+text
+/mcp {"tool": "explain_concept", "arguments": {"concept": "tema a explicar"}}
+Ejemplos:
+
+text
+/mcp {"tool": "explain_concept", "arguments": {"concept": "bucles en Python"}}
+/mcp {"tool": "explain_concept", "arguments": {"concept": "listas"}}
+/mcp {"tool": "explain_concept", "arguments": {"concept": "funciones lambda"}}
+Obtendrás:
+
+📚 Definición clara
+
+💡 Ejemplos prácticos
+
+🎯 Casos de uso
+
+⚠️ Consejos importantes
+
+3. 🐛 Debuggear Código
+Para qué sirve: Encontrar y solucionar errores en tu código.
+
+Cómo usarla:
+
+text
+/mcp {"tool": "debug_code", "arguments": {"code": "tu código", "error": "mensaje de error"}}
+Ejemplo:
+
+text
+/mcp {"tool": "debug_code", "arguments": {"code": "print(10/0)", "error": "ZeroDivisionError"}}
+Te ayudará con:
+
+🔎 Identificar la causa del error
+
+🛠️ Proporcionar la solución
+
+✅ Mostrar código corregido
+
+💡 Prevenir errores futuros
+
+📝 Ejemplos Paso a Paso para Principiantes
+Ejemplo 1: Tu Primer Análisis de Código
+1. Copia este código:
+
+python
+def saludar(nombre):
+    print("Hola " + nombre)
+    return True
+2. Escribe en el chat:
+
+text
+/mcp {"tool": "code_analysis", "arguments": {"code": "def saludar(nombre):\n    print(\"Hola \" + nombre)\n    return True"}}
+3. Presiona Enter y verás: Un análisis completo de tu código con sugerencias de mejora.
+
+Ejemplo 2: Aprender sobre Listas
+Escribe en el chat:
+
+text
+/mcp {"tool": "explain_concept", "arguments": {"concept": "listas en Python"}}
+Obtendrás: Una explicación completa sobre cómo usar listas en Python.
+
+Ejemplo 3: Solucionar un Error Común
+1. Si tienes este código con error:
+
+python
+edad = input("¿Cuántos años tienes? ")
+if edad > 18:
+    print("Eres mayor de edad")
+2. Escribe en el chat:
+
+text
+/mcp {"tool": "debug_code", "arguments": {"code": "edad = input(\"¿Cuántos años tienes? \")\nif edad > 18:\n    print(\"Eres mayor de edad\")", "error": "TypeError: '>' not supported between instances of 'str' and 'int'"}}
+3. Obtendrás: La solución al error y explicación de por qué ocurre.
+
+💡 Consejos para Usuarios Novatos
+📋 Formato Correcto
+Usa siempre comillas dobles " en el JSON
+
+El código va entre comillas y usa \n para saltos de línea
+
+Copia y pega los ejemplos exactamente como están
+
+🔄 Si Cometes un Error
+No te preocupes, la aplicación te dirá qué salió mal. Puedes intentarlo de nuevo.
+
+📚 Para Aprender Programación
+Usa mucho la herramienta explain_concept con temas como:
+
+"variables"
+
+"condicionales if"
+
+"bucles for"
+
+"funciones"
+
+"clases y objetos"
+
+🐛 Para Resolver Problemas
+Cuando tu código no funcione:
+
+Copia el código exacto
+
+Copia el mensaje de error exacto
+
+Usa la herramienta debug_code
+
+❓ Preguntas Frecuentes
+¿Necesito saber programación para usar estas herramientas?
+¡No! Están diseñadas para ayudarte a aprender y resolver problemas.
+
+¿Puedo usar las herramientas con otros lenguajes?
+Actualmente están optimizadas para Python, pero puedes preguntar sobre conceptos generales de programación.
+
+¿Qué hago si el comando no funciona?
+Verifica que hayas escrito exactamente como en los ejemplos
+
+Asegúrate de usar comillas dobles "
+
+Si usas código, recuerda poner \n para los saltos de línea
+
+¿Puedo guardar las respuestas?
+Sí, todas las conversaciones se guardan automáticamente en el historial.
+
+🎓 Ejercicios para Practicar
+Nivel Principiante:
+Analiza: print("Hola Mundo")
+
+Pregunta: "¿qué son las variables?"
+
+Debuggea: print("5" + 3)
+
+Nivel Intermedio:
+Analiza una función que calcule el área de un círculo
+
+Pregunta sobre "comprensión de listas"
+
+Debuggea un bucle infinito
 ---
 
 

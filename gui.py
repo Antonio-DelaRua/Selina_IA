@@ -95,6 +95,11 @@ def show_combined_window(root, muneco_label, images):
             self.text_widget.pack(side='left', fill='x', expand=True)
             self.text_widget.bind("<Return>", lambda event: self.send_message())
 
+            # Añadir ayuda MCP en la interfaz
+            help_label = tk.Label(self.input_frame, text="💡 Usa /mcp help para herramientas", 
+                                 font=("Comic Sans MS", 10), bg='white', fg='gray')
+            help_label.pack(side='bottom', fill='x', pady=2)
+
             self.window.after(100, lambda: self.text_widget.focus_set())
 
             # Añadir etiqueta de estado
@@ -127,6 +132,9 @@ def show_combined_window(root, muneco_label, images):
             
             if "Consultando..." in self.complete_text:
                 self.complete_text = self.complete_text.replace("Consultando...", "")
+            if "🛠️ Ejecutando herramienta MCP..." in self.complete_text:
+                self.complete_text = self.complete_text.replace("🛠️ Ejecutando herramienta MCP...", "")
+                
             self.complete_text += new_text
             
             self.response_text_widget.delete("1.0", tk.END)
@@ -194,11 +202,17 @@ def show_combined_window(root, muneco_label, images):
                 self.response_text_widget.config(state="normal")
                 self.response_text_widget.delete("1.0", tk.END)
                 self.response_text_widget.config(state="disabled")
-                self.update_response("Consultando...")
+                
+                # Detectar tipo de mensaje para mostrar feedback apropiado
+                if user_input.startswith("/mcp"):
+                    if user_input == "/mcp help":
+                        self.update_response("🛠️ Cargando herramientas MCP...")
+                    else:
+                        self.update_response("🛠️ Ejecutando herramienta MCP...")
+                else:
+                    self.update_response("Consultando...")
+                    
                 self.window.after(100, lambda: fetch_response(user_input, self))
-
-        def start_listening(user_input, self):
-            self.window.after(100, lambda: fetch_response(user_input, self))
 
         def on_close(self):
             global window_abierta
@@ -212,9 +226,12 @@ def show_combined_window(root, muneco_label, images):
 
 def fetch_response(user_input, response_window_instance):
     def run_agent():
-        response = asyncio.run(agent(user_input))  # Obtener respuesta del asistente
-        response_window_instance.update_response(response)
-        #hablar_respuesta(response)  # Hablar la respuesta usando el bot de voz
+        try:
+            response = asyncio.run(agent(user_input))  # Obtener respuesta del asistente
+            response_window_instance.update_response(response)
+        except Exception as e:
+            error_msg = f"❌ Error al obtener respuesta: {str(e)}"
+            response_window_instance.update_response(error_msg)
 
     threading.Thread(target=run_agent, daemon=True).start()  # Ejecutar en segundo plano
 
