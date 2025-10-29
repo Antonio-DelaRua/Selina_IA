@@ -10,6 +10,10 @@ from info import CompanyInfo
 import logging
 import re
 from sqlalchemy import or_
+import os
+import glob
+import subprocess
+import shutil
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO)
@@ -29,16 +33,199 @@ local_llm = OllamaLLM(
     repeat_penalty=1.2,
 )
 
+class FilesystemTools:
+    """Herramientas de filesystem integradas con MCP"""
+    
+    @staticmethod
+    async def read_file(path: str) -> str:
+        """Leer archivo de forma segura"""
+        try:
+            # Validar ruta segura
+            if not os.path.exists(path):
+                return f"❌ Archivo no encontrado: {path}"
+            
+            if not os.path.isfile(path):
+                return f"❌ No es un archivo: {path}"
+            
+            # Limitar tamaño para seguridad
+            if os.path.getsize(path) > 5 * 1024 * 1024:  # 5MB
+                return "❌ Archivo demasiado grande (>5MB)"
+            
+            with open(path, 'r', encoding='utf-8', errors='ignore') as f:
+                content = f.read()
+            
+            # Determinar tipo de archivo para formato
+            file_ext = os.path.splitext(path)[1].lower()
+            code_langs = {'.py': 'python', '.js': 'javascript', '.html': 'html', '.css': 'css', '.json': 'json'}
+            lang = code_langs.get(file_ext, '')
+            
+            formatted_content = f"```{lang}\n{content[:3000]}\n```" if lang else f"```\n{content[:3000]}\n```"
+            
+            return f"## 📄 Contenido de `{path}`\n\n{formatted_content}"
+            
+        except PermissionError:
+            return "❌ Permiso denegado para leer el archivo"
+        except Exception as e:
+            return f"❌ Error leyendo archivo: {str(e)}"
+    
+    @staticmethod
+    async def list_directory(path: str) -> str:
+        """Listar directorio de forma segura"""
+        try:
+            if not os.path.exists(path):
+                return f"❌ Directorio no encontrado: {path}"
+            
+            if not os.path.isdir(path):
+                return f"❌ No es un directorio: {path}"
+            
+            items = os.listdir(path)
+            files = []
+            directories = []
+            
+            for item in items:
+                full_path = os.path.join(path, item)
+                if os.path.isfile(full_path):
+                    size = os.path.getsize(full_path)
+                    size_str = f" ({size} bytes)" if size < 1024 else f" ({size/1024:.1f} KB)"
+                    files.append(f"📄 {item}{size_str}")
+                else:
+                    directories.append(f"📁 {item}/")
+            
+            result = f"## 📂 Contenido de `{path}`\n\n"
+            if directories:
+                result += "### 📁 Directorios\n" + "\n".join(sorted(directories)) + "\n\n"
+            if files:
+                result += "### 📄 Archivos\n" + "\n".join(sorted(files))
+            
+            if not directories and not files:
+                result += "📁 Directorio vacío"
+            
+            return result
+            
+        except PermissionError:
+            return "❌ Permiso denegado para listar el directorio"
+        except Exception as e:
+            return f"❌ Error listando directorio: {str(e)}"
+    
+    @staticmethod
+    async def search_files(query: str, path: str = ".") -> str:
+        """Buscar archivos por nombre"""
+        try:
+            if not os.path.exists(path):
+                return f"❌ Ruta no encontrada: {path}"
+            
+            # Búsqueda segura con glob
+            search_path = os.path.join(path, f"*{query}*")
+            matches = glob.glob(search_path)
+            
+            # Búsqueda recursiva opcional para resultados limitados
+            if len(matches) < 5:
+                recursive_path = os.path.join(path, "**", f"*{query}*")
+                recursive_matches = glob.glob(recursive_path, recursive=True)
+                matches.extend(recursive_matches[:10])  # Limitar resultados recursivos
+            
+            # Eliminar duplicados y limitar
+            matches = list(set(matches))[:15]
+            
+            if not matches:
+                return f"🔍 No se encontraron archivos con: '{query}' en `{path}`"
+            
+            result = f"## 🔍 Resultados para '{query}' en `{path}`\n\n"
+            
+            files = []
+            dirs = []
+            
+            for match in matches:
+                if os.path.isfile(match):
+                    size = os.path.getsize(match)
+                    size_str = f" ({size} bytes)" if size < 1024 else f" ({size/1024:.1f} KB)"
+                    files.append(f"📄 {match}{size_str}")
+                else:
+                    dirs.append(f"📁 {match}/")
+            
+            if dirs:
+                result += "### 📁 Directorios\n" + "\n".join(sorted(dirs)) + "\n\n"
+            if files:
+                result += "### 📄 Archivos\n" + "\n".join(sorted(files))
+            
+            return result
+            
+        except Exception as e:
+            return f"❌ Error buscando archivos: {str(e)}"
+    
+    @staticmethod
+    async def get_file_info(path: str) -> str:
+        """Obtener información detallada de un archivo"""
+        try:
+            if not os.path.exists(path):
+                return f"❌ Archivo no encontrado: {path}"
+            
+            stat = os.stat(path)
+            file_info = {
+                "Nombre": os.path.basename(path),
+                "Ruta completa": os.path.abspath(path),
+                "Tamaño": f"{stat.st_size} bytes",
+                "Modificado": str(stat.st_mtime),
+                "Es archivo": os.path.isfile(path),
+                "Es directorio": os.path.isdir(path)
+            }
+            
+            result = f"## 📊 Información de `{path}`\n\n"
+            for key, value in file_info.items():
+                result += f"**{key}:** {value}\n"
+            
+            return result
+            
+        except Exception as e:
+            return f"❌ Error obteniendo información: {str(e)}"
+    
+    @staticmethod
+    async def move_file(source: str, destination: str) -> str:
+        """Mover o renombrar archivos/directorios de forma segura"""
+        try:
+            # Validar que el archivo origen existe
+            if not os.path.exists(source):
+                return f"❌ Archivo origen no encontrado: {source}"
+            
+            # Validar permisos
+            if not os.access(source, os.R_OK):
+                return f"❌ Sin permisos de lectura para: {source}"
+            
+            # Crear directorio destino si no existe
+            dest_dir = os.path.dirname(destination)
+            if dest_dir and not os.path.exists(dest_dir):
+                os.makedirs(dest_dir, exist_ok=True)
+            
+            # Verificar si el destino ya existe
+            if os.path.exists(destination):
+                return f"❌ El destino ya existe: {destination}"
+            
+            # Mover el archivo
+            shutil.move(source, destination)
+            
+            # Verificar que se movió correctamente
+            if os.path.exists(destination) and not os.path.exists(source):
+                return f"✅ **Archivo movido exitosamente**\n\n**Origen:** `{source}`\n**Destino:** `{destination}`"
+            else:
+                return "❌ Error: No se pudo completar el movimiento"
+                
+        except PermissionError:
+            return "❌ Permiso denegado para mover el archivo"
+        except Exception as e:
+            return f"❌ Error moviendo archivo: {str(e)}"
+
 class MCPDatabaseServer:
-    """Servidor MCP que PRIORIZA la base de datos local"""
+    """Servidor MCP que PRIORIZA la base de datos local + Filesystem"""
     
     def __init__(self, llm):
         self.llm = llm
         self.tools = self._setup_tools()
         self.session_factory = sessionmaker(bind=engine)
+        self.fs_tools = FilesystemTools()
     
     def _setup_tools(self):
         return {
+            # 🗄️ Herramientas existentes de base de datos
             "code_analysis": {
                 "name": "code_analysis",
                 "description": "Analizar código Python usando base de datos local",
@@ -83,24 +270,109 @@ class MCPDatabaseServer:
                     },
                     "required": ["query"]
                 }
+            },
+            
+            # 📁 NUEVAS herramientas de filesystem
+            "move_file": {
+                "name": "move_file",
+                "description": "Mover o renombrar archivos y directorios",
+                "parameters": {
+                    "type": "object", 
+                    "properties": {
+                        "source": {"type": "string", "description": "Ruta del archivo/directorio origen"},
+                        "destination": {"type": "string", "description": "Ruta del archivo/directorio destino"}
+                    },
+                    "required": ["source", "destination"]
+                }
+            },
+            "read_file": {
+                "name": "read_file",
+                "description": "Leer contenido de archivos locales",
+                "parameters": {
+                    "type": "object", 
+                    "properties": {
+                        "path": {"type": "string", "description": "Ruta completa del archivo"}
+                    },
+                    "required": ["path"]
+                }
+            },
+            "list_directory": {
+                "name": "list_directory",
+                "description": "Listar archivos y directorios", 
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "path": {"type": "string", "description": "Ruta del directorio (default: actual)"}
+                    },
+                    "required": ["path"]
+                }
+            },
+            "search_files": {
+                "name": "search_files", 
+                "description": "Buscar archivos por nombre",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "query": {"type": "string", "description": "Término de búsqueda"},
+                        "path": {"type": "string", "description": "Directorio donde buscar", "default": "."}
+                    },
+                    "required": ["query"]
+                }
+            },
+            "file_info": {
+                "name": "file_info",
+                "description": "Obtener información detallada de archivo/directorio",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "path": {"type": "string", "description": "Ruta del archivo/directorio"}
+                    },
+                    "required": ["path"]
+                }
             }
         }
     
     async def call_tool(self, tool_name: str, arguments: dict) -> str:
-        """Ejecutar herramienta MCP - PRIORIZANDO BASE DE DATOS"""
+        """Ejecutar herramienta MCP - PRIORIZANDO BASE DE DATOS + FILESYSTEM"""
         try:
-            # 1️⃣ PRIMERO buscar en base de datos
+            # 1️⃣ PRIMERO: Herramientas de Filesystem (rápidas)
+            if tool_name in ["read_file", "list_directory", "search_files", "file_info", "move_file"]:
+                fs_response = await self._call_filesystem_tool(tool_name, arguments)
+                return fs_response
+            
+            # 2️⃣ SEGUNDO: Buscar en base de datos
             db_response = await self._search_in_database(tool_name, arguments)
             if db_response:
                 return f"## 🗄️ **Desde Base de Datos**\n\n{db_response}"
             
-            # 2️⃣ SI NO HAY RESULTADOS, usar LLM
+            # 3️⃣ TERCERO: Si no hay resultados, usar LLM
             llm_response = await self._call_llm_tool(tool_name, arguments)
             return f"## 🤖 **Generado por IA**\n\n{llm_response}"
                 
         except Exception as e:
             logger.error(f"Error en herramienta MCP {tool_name}: {e}")
             return f"❌ Error ejecutando {tool_name}: {str(e)}"
+    
+    async def _call_filesystem_tool(self, tool_name: str, arguments: dict) -> str:
+        """Ejecutar herramientas de filesystem"""
+        try:
+            if tool_name == "read_file":
+                return await self.fs_tools.read_file(arguments["path"])
+            elif tool_name == "list_directory":
+                path = arguments.get("path", ".")
+                return await self.fs_tools.list_directory(path)
+            elif tool_name == "search_files":
+                path = arguments.get("path", ".")
+                return await self.fs_tools.search_files(arguments["query"], path)
+            elif tool_name == "file_info":
+                return await self.fs_tools.get_file_info(arguments["path"])
+            elif tool_name == "move_file":
+                return await self.fs_tools.move_file(arguments["source"], arguments["destination"])
+            else:
+                return f"❌ Herramienta de filesystem desconocida: {tool_name}"
+        except Exception as e:
+            logger.error(f"Error en herramienta filesystem {tool_name}: {e}")
+            return f"❌ Error en filesystem: {str(e)}"
     
     async def _search_in_database(self, tool_name: str, arguments: dict) -> str:
         """Buscar en la base de datos SQLite antes de usar LLM"""
@@ -461,14 +733,14 @@ class VectorStore:
             logger.error(f"❌ Error agregando al índice: {e}")
             return False
 
-# Inicializar vector store (pero no lo usamos en MCP por ahora para evitar errores)
+# Inicializar vector store
 vector_store = VectorStore()
 try:
     vector_store.build_or_load_faiss_index()
 except Exception as e:
     logger.warning(f"VectorStore no inicializado: {e}")
 
-# Inicializar MCP Server CON BASE DE DATOS
+# Inicializar MCP Server MEJORADO con Filesystem
 mcp_server = MCPDatabaseServer(local_llm)
 
 def generate_embedding(text):
@@ -550,23 +822,32 @@ def convert_single_quotes_to_double(json_str):
     return result
 
 async def handle_mcp_command(command: str) -> str:
-    """Manejar comandos MCP - CON BASE DE DATOS PRIMERO"""
+    """Manejar comandos MCP - AHORA CON FILESYSTEM"""
     try:
         if command == "help" or command == "tools":
             tools = mcp_server.list_tools()
-            tools_list = "\n".join([f"- **{tool['name']}**: {tool['description']}" for tool in tools])
+            
+            # Separar herramientas por categoría
+            db_tools = [t for t in tools if t['name'] in ['code_analysis', 'explain_concept', 'debug_code', 'search_knowledge']]
+            fs_tools = [t for t in tools if t['name'] in ['read_file', 'list_directory', 'search_files', 'file_info', 'move_file']]
+            
+            db_list = "\n".join([f"- **{tool['name']}**: {tool['description']}" for tool in db_tools])
+            fs_list = "\n".join([f"- **{tool['name']}**: {tool['description']}" for tool in fs_tools])
+            
             return f"""
-## 🗄️ **Herramientas MCP (Base de Datos First)**
+## 🛠️ **Herramientas MCP Disponibles**
 
-{tools_list}
+### 🗄️ **Base de Datos**
+{db_list}
 
-**Flujo:** 
-1. 🔍 Busca en Base de Datos SQLite
-2. 🤖 Solo si no encuentra, usa LLM
+### 📁 **Filesystem** 
+{fs_list}
 
-**Ejemplos:**
-`/mcp {{"tool": "explain_concept", "arguments": {{"concept": "listas"}}}}`
-`/mcp {{"tool": "search_knowledge", "arguments": {{"query": "decoradores"}}}}`
+**📝 Ejemplos:**
+- `{{"tool": "read_file", "arguments": {{"path": "/ruta/archivo.py"}}}}`
+- `{{"tool": "list_directory", "arguments": {{"path": "/home/usuario"}}}}`
+- `{{"tool": "move_file", "arguments": {{"source": "C:\\\\Users\\\\RuXx\\\\Downloads\\\\archivo.txt", "destination": "C:\\\\Users\\\\RuXx\\\\Documents\\\\archivo.txt"}}}}`
+- `{{"tool": "explain_concept", "arguments": {{"concept": "listas"}}}}`
 """
         
         # Convertir comillas simples a dobles
@@ -582,7 +863,7 @@ async def handle_mcp_command(command: str) -> str:
             if not tool_name:
                 return "❌ Error: Falta el nombre de la herramienta"
             
-            # Ejecutar herramienta CON BASE DE DATOS PRIMERO
+            # Ejecutar herramienta MEJORADA
             response = await asyncio.wait_for(
                 mcp_server.call_tool(tool_name, arguments),
                 timeout=45.0
@@ -597,14 +878,14 @@ async def handle_mcp_command(command: str) -> str:
         return f"❌ Error: {str(e)}"
 
 async def agent(prompt):
-    """Agente principal con soporte MCP"""
+    """Agente principal con soporte MCP MEJORADO"""
     if not prompt or not prompt.strip():
         return "❌ Por favor, ingresa una pregunta válida."
 
     user_query = prompt.strip()
     logger.info(f"🔍 Procesando consulta: {user_query}")
 
-    # 1️⃣ Detectar si es un comando MCP (RÁPIDO con base de datos)
+    # 1️⃣ Detectar si es un comando MCP (AHORA CON FILESYSTEM)
     if user_query.startswith("/mcp "):
         return await handle_mcp_command(user_query[5:])
     
@@ -634,7 +915,7 @@ async def agent(prompt):
     except Exception as e:
         logger.error(f"⚠️ Error en consulta SQL: {e}")
 
-    # 5️⃣ Si no hay coincidencia, usar CodeLlama (LENTO - solo como último recurso)
+    # 5️⃣ Si no hay coincidencia, usar LLM (LENTO - solo como último recurso)
     logger.info("🤖 Generando respuesta con LLM (puede tardar)")
     prompt_template = f"""
 Responde BREVEMENTE en español (máximo 150 palabras):
