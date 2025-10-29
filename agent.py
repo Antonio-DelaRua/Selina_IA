@@ -9,6 +9,7 @@ from model import History, HistoryEntry, PythonDB, engine
 from info import CompanyInfo
 import logging
 import re
+from sqlalchemy import or_
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO)
@@ -20,36 +21,27 @@ EMB_DIM = 384
 INDEX_PATH = "vector_index.faiss"
 METADATA_PATH = "vector_metadata.json"
 
-# 🚀 LLM local (CodeLlama) - SOLO para respuestas complejas
+# 🚀 LLM local
 local_llm = OllamaLLM(
-    model="codellama:latest",
-    temperature=0.3,
-    num_predict=900,
+    model="qwen2.5:0.5b",
+    temperature=0.5,
+    num_predict=500,
     repeat_penalty=1.2,
-    num_gpu_layers=20,
 )
 
-# 🚀 LLM RÁPIDO para herramientas MCP
-fast_llm = OllamaLLM(
-    model="qwen2.5:0.5b",  # Modelo más pequeño y rápido
-    temperature=0.1,
-    num_predict=700,  # Respuestas más cortas
-    repeat_penalty=1.1,
-    num_gpu_layers=10,
-)
-
-class MCPServer:
-    """Servidor MCP integrado en la aplicación - VERSIÓN RÁPIDA"""
+class MCPDatabaseServer:
+    """Servidor MCP que PRIORIZA la base de datos local"""
     
-    def __init__(self, fast_llm):
-        self.fast_llm = fast_llm
+    def __init__(self, llm):
+        self.llm = llm
         self.tools = self._setup_tools()
+        self.session_factory = sessionmaker(bind=engine)
     
     def _setup_tools(self):
         return {
             "code_analysis": {
                 "name": "code_analysis",
-                "description": "Analizar y explicar código Python",
+                "description": "Analizar código Python usando base de datos local",
                 "parameters": {
                     "type": "object",
                     "properties": {
@@ -60,7 +52,7 @@ class MCPServer:
             },
             "explain_concept": {
                 "name": "explain_concept", 
-                "description": "Explicar concepto de programación",
+                "description": "Explicar concepto usando base de datos local",
                 "parameters": {
                     "type": "object",
                     "properties": {
@@ -71,7 +63,7 @@ class MCPServer:
             },
             "debug_code": {
                 "name": "debug_code",
-                "description": "Ayudar a debuggear código",
+                "description": "Debuggear código usando base de datos local",
                 "parameters": {
                     "type": "object", 
                     "properties": {
@@ -80,62 +72,220 @@ class MCPServer:
                     },
                     "required": ["code"]
                 }
+            },
+            "search_knowledge": {
+                "name": "search_knowledge",
+                "description": "Buscar en toda la base de conocimientos",
+                "parameters": {
+                    "type": "object", 
+                    "properties": {
+                        "query": {"type": "string", "description": "Término a buscar"}
+                    },
+                    "required": ["query"]
+                }
             }
         }
     
     async def call_tool(self, tool_name: str, arguments: dict) -> str:
-        """Ejecutar una herramienta MCP - VERSIÓN RÁPIDA"""
+        """Ejecutar herramienta MCP - PRIORIZANDO BASE DE DATOS"""
+        try:
+            # 1️⃣ PRIMERO buscar en base de datos
+            db_response = await self._search_in_database(tool_name, arguments)
+            if db_response:
+                return f"## 🗄️ **Desde Base de Datos**\n\n{db_response}"
+            
+            # 2️⃣ SI NO HAY RESULTADOS, usar LLM
+            llm_response = await self._call_llm_tool(tool_name, arguments)
+            return f"## 🤖 **Generado por IA**\n\n{llm_response}"
+                
+        except Exception as e:
+            logger.error(f"Error en herramienta MCP {tool_name}: {e}")
+            return f"❌ Error ejecutando {tool_name}: {str(e)}"
+    
+    async def _search_in_database(self, tool_name: str, arguments: dict) -> str:
+        """Buscar en la base de datos SQLite antes de usar LLM"""
+        try:
+            with self.session_factory() as session:
+                if tool_name == "code_analysis":
+                    code = arguments.get("code", "").strip()
+                    if not code:
+                        return None
+                    
+                    # Buscar código similar en la base de datos
+                    results = session.query(PythonDB).filter(
+                        or_(
+                            PythonDB.prompt.ilike(f"%{code}%"),
+                            PythonDB.response.ilike(f"%{code}%")
+                        )
+                    ).limit(3).all()
+                    
+                    if results:
+                        response = "**Análisis encontrado en base de datos:**\n\n"
+                        for i, result in enumerate(results, 1):
+                            response += f"**{i}. {result.prompt[:100]}...**\n"
+                            response += f"{result.response}\n\n"
+                        return response
+                
+                elif tool_name == "explain_concept":
+                    concept = arguments.get("concept", "").lower().strip()
+                    
+                    # Buscar concepto en FAQs, PythonDB e History
+                    # 1. Buscar en FAQs
+                    faq_results = []
+                    for keyword, answer in CompanyInfo.FAQS.items():
+                        if concept in keyword.lower():
+                            faq_results.append(f"**FAQ:** {keyword}\n{answer}")
+                    
+                    # 2. Buscar en PythonDB
+                    db_results = session.query(PythonDB).filter(
+                        or_(
+                            PythonDB.prompt.ilike(f"%{concept}%"),
+                            PythonDB.response.ilike(f"%{concept}%")
+                        )
+                    ).limit(2).all()
+                    
+                    # 3. Buscar en History
+                    history_results = session.query(History).filter(
+                        or_(
+                            History.prompt.ilike(f"%{concept}%"),
+                            History.response.ilike(f"%{concept}%")
+                        )
+                    ).limit(2).all()
+                    
+                    all_results = faq_results + [
+                        f"**Base de Datos:** {result.prompt}\n{result.response}" 
+                        for result in db_results
+                    ] + [
+                        f"**Historial:** {result.prompt}\n{result.response}" 
+                        for result in history_results
+                    ]
+                    
+                    if all_results:
+                        response = "**Explicaciones encontradas:**\n\n"
+                        for i, result in enumerate(all_results[:3], 1):
+                            response += f"{result}\n\n"
+                        return response
+                
+                elif tool_name == "debug_code":
+                    code = arguments.get("code", "").strip()
+                    error = arguments.get("error", "").strip()
+                    
+                    search_terms = [code]
+                    if error:
+                        search_terms.append(error)
+                    
+                    results = []
+                    for term in search_terms:
+                        if term:
+                            # Buscar en PythonDB
+                            db_matches = session.query(PythonDB).filter(
+                                or_(
+                                    PythonDB.prompt.ilike(f"%{term}%"),
+                                    PythonDB.response.ilike(f"%{term}%")
+                                )
+                            ).limit(2).all()
+                            
+                            # Buscar en History
+                            history_matches = session.query(History).filter(
+                                or_(
+                                    History.prompt.ilike(f"%{term}%"),
+                                    History.response.ilike(f"%{term}%")
+                                )
+                            ).limit(2).all()
+                            
+                            results.extend(db_matches + history_matches)
+                    
+                    if results:
+                        response = "**Soluciones de debugging encontradas:**\n\n"
+                        for i, result in enumerate(results[:3], 1):
+                            response += f"**{i}. {result.prompt[:100]}...**\n"
+                            response += f"{result.response}\n\n"
+                        return response
+                
+                elif tool_name == "search_knowledge":
+                    query = arguments.get("query", "").strip()
+                    
+                    # Búsqueda completa en toda la base de conocimientos
+                    all_results = []
+                    
+                    # Buscar en FAQs
+                    for keyword, answer in CompanyInfo.FAQS.items():
+                        if query.lower() in keyword.lower():
+                            all_results.append(f"📚 **FAQ:** {keyword}\n{answer}")
+                    
+                    # Buscar en PythonDB
+                    db_results = session.query(PythonDB).filter(
+                        or_(
+                            PythonDB.prompt.ilike(f"%{query}%"),
+                            PythonDB.response.ilike(f"%{query}%")
+                        )
+                    ).limit(3).all()
+                    
+                    # Buscar en History
+                    history_results = session.query(History).filter(
+                        or_(
+                            History.prompt.ilike(f"%{query}%"),
+                            History.response.ilike(f"%{query}%")
+                        )
+                    ).limit(3).all()
+                    
+                    all_results.extend([
+                        f"💾 **Base de Datos:** {result.prompt}\n{result.response}" 
+                        for result in db_results
+                    ] + [
+                        f"📝 **Historial:** {result.prompt}\n{result.response}" 
+                        for result in history_results
+                    ])
+                    
+                    if all_results:
+                        response = f"## 🔍 **Resultados para: '{query}'**\n\n"
+                        for i, result in enumerate(all_results[:5], 1):
+                            response += f"{i}. {result}\n\n"
+                        return response
+            
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error buscando en base de datos: {e}")
+            return None
+    
+    async def _call_llm_tool(self, tool_name: str, arguments: dict) -> str:
+        """Usar LLM solo si no hay resultados en BD"""
         try:
             if tool_name == "code_analysis":
                 code = arguments.get("code", "")
-                # Respuesta rápida predefinida para código simple
-                if len(code) < 100:
-                    quick_response = self._quick_code_analysis(code)
-                    if quick_response:
-                        return quick_response
-                
                 prompt = f"""
-                Analiza BREVEMENTE este código Python (máximo 150 palabras):
+                Analiza BREVEMENTE este código Python (máximo 100 palabras):
 
                 ```python
                 {code}
                 ```
 
                 Responde en español con:
-                • Función: ¿qué hace?
-                • Mejora: una sugerencia
-                • Error: posible problema
+                • Función principal
+                • Una mejora sugerida
+                • Posible error
 
                 Sé CONCISO.
                 """
-                response = await self._call_fast_llm(prompt)
-                return f"## 🔍 Análisis Rápido\n\n{response}"
                 
             elif tool_name == "explain_concept":
                 concept = arguments.get("concept", "")
-                # Respuesta rápida para conceptos comunes
-                quick_explanation = self._quick_concept_explanation(concept)
-                if quick_explanation:
-                    return quick_explanation
-                
                 prompt = f"""
-                Explica BREVEMENTE '{concept}' en programación (máximo 100 palabras):
+                Explica BREVEMENTE '{concept}' en programación (máximo 80 palabras):
 
                 • Definición simple
-                • Ejemplo práctico
-                • Caso de uso
+                • Ejemplo práctico en Python
+                • Caso de uso común
 
                 Sé CONCISO y usa español.
                 """
-                response = await self._call_fast_llm(prompt)
-                return f"## 📖 Explicación: {concept}\n\n{response}"
                 
             elif tool_name == "debug_code":
                 code = arguments.get("code", "")
                 error = arguments.get("error", "")
-                
                 prompt = f"""
-                Debug rápido (máximo 100 palabras):
+                Debug rápido (máximo 80 palabras):
 
                 Código: ```python
                 {code}
@@ -149,64 +299,64 @@ class MCPServer:
 
                 Sé CONCISO.
                 """
-                response = await self._call_fast_llm(prompt)
-                return f"## 🐛 Debug Rápido\n\n{response}"
                 
-            else:
-                return f"❌ Herramienta desconocida: {tool_name}"
-                
-        except Exception as e:
-            logger.error(f"Error en herramienta MCP {tool_name}: {e}")
-            return f"❌ Error ejecutando {tool_name}: {str(e)}"
-    
-    def _quick_code_analysis(self, code: str) -> str:
-        """Análisis rápido predefinido para código común"""
-        code_lower = code.lower()
-        
-        # Patrones comunes
-        if "print(" in code_lower and "hello" in code_lower:
-            return "## 🔍 Análisis Rápido\n\n**Función:** Muestra 'hello' en pantalla\n**Mejora:** Usar f-strings para variables\n**Error:** Ninguno, es código básico"
-        
-        if "def " in code_lower and "return" in code_lower:
-            return "## 🔍 Análisis Rápido\n\n**Función:** Define una función que retorna valor\n**Mejora:** Añadir docstring y validaciones\n**Error:** Posible falta de manejo de casos edge"
-        
-        if "for " in code_lower and " in " in code_lower:
-            return "## 🔍 Análisis Rápido\n\n**Función:** Bucle que itera sobre elementos\n**Mejora:** Usar list comprehension si es simple\n**Error:** Posible iteración sobre tipo incorrecto"
+            elif tool_name == "search_knowledge":
+                query = arguments.get("query", "")
+                prompt = f"""
+                Responde BREVEMENTE sobre '{query}' en programación (máximo 100 palabras):
+
+                • Concepto clave
+                • Ejemplo práctico
+                • Uso común
+
+                Sé CONCISO.
+                """
             
-        return None
-    
-    def _quick_concept_explanation(self, concept: str) -> str:
-        """Explicación rápida predefinida para conceptos comunes"""
-        concept_lower = concept.lower()
-        
-        explanations = {
-            "lista": "## 📖 Listas en Python\n\n• **Definición:** Colección ordenada y mutable de elementos\n• **Ejemplo:** `mi_lista = [1, 2, 'hola']`\n• **Uso:** Para almacenar múltiples valores relacionados",
-            "función": "## 📖 Funciones en Python\n\n• **Definición:** Bloque de código reutilizable\n• **Ejemplo:** `def suma(a, b): return a + b`\n• **Uso:** Organizar código y evitar repetición",
-            "variable": "## 📖 Variables en Python\n\n• **Definición:** Contenedor para almacenar datos\n• **Ejemplo:** `edad = 25`\n• **Uso:** Guardar y manipular valores",
-            "bucle": "## 📖 Bucles en Python\n\n• **Definición:** Repetir código múltiples veces\n• **Ejemplo:** `for i in range(5): print(i)`\n• **Uso:** Procesar listas o repetir acciones",
-            "condicional": "## 📖 Condicionales en Python\n\n• **Definición:** Ejecutar código según condición\n• **Ejemplo:** `if edad >= 18: print('Mayor')`\n• **Uso:** Tomar decisiones en el programa"
-        }
-        
-        for key, explanation in explanations.items():
-            if key in concept_lower:
-                return explanation
-                
-        return None
-    
-    async def _call_fast_llm(self, prompt: str) -> str:
-        """Llamar al LLM RÁPIDO con timeout"""
-        try:
-            # Timeout de 30 segundos máximo
+            # LLM con timeout corto
             response = await asyncio.wait_for(
-                asyncio.get_event_loop().run_in_executor(None, self.fast_llm.invoke, prompt),
+                asyncio.get_event_loop().run_in_executor(None, self.llm.invoke, prompt),
                 timeout=30.0
             )
-            return response.strip() if response else "⚠️ Respuesta demasiado larga, intenta con menos código."
+            
+            # Guardar en la base de datos para futuras consultas
+            await self._save_to_database(tool_name, arguments, response)
+            
+            return response.strip() if response else "No pude generar una respuesta."
+            
         except asyncio.TimeoutError:
-            return "⏰ Tiempo agotado. El código es muy complejo o el modelo está lento. Intenta con menos código."
+            return "⏰ Tiempo agotado. Intenta con una consulta más específica."
         except Exception as e:
-            logger.error(f"Error llamando LLM rápido: {e}")
-            return f"Error temporal: {str(e)}"
+            logger.error(f"Error llamando LLM: {e}")
+            return f"Error: {str(e)}"
+    
+    async def _save_to_database(self, tool_name: str, arguments: dict, response: str):
+        """Guardar la respuesta en la base de datos para futuras consultas"""
+        try:
+            with self.session_factory() as session:
+                if tool_name == "code_analysis":
+                    prompt = f"Análisis de código: {arguments.get('code', '')[:200]}"
+                    entry = PythonDB(prompt=prompt, response=response)
+                
+                elif tool_name == "explain_concept":
+                    prompt = f"Explicar concepto: {arguments.get('concept', '')}"
+                    entry = PythonDB(prompt=prompt, response=response)
+                
+                elif tool_name == "debug_code":
+                    code = arguments.get('code', '')[:150]
+                    error = arguments.get('error', '')
+                    prompt = f"Debug: {code} - Error: {error}" if error else f"Debug: {code}"
+                    entry = PythonDB(prompt=prompt, response=response)
+                
+                elif tool_name == "search_knowledge":
+                    prompt = f"Búsqueda: {arguments.get('query', '')}"
+                    entry = PythonDB(prompt=prompt, response=response)
+                
+                session.add(entry)
+                session.commit()
+                logger.info("✅ Respuesta guardada en base de datos")
+                
+        except Exception as e:
+            logger.error(f"Error guardando en base de datos: {e}")
     
     def list_tools(self) -> list:
         """Listar herramientas disponibles"""
@@ -311,12 +461,15 @@ class VectorStore:
             logger.error(f"❌ Error agregando al índice: {e}")
             return False
 
-# Inicializar vector store
+# Inicializar vector store (pero no lo usamos en MCP por ahora para evitar errores)
 vector_store = VectorStore()
-vector_store.build_or_load_faiss_index()
+try:
+    vector_store.build_or_load_faiss_index()
+except Exception as e:
+    logger.warning(f"VectorStore no inicializado: {e}")
 
-# Inicializar MCP Server CON LLM RÁPIDO
-mcp_server = MCPServer(fast_llm)
+# Inicializar MCP Server CON BASE DE DATOS
+mcp_server = MCPDatabaseServer(local_llm)
 
 def generate_embedding(text):
     """Generar embedding numpy para un texto"""
@@ -397,97 +550,47 @@ def convert_single_quotes_to_double(json_str):
     return result
 
 async def handle_mcp_command(command: str) -> str:
-    """Manejar comandos MCP desde el chat - VERSIÓN RÁPIDA"""
+    """Manejar comandos MCP - CON BASE DE DATOS PRIMERO"""
     try:
         if command == "help" or command == "tools":
             tools = mcp_server.list_tools()
             tools_list = "\n".join([f"- **{tool['name']}**: {tool['description']}" for tool in tools])
             return f"""
-## 🛠️ **Herramientas MCP Disponibles** ⚡
+## 🗄️ **Herramientas MCP (Base de Datos First)**
 
 {tools_list}
 
-**Uso:** `/mcp <comando_json>`
+**Flujo:** 
+1. 🔍 Busca en Base de Datos SQLite
+2. 🤖 Solo si no encuentra, usa LLM
 
-**📝 Ejemplos RÁPIDOS:**
-
-**1. Análisis de código:**
-`/mcp {{"tool": "code_analysis", "arguments": {{"code": "print('hola')"}}}}`
-
-**2. Explicar concepto:**
+**Ejemplos:**
 `/mcp {{"tool": "explain_concept", "arguments": {{"concept": "listas"}}}}`
-
-**3. Debuggear:**
-`/mcp {{"tool": "debug_code", "arguments": {{"code": "x=1/0", "error": "Division by zero"}}}}`
-
-💡 **Las herramientas MCP son RÁPIDAS** (max 30 segundos)
-            """
+`/mcp {{"tool": "search_knowledge", "arguments": {{"query": "decoradores"}}}}`
+"""
         
-        # Convertir comillas simples a dobles para JSON válido
+        # Convertir comillas simples a dobles
         command_clean = command.strip()
-        
-        # Si el comando usa comillas simples, convertirlas a dobles
         if "'" in command_clean and '"' not in command_clean:
             command_clean = convert_single_quotes_to_double(command_clean)
         
         try:
-            # Parsear el JSON
             data = json.loads(command_clean)
-            
             tool_name = data.get("tool")
             arguments = data.get("arguments", {})
             
             if not tool_name:
                 return "❌ Error: Falta el nombre de la herramienta"
             
-            # Ejecutar la herramienta CON TIMEOUT
+            # Ejecutar herramienta CON BASE DE DATOS PRIMERO
             response = await asyncio.wait_for(
                 mcp_server.call_tool(tool_name, arguments),
-                timeout=35.0  # Timeout de 35 segundos
+                timeout=45.0
             )
             return response
             
         except json.JSONDecodeError as e:
-            logger.error(f"Error parseando JSON: {e}")
-            
-            # Intentar parseo con regex como fallback
-            try:
-                tool_match = re.search(r'["\']tool["\']\s*:\s*["\']([^"\']*)["\']', command)
-                if tool_match:
-                    tool_name = tool_match.group(1)
-                    
-                    arguments = {}
-                    code_match = re.search(r'["\']code["\']\s*:\s*["\']([^"\']*)["\']', command)
-                    if code_match:
-                        arguments['code'] = code_match.group(1)
-                    
-                    concept_match = re.search(r'["\']concept["\']\s*:\s*["\']([^"\']*)["\']', command)
-                    if concept_match:
-                        arguments['concept'] = concept_match.group(1)
-                    
-                    error_match = re.search(r'["\']error["\']\s*:\s*["\']([^"\']*)["\']', command)
-                    if error_match:
-                        arguments['error'] = error_match.group(1)
-                    
-                    if arguments:
-                        response = await asyncio.wait_for(
-                            mcp_server.call_tool(tool_name, arguments),
-                            timeout=35.0
-                        )
-                        return response
-                        
-            except Exception as parse_error:
-                logger.error(f"Error en parseo alternativo: {parse_error}")
-            
-            return f"""
-❌ **Error en el formato JSON**
-
-**Usa este formato:** `/mcp {{"tool": "nombre", "arguments": {{"param": "valor"}}}}`
-
-**Ejemplo:** `/mcp {{"tool": "code_analysis", "arguments": {{"code": "print('hola')"}}}}`
-"""
-        except asyncio.TimeoutError:
-            return "⏰ **¡Demasiado lento!** ⚡\n\nLa herramienta tardó demasiado. Intenta con:\n• Código más corto\n• Conceptos más simples\n• Menos texto"
+            return f"❌ Error en formato JSON. Usa: /mcp {{\"tool\": \"nombre\", \"arguments\": {{\"param\": \"valor\"}}}}"
         
     except Exception as e:
         logger.error(f"Error en comando MCP: {e}")
@@ -501,7 +604,7 @@ async def agent(prompt):
     user_query = prompt.strip()
     logger.info(f"🔍 Procesando consulta: {user_query}")
 
-    # 1️⃣ Detectar si es un comando MCP (RÁPIDO)
+    # 1️⃣ Detectar si es un comando MCP (RÁPIDO con base de datos)
     if user_query.startswith("/mcp "):
         return await handle_mcp_command(user_query[5:])
     
@@ -519,12 +622,17 @@ async def agent(prompt):
 
     # 4️⃣ Buscar en base de datos exacta (rápido)
     try:
-        db_response = PythonDB.get_by_prompt(user_query) or HistoryEntry.get_by_prompt(user_query)
-        if db_response:
-            logger.info("✅ Respuesta encontrada en base de datos exacta")
-            return f"📚 **Respuesta encontrada en base de datos:**\n{db_response.response}"
+        Session = sessionmaker(bind=engine)
+        with Session() as session:
+            db_response = session.query(PythonDB).filter(
+                PythonDB.prompt.ilike(f"%{user_query}%")
+            ).first()
+            
+            if db_response:
+                logger.info("✅ Respuesta encontrada en base de datos exacta")
+                return f"📚 **Respuesta encontrada en base de datos:**\n{db_response.response}"
     except Exception as e:
-        logger.error(f"⚠️ Error en consulta SQL: {e} - Consulta: {user_query}")
+        logger.error(f"⚠️ Error en consulta SQL: {e}")
 
     # 5️⃣ Si no hay coincidencia, usar CodeLlama (LENTO - solo como último recurso)
     logger.info("🤖 Generando respuesta con LLM (puede tardar)")
@@ -549,6 +657,14 @@ Respuesta concisa:
             history_entry = HistoryEntry(prompt=user_query, response=response)
             history_entry.set_embedding(embedding)
             history_entry.save()
+            
+            # También guardar en PythonDB para MCP
+            with Session() as session:
+                python_entry = PythonDB(prompt=user_query, response=response)
+                python_entry.set_embedding(embedding)
+                session.add(python_entry)
+                session.commit()
+                
             vector_store.add_to_index(embedding, user_query, response, "history")
         except Exception as e:
             logger.error(f"Error guardando en historial: {e}")
