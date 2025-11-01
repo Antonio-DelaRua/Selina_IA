@@ -32,7 +32,7 @@ def show_combined_window(root, muneco_label, images):
             self.parent = parent  # Guardar referencia al padre
             self.complete_text = ""
             self.window = tk.Toplevel(parent)
-            self.window.title(WINDOW_TITLE)
+            self.window.title("NoBt GPT 🐍")
             self.window.protocol("WM_DELETE_WINDOW", self.on_close)
 
             # Configurar cursor al abrir
@@ -371,6 +371,7 @@ def setup_gui(root):
     root.geometry(f"{virtual_width}x{virtual_height}+0+0")  # Cubrir todas las pantallas
     root.attributes("-transparentcolor", "white")
     root.attributes("-topmost", True)
+    root.overrideredirect(True)  # Quitar barra de título completamente
     try:
         root.option_add("*Font", "Inter 14")
     except Exception as e:
