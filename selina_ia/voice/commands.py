@@ -111,6 +111,9 @@ def talk(text):
     engine.say(text)
     engine.runAndWait()
 
+    # Pequeña pausa para asegurar que el audio termine
+    time.sleep(0.1)
+
     with lock:
         ocupado = False
         estado_asistente.set("Estado: Inactivo")
@@ -559,10 +562,10 @@ def procesar_comando(rec):
     # Diccionario de comandos
     comandos = {
         "reproduce": lambda x: reproduce_musica(),
-        "busca": buscar_info,
+        "busca": lambda x: buscar_info(x),
         "detener": lambda x: [globals().update(alarma_activa=False), mixer.music.stop(), talk("Alarma detenida")] if alarma_activa else None,
         "alarma": lambda x: activar_alarma(),
-        "cámara": lambda x: capture(),
+        "cámara": lambda x: manejar_camara(),
         "abre": lambda x: abrir_sitio(x, SITES),
         "cerrar web": lambda x: cerrar_web(),
         "música": lambda x: abrir_sitio(x, CANCIONES),
