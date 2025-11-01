@@ -1,4 +1,9 @@
 from typing import Dict, List, Type, Any
+import sys
+import os
+
+# Fix import paths
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from .base import MCPServer
 from .database_mcp import DatabaseMCP
 from .llm_mcp import LLMMCP

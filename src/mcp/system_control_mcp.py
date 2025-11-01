@@ -5,9 +5,21 @@ import os
 import ctypes
 from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
-from pycaw.pycaw import AudioUtility, IAudioEndpointVolume
-import screen_brightness_control as sbc
-import psutil
+try:
+    from pycaw.pycaw import AudioUtility, IAudioEndpointVolume
+    AUDIO_AVAILABLE = True
+except ImportError:
+    AUDIO_AVAILABLE = False
+try:
+    import screen_brightness_control as sbc
+    BRIGHTNESS_AVAILABLE = True
+except ImportError:
+    BRIGHTNESS_AVAILABLE = False
+try:
+    import psutil
+    PSUTIL_AVAILABLE = True
+except ImportError:
+    PSUTIL_AVAILABLE = False
 import win32gui
 import win32con
 import win32process
@@ -24,6 +36,10 @@ class SystemControlMCP(MCPServer):
 
     def _initialize_audio(self):
         """Inicializar control de audio"""
+        if not AUDIO_AVAILABLE:
+            self.volume = None
+            return
+
         try:
             devices = AudioUtility.GetSpeakers()
             interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
@@ -127,28 +143,31 @@ class SystemControlMCP(MCPServer):
 
     async def _handle_brightness(self, request: Dict[str, Any]) -> Dict[str, Any]:
         """Control de brillo"""
+        if not BRIGHTNESS_AVAILABLE:
+            return {"error": "Control de brillo no disponible"}
+
         try:
             action = request.get("brightness_action")
             value = request.get("value", 0)
-            
+
             current = sbc.get_brightness()[0]
-            
+
             if action == "set":
                 sbc.set_brightness(value)
                 return {"success": True, "brightness": value}
-                
+
             elif action == "up":
                 new_value = min(current + value, 100)
                 sbc.set_brightness(new_value)
                 return {"success": True, "brightness": new_value}
-                
+
             elif action == "down":
                 new_value = max(current - value, 0)
                 sbc.set_brightness(new_value)
                 return {"success": True, "brightness": new_value}
-                
+
             return {"error": "Acción de brillo no válida"}
-            
+
         except Exception as e:
             return {"error": str(e)}
 

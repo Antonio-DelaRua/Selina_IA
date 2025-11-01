@@ -15,4 +15,5 @@ src/ui/gui.py
 src/ui/whatsapp.py
 src/utils/__init__.py
 src/utils/bot.py
+src/utils/clean_history.py
 src/utils/movimientos.py

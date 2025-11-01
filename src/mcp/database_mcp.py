@@ -1,7 +1,12 @@
 from typing import Dict, Any
+import sys
+import os
+
+# Fix import paths
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from .base import MCPServer
 from sqlalchemy import func
-from ..core.model import PythonDB, engine, sessionmaker
+from core.model import PythonDB, engine, sessionmaker
 
 class DatabaseMCP(MCPServer):
     """MCP server for handling database operations"""
