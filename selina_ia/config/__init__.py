@@ -1,0 +1,3 @@
+"""
+Configuración centralizada del sistema
+"""

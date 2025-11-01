@@ -1,12 +1,16 @@
+"""
+Interfaz gráfica principal - refactorizado de gui.py
+"""
 import tkinter as tk
 from tkinter import Toplevel, Text, Button, Frame, Label
 from PIL import Image, ImageTk
-from agent import agent
-from movimientos import apply_gravity, move_to_edge, climb_animation
+from core.agent import agent
+from .animations import apply_gravity, move_to_edge, climb_animation
 import re
 import asyncio
 import threading
-from bot import talk, set_estado_asistente, iniciar_asistente
+from voice.bot import talk, set_estado_asistente, iniciar_asistente
+from config.settings import WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, IMAGES_DIR
 
 # Variables globales para la ventana de respuesta
 response_window = None
@@ -18,7 +22,7 @@ def show_combined_window(root, muneco_label, images):
     global window_abierta
     if window_abierta:
         return
-    window_abierta = True 
+    window_abierta = True
 
     muneco_label.config(image=images["muneco_active"])
     muneco_label.image = images["muneco_active"]
@@ -28,7 +32,7 @@ def show_combined_window(root, muneco_label, images):
             self.parent = parent  # Guardar referencia al padre
             self.complete_text = ""
             self.window = tk.Toplevel(parent)
-            self.window.title("NoBt GPT \U0001F4BB")
+            self.window.title(WINDOW_TITLE)
             self.window.protocol("WM_DELETE_WINDOW", self.on_close)
 
             # Configurar cursor al abrir
@@ -38,7 +42,7 @@ def show_combined_window(root, muneco_label, images):
             # Configuración de geometría
             screen_width = root.winfo_screenwidth()
             screen_height = root.winfo_screenheight()
-            window_width, window_height = 800, 750
+            window_width, window_height = WINDOW_WIDTH, WINDOW_HEIGHT
             position_x = (screen_width // 2) - (window_width // 2)
             position_y = (screen_height // 2) - (window_height // 2)
             self.window.geometry(f"{window_width}x{window_height}+{position_x}+{position_y}")
@@ -59,13 +63,13 @@ def show_combined_window(root, muneco_label, images):
             scrollbar.grid(row=0, column=1, sticky='ns')
 
             self.response_text_widget = tk.Text(
-                self.response_frame, 
-                bg='#ebe8e8', 
+                self.response_frame,
+                bg='#ebe8e8',
                 wrap='word',
-                font=("Inter", 14), 
-                padx=20, 
-                pady=20, 
-                bd=0, 
+                font=("Inter", 14),
+                padx=20,
+                pady=20,
+                bd=0,
                 state="disabled",
                 yscrollcommand=scrollbar.set
             )
@@ -96,8 +100,8 @@ def show_combined_window(root, muneco_label, images):
             self.text_widget.bind("<Return>", lambda event: self.send_message())
 
             # Añadir ayuda MCP en la interfaz
-            help_label = tk.Label(self.input_frame, text="💡 Usa /mcp help para herramientas", 
-                                 font=("Comic Sans MS", 10), bg='white', fg='gray')
+            help_label = tk.Label(self.input_frame, text="💡 Usa /mcp help para herramientas",
+                                  font=("Comic Sans MS", 10), bg='white', fg='gray')
             help_label.pack(side='bottom', fill='x', pady=2)
 
             self.window.after(100, lambda: self.text_widget.focus_set())
@@ -119,8 +123,8 @@ def show_combined_window(root, muneco_label, images):
             self.response_text_widget.tag_configure("italic", font=("Segoe UI", 12, "italic"), foreground="grey")
             self.response_text_widget.tag_configure("negrita", font=("Times New Roman", 16, "bold"))
             self.response_text_widget.tag_configure("comillas_simples", font=("Courier", 15, "bold"), foreground="grey")
-            self.response_text_widget.tag_configure("code", 
-                font=("Courier", 12, "bold"), 
+            self.response_text_widget.tag_configure("code",
+                font=("Courier", 12, "bold"),
                 background="#f4f4f4",
                 lmargin1=30,
                 lmargin2=10,
@@ -129,17 +133,17 @@ def show_combined_window(root, muneco_label, images):
 
         def update_response(self, new_text):
             self.response_text_widget.config(state="normal")
-            
+
             if "Consultando..." in self.complete_text:
                 self.complete_text = self.complete_text.replace("Consultando...", "")
             if "🛠️ Ejecutando herramienta MCP..." in self.complete_text:
                 self.complete_text = self.complete_text.replace("🛠️ Ejecutando herramienta MCP...", "")
-                
+
             self.complete_text += new_text
-            
+
             self.response_text_widget.delete("1.0", tk.END)
             self.insert_formatted_text(self.complete_text)
-            
+
             self.response_text_widget.yview(tk.END)
             self.response_text_widget.see("1.0")
             self.response_text_widget.config(state="disabled")
@@ -198,11 +202,11 @@ def show_combined_window(root, muneco_label, images):
             user_input = self.text_widget.get("1.0", tk.END).strip()
             if user_input:
                 self.text_widget.delete("1.0", tk.END)
-                self.complete_text = "" 
+                self.complete_text = ""
                 self.response_text_widget.config(state="normal")
                 self.response_text_widget.delete("1.0", tk.END)
                 self.response_text_widget.config(state="disabled")
-                
+
                 # Detectar tipo de mensaje para mostrar feedback apropiado
                 if user_input.startswith("/mcp"):
                     if user_input == "/mcp help":
@@ -211,7 +215,7 @@ def show_combined_window(root, muneco_label, images):
                         self.update_response("🛠️ Ejecutando herramienta MCP...")
                 else:
                     self.update_response("Consultando...")
-                    
+
                 self.window.after(100, lambda: fetch_response(user_input, self))
 
         def on_close(self):
@@ -266,13 +270,10 @@ def show_animation_menu(event, root, muneco_label, fall_images, walk_images, cli
 
         global animacion_id  # Usamos una variable global para rastrear la animación activa
 
-        
         animacion_id = apply_gravity(muneco_label, root, fall_images, muneco_photo, muneco_active_image, window_abierta)
         # Si hay una animación en curso, la cancelamos
         if "animacion_id" in globals() and animacion_id:
             root.after_cancel(animacion_id)
-
-        
 
         # Ejecutamos la animación seleccionada
         if "animacion_id" in globals() and animacion_id:
@@ -281,12 +282,12 @@ def show_animation_menu(event, root, muneco_label, fall_images, walk_images, cli
         # Corrección: Cada animación dentro de su condición
         if animation == "Gravedad":
             animacion_id = apply_gravity(
-                muneco_label, root, fall_images, 
+                muneco_label, root, fall_images,
                 muneco_photo, muneco_active_image, window_abierta  # <-- Parámetro añadido
             )
         elif animation == "Mover a la izquierda":
             animacion_id = move_to_edge(
-                "left", muneco_label, root, walk_images, 
+                "left", muneco_label, root, walk_images,
                 muneco_photo, muneco_active_image, window_abierta  # <-- Parámetro añadido
             )
         elif animation == "Mover a la derecha":
@@ -343,12 +344,12 @@ def show_animation_menu(event, root, muneco_label, fall_images, walk_images, cli
 # Función para cargar imágenes
 def load_images():
     image_paths = {
-        "muneco": "img/muneco.png",          # Imagen normal
-        "muneco_active": "img/muneco1.png",  # Imagen activa (al iniciar)
-        "fall": ["img/fall_1.png", "img/fall_2.png", "img/fall_3.png"],
-        "walk_left": ["img/walk_left_1.png", "img/walk_left_2.png", "img/walk_left_3.png"],
-        "climb": ["img/climb_1.png", "img/climb_2.png", "img/climb_3.png"],
-        "fly": "img/volar.png"
+        "muneco": IMAGES_DIR / "muneco.png",          # Imagen normal
+        "muneco_active": IMAGES_DIR / "muneco1.png",  # Imagen activa (al iniciar)
+        "fall": [IMAGES_DIR / "fall_1.png", IMAGES_DIR / "fall_2.png", IMAGES_DIR / "fall_3.png"],
+        "walk_left": [IMAGES_DIR / "walk_left_1.png", IMAGES_DIR / "walk_left_2.png", IMAGES_DIR / "walk_left_3.png"],
+        "climb": [IMAGES_DIR / "climb_1.png", IMAGES_DIR / "climb_2.png", IMAGES_DIR / "climb_3.png"],
+        "fly": IMAGES_DIR / "volar.png"
     }
 
     images = {}
@@ -361,7 +362,7 @@ def load_images():
 
 # Función para configurar la interfaz gráfica
 def setup_gui(root):
-    root.title("NoBt GPT  \U0001F40D")
+    root.title(WINDOW_TITLE)
     root.configure(bg='white')
 
     # Obtener dimensiones del escritorio virtual (todas las pantallas)
@@ -370,7 +371,6 @@ def setup_gui(root):
     root.geometry(f"{virtual_width}x{virtual_height}+0+0")  # Cubrir todas las pantallas
     root.attributes("-transparentcolor", "white")
     root.attributes("-topmost", True)
-    root.overrideredirect(True)
     try:
         root.option_add("*Font", "Inter 14")
     except Exception as e:
@@ -378,7 +378,7 @@ def setup_gui(root):
 
     canvas = tk.Canvas(root, bg='white', highlightthickness=0)
     canvas.pack(fill="both", expand=True)
-    
+
     images = load_images()
     muneco_photo = images["muneco"]
     fall_images = images["fall"]
@@ -388,7 +388,6 @@ def setup_gui(root):
 
     muneco_label = tk.Label(root, image=muneco_photo, bg='white')
     muneco_label.current_after_id = None  # Nuevo atributo para controlar las animaciones
-    
 
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
@@ -402,11 +401,11 @@ def setup_gui(root):
     muneco_label.bind("<B1-Motion>", lambda event: do_move(event, muneco_label, root))
     muneco_label.bind("<Double-1>", lambda event: show_combined_window(root, muneco_label, images))
     muneco_label.bind("<ButtonRelease-3>", lambda event: show_animation_menu(
-    event, root, muneco_label, 
-    fall_images, walk_images, climb_images, 
+    event, root, muneco_label,
+    fall_images, walk_images, climb_images,
     fly_image, muneco_photo, images["muneco_active"]  # <- Añadir imagen activa
 ))
-    
+
     # Bind Ctrl+Q to close the application
     root.bind("<Control-q>", lambda event: [print("Bye Bye Camarada"), root.destroy()])
 

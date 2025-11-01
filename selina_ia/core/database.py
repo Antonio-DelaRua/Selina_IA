@@ -1,22 +1,26 @@
-from sqlalchemy import Integer, DateTime, String, create_engine, Column, Text
+"""
+Gestión de base de datos - refactorizado de model.py
+"""
+from sqlalchemy import Integer, DateTime, String, create_engine, Column, Text, or_
 from sqlalchemy.orm import declarative_base, sessionmaker
 import datetime
 import numpy as np
 import json
 import logging
+from config.settings import DATABASE_URL
 
 logger = logging.getLogger(__name__)
 
 # Definir la base de datos
-engine = create_engine("sqlite:///my_database.sqlite", echo=False)
+engine = create_engine(DATABASE_URL, echo=False)
 Base = declarative_base()
+SessionLocal = sessionmaker(bind=engine)
 
 class BaseModel:
     """Clase base con métodos comunes"""
-    
+
     def save(self):
-        Session = sessionmaker(bind=engine)
-        session = Session()
+        session = SessionLocal()
         try:
             session.add(self)
             session.commit()
@@ -68,8 +72,7 @@ class PythonDB(Base, BaseModel):
 
     @staticmethod
     def get_by_prompt(prompt):
-        Session = sessionmaker(bind=engine)
-        session = Session()
+        session = SessionLocal()
         try:
             return session.query(PythonDB).filter(PythonDB.prompt == prompt).first()
         except Exception as e:
@@ -80,8 +83,7 @@ class PythonDB(Base, BaseModel):
 
     @staticmethod
     def get_all_with_embeddings():
-        Session = sessionmaker(bind=engine)
-        session = Session()
+        session = SessionLocal()
         try:
             return session.query(PythonDB).filter(PythonDB.embedding.isnot(None)).all()
         except Exception as e:
@@ -97,18 +99,17 @@ class HistoryEntry:
     def __init__(self, prompt, response):
         if not prompt or not response:
             raise ValueError("Prompt y response son requeridos")
-            
+
         self.prompt = prompt
         self.response = response
         self.embedding = None
 
     def save(self):
-        Session = sessionmaker(bind=engine)
-        session = Session()
+        session = SessionLocal()
         try:
             history_entry = History(
-                prompt=self.prompt, 
-                response=self.response, 
+                prompt=self.prompt,
+                response=self.response,
                 embedding=self.embedding
             )
             session.add(history_entry)
@@ -143,8 +144,7 @@ class HistoryEntry:
 
     @staticmethod
     def get_by_prompt(prompt):
-        Session = sessionmaker(bind=engine)
-        session = Session()
+        session = SessionLocal()
         try:
             return session.query(History).filter(History.prompt == prompt).first()
         except Exception as e:
@@ -155,8 +155,7 @@ class HistoryEntry:
 
     @staticmethod
     def get_all_with_embeddings():
-        Session = sessionmaker(bind=engine)
-        session = Session()
+        session = SessionLocal()
         try:
             return session.query(History).filter(History.embedding.isnot(None)).all()
         except Exception as e:

@@ -1,79 +1,37 @@
-import speech_recognition as sr
-import threading
-import pyttsx3, pywhatkit, wikipedia, datetime, keyboard, cv2, subprocess, os
-from pygame import mixer
-import numpy as np
-import subprocess as sub
+"""
+Procesamiento de comandos de voz - refactorizado de bot.py
+"""
+import webbrowser
+import pyautogui as at
 import time
 import socket
 import platform
+import os
+import subprocess
+from pygame import mixer
+import datetime
 import cv2
 from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 import ctypes
-
-# Diccionarios de sitios, archivos y contactos
-
-canciones = {
-    'motivación': 'https://www.youtube.com/watch?v=Pnf8Y0kE4Z8&ab_channel=MotiversityenEspa%C3%B1ol',
-    'chill': 'https://www.youtube.com/watch?v=cq2Ef6rvL6g&t=3587s&ab_channel=RelaxChilloutMusic',
-    'estudiar': 'https://www.youtube.com/watch?v=DZ5LneDpTBc&ab_channel=musicforlife',
-    'relax': 'https://www.youtube.com/watch?v=LAqOdX5jgb4&ab_channel=JAZZ%26BLUES',
-}
-
-sites = {
-    'google': 'https://www.google.com',
-    'youtube': 'https://www.youtube.com',
-    'facebook': 'https://www.facebook.com',
-    'whatsapp': 'https://web.whatsapp.com',
-    'cursos': 'https://freecodecamp.org/learn',
-    'deportes': 'https://www.as.com',
-    'netflix': 'https://www.netflix.com/es/',
-    'instagram': 'https://www.instagram.com/',
-    'git': 'https://github.com/',
-    'motivación': 'https://www.youtube.com/watch?v=Pnf8Y0kE4Z8&ab_channel=MotiversityenEspa%C3%B1ol',
-    'twitter': 'https://x.com/home',
-    'twitch': 'https://www.twitch.tv',
-    'tiktok': 'https://www.tiktok.com',
-    'spotify': 'https://open.spotify.com/',
-    'linkedin': 'https://www.linkedin.com',
-    'pinterest': 'https://www.pinterest.es',
-    'discord': 'https://discord.com',
-    'gmail': 'https://mail.google.com',
-    'drive': 'https://drive.google.com',
-    'notion': 'https://www.notion.so',
-    'canva': 'https://www.canva.com',
-    'stackoverflow': 'https://stackoverflow.com',
-    'freecodecamp': 'https://www.freecodecamp.org',
-    'gpt': 'https://chatgpt.com/',
-    'udemy': 'https://www.udemy.com',
-    'modelos': 'https://openrouter.ai/',
-    'manual': 'https://www.notion.so/BD_Selina-271f48680df180a2971ae5201b6a7205?source=copy_link',
-}
-
-files = {
-    'libro': 'buthowudidknow.pdf',
-    'foto': 'logonobt.png',
-    'manual': 'manual_goku.pdf',
-    'python': 'python.pdf',
-    'ejercicios': 'Ejercicios-Python.pdf',
-}
-
-contacts = {
-    'Danny Primo': '+34606197854'
-}
+import threading
+import speech_recognition as sr
+import pyttsx3, pywhatkit, wikipedia, keyboard
+from config.settings import (
+    SITES, CANCIONES, FILES, CONTACTS, ALARM_SOUND,
+    VOICE_ENERGY_THRESHOLD, VOICE_PAUSE_THRESHOLD, VOICE_PHRASE_TIME_LIMIT, VOICE_NON_SPEAKING_DURATION
+)
 
 # Inicializar reconocimiento de voz y motor de texto a voz
-
 listener = sr.Recognizer()
 listener.dynamic_energy_threshold = True  # Umbral dinámico de energía
-listener.pause_threshold = 1.5  # Tiempo de pausa entre frases
-listener.phrase_time_limit = 8  # Límite máximo de frase
-listener.non_speaking_duration = 0.5  # Silencios no considerados como pausas
+listener.pause_threshold = VOICE_PAUSE_THRESHOLD  # Tiempo de pausa entre frases
+listener.phrase_time_limit = VOICE_PHRASE_TIME_LIMIT  # Límite máximo de frase
+listener.non_speaking_duration = VOICE_NON_SPEAKING_DURATION  # Silencios no considerados como pausas
 engine = pyttsx3.init()
 
-# Variable global 
+# Variable global
 ultimo_comando = None
 ocupado = False
 lock = threading.Lock()
@@ -120,13 +78,6 @@ def capture():
     cap.release()
     cv2.destroyAllWindows()
 
-def write(f):
-    talk("¿Qué quieres que escriba?")
-    rec_write = escuchar()
-    f.write(rec_write + os.linesep)
-    talk("Listo, puedes revisarlo")
-    sub.Popen("nota.txt", shell=True)
-
 def cambiar_volumen(accion):
     devices = AudioUtilities.GetSpeakers()
     interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
@@ -151,12 +102,12 @@ def talk(text):
     global ocupado, estado_asistente
     with lock:
         ocupado = True
-    
+
     print(f"🗣️ {text}")
     estado_asistente.set(f"🗣️ {text}")
     engine.say(text)
     engine.runAndWait()
-    
+
     with lock:
         ocupado = False
         estado_asistente.set("Estado: Inactivo")
@@ -178,7 +129,7 @@ def escuchar():
         listener.adjust_for_ambient_noise(source, duration=2)
         listener.pause_threshold = 0.8  # Reducir pausa necesaria entre frases
         listener.phrase_time_limit = 5  # Límite de tiempo por frase
-        listener.energy_threshold = 5000  # Ajuste más preciso
+        listener.energy_threshold = VOICE_ENERGY_THRESHOLD  # Ajuste más preciso
 
         while asistente_activo:
             try:
@@ -205,13 +156,13 @@ def escuchar():
 
 def reproduce_musica(rec=None):
     global reproduccion_pendiente
-    
+
     if not reproduccion_pendiente:
         # Primera parte: preguntar por la canción
         reproduccion_pendiente = True
         talk("¿dime?")
         return
-    
+
     # Segunda parte: recibir el título
     if rec:
         reproduccion_pendiente = False
@@ -234,7 +185,7 @@ def verificar_alarma():
         now = datetime.datetime.now().strftime('%H:%M')
         if now == hora_alarma:
             print('¡DESPIERTA!')
-            mixer.music.load("alarma.mp3")
+            mixer.music.load(str(ALARM_SOUND))
             mixer.music.play()
             # Reproducir alarma hasta que se detenga
             while mixer.music.get_busy() and alarma_activa:
@@ -244,13 +195,13 @@ def verificar_alarma():
 
 def activar_alarma(rec=None):
     global alarma_activa, hora_alarma, alarma_thread, alarma_pendiente
-    
+
     if not alarma_pendiente:
         # Primera parte: preguntar por la hora
         alarma_pendiente = True
         talk("¿A qué hora quieres la alarma?")
         return
-    
+
     # Segunda parte: recibir la hora
     if rec:
         alarma_pendiente = False
@@ -259,20 +210,20 @@ def activar_alarma(rec=None):
             hora = rec.replace(' ', '').replace(':', '')
             if len(hora) != 4 or not hora.isdigit():
                 raise ValueError
-                
+
             hora_formateada = f"{hora[:2]}:{hora[2:]}"
             hora_alarma = hora_formateada
-            
+
             # Detener cualquier alarma previa
             if alarma_thread and alarma_thread.is_alive():
                 alarma_activa = False
                 alarma_thread.join()
-            
+
             alarma_activa = True
             talk(f"Alarma configurada a las {hora_formateada}")
             alarma_thread = threading.Thread(target=verificar_alarma)
             alarma_thread.start()
-            
+
         except Exception as e:
             talk("Formato de hora inválido. Intenta de nuevo")
             alarma_pendiente = True  # Volver a preguntar
@@ -280,14 +231,14 @@ def activar_alarma(rec=None):
 def abrir_sitio(rec, sites):
     """Abre un sitio web si está en la lista de sitios conocidos."""
     rec = rec.lower()  # Convertir a minúsculas para evitar errores de comparación
-    
+
     for site, url in sites.items():
         if site in rec:
             print(f"🌐 Abriendo {site}: {url}")
             subprocess.run(f'start chrome {url}', shell=True)
             talk(f"Abriendo {site}")
             return  # Salir después de encontrar el sitio correcto
-    
+
     talk("No encontré ese sitio en mi lista.")
 
 def cerrar_web():
@@ -304,7 +255,7 @@ def cerrar_web():
 def abrir_archivo(rec, files):
     """Abre un archivo si está en la lista de archivos conocidos."""
     rec = rec.lower()
-    
+
     for file, path in files.items():
         if file in rec:
             if os.path.exists(path):  # Verifica si el archivo realmente existe
@@ -314,7 +265,7 @@ def abrir_archivo(rec, files):
             else:
                 talk(f"No encontré el archivo {file}. Verifica que esté en la ubicación correcta.")
             return  # Salir después de encontrar el archivo correcto
-    
+
     talk("No encontré ese archivo en mi lista.")
 
 def escribir_nota():
@@ -323,13 +274,13 @@ def escribir_nota():
         with sr.Microphone() as source:
             audio = listener.listen(source, timeout=5)
             texto = listener.recognize_google(audio, language='es-ES')
-            
+
         with open("nota.txt", "a") as f:
             f.write(texto + "\n")
-            
+
         talk("Nota guardada correctamente")
         sub.Popen("nota.txt", shell=True)
-        
+
     except Exception as e:
         talk("No pude escribir la nota")
         print(f"Error: {str(e)}")
@@ -433,21 +384,21 @@ def procesar_comando(rec):
                     subprocess.run("shutdown -r now", shell=True)
         elif rec in ["no", "no gracias", "no quiero"]:
             talk("Operación cancelada")
-        
+
         confirmacion_pendiente = None  # Resetear confirmación
         return  # Salir después de manejar la confirmación
 
     # Diccionario de comandos
     comandos = {
-        "reproduce": lambda x: reproduce_musica(),  
+        "reproduce": lambda x: reproduce_musica(),
         "busca": buscar_info,
         "detener": lambda x: [globals().update(alarma_activa=False), mixer.music.stop(), talk("Alarma detenida")] if alarma_activa else None,
         "alarma": lambda x: activar_alarma(),
         "cámara": lambda x: capture(),
-        "abre": lambda x: abrir_sitio(x, sites),
+        "abre": lambda x: abrir_sitio(x, SITES),
         "cerrar web": lambda x: cerrar_web(),
-        "música": lambda x: abrir_sitio(x, canciones),
-        "archivo": lambda x: abrir_archivo(x, files),
+        "música": lambda x: abrir_sitio(x, CANCIONES),
+        "archivo": lambda x: abrir_archivo(x, FILES),
         "escribe": lambda x: escribir_nota(),
         "código": lambda x: abrir_vscode(),
         "terminal": lambda x: abrir_terminal(),
@@ -470,7 +421,6 @@ def procesar_comando(rec):
             return
 
     # Manejar comandos no reconocidos
-    
 
 def detener_asistente():
     global asistente_activo
@@ -499,7 +449,7 @@ def run_selina():
 
     while asistente_activo:
         rec = None
-        
+
         with lock:
             if ultimo_comando and not ocupado:
                 rec = ultimo_comando.lower()
@@ -524,4 +474,4 @@ def run_selina():
                     estado_asistente.set("Estado: Inactivo")
 
         time.sleep(0.2)
-    s.close()       
+    s.close()
