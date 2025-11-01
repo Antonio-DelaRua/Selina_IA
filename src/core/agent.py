@@ -1,7 +1,7 @@
 import asyncio
 from langchain_ollama import OllamaLLM  # Para usar CodeLlama en local
-from model import HistoryEntry, PythonDB
-from info import CompanyInfo
+from .model import HistoryEntry, PythonDB
+from .info import CompanyInfo
 
 
 # 🚀 Cargar el modelo CodeLlama en local

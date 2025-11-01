@@ -85,4 +85,3 @@ class HistoryEntry:
             print(f"Error al consultar el historial: {e}")
         finally:
             session.close()
-

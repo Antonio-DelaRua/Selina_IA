@@ -1,12 +1,12 @@
 import tkinter as tk
 from tkinter import Toplevel, Text, Button, Frame, Label
 from PIL import Image, ImageTk
-from agent import agent
-from movimientos import apply_gravity, move_to_edge, climb_animation
+from core.agent import agent
+from utils.movimientos import apply_gravity, move_to_edge, climb_animation
 import re
 import asyncio
 import threading
-from bot import talk, set_estado_asistente, iniciar_asistente
+from utils.bot import talk, set_estado_asistente, iniciar_asistente
 
 # Variables globales para la ventana de respuesta
 response_window = None

@@ -1,0 +1,16 @@
+Metadata-Version: 2.4
+Name: selina_ia
+Version: 0.1.0
+Requires-Python: >=3.10
+Requires-Dist: langchain_ollama
+Requires-Dist: pygame
+Requires-Dist: pillow
+Requires-Dist: pyttsx3
+Requires-Dist: pywhatkit
+Requires-Dist: wikipedia
+Requires-Dist: keyboard
+Requires-Dist: opencv-python
+Requires-Dist: numpy
+Requires-Dist: speechrecognition
+Dynamic: requires-dist
+Dynamic: requires-python

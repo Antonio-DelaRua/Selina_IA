@@ -1,0 +1,10 @@
+langchain_ollama
+pygame
+pillow
+pyttsx3
+pywhatkit
+wikipedia
+keyboard
+opencv-python
+numpy
+speechrecognition

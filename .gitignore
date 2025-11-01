@@ -1,6 +1,44 @@
-venv
-__pycache__
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+venv/
+
+# Archivos de desarrollo
+.vscode/
+*.code-workspace
+
+# Archivos de base de datos
+data/*.sqlite
+data/*.db
+*.sqlite3
+
+# Archivos de configuración
 config.py
-ollama
-llm_local
+.env
+.env.*
+
+# Modelos y vectores
+vector_index.faiss
+vector_metadata.json
+ollama/
+llm_local/
+
+# Node
+node_modules/
+
+# Archivos temporales
+*.log
+*.tmp
+*.swp
+.DS_Store
+Thumbs.db
+
+# Archivos generados
+formatted_output.txt
+historial_respuestas.txt
+comandos.txt
+prueba.txt
+nota.txt
 
