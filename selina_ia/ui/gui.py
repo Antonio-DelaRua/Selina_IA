@@ -6,6 +6,7 @@ from tkinter import Toplevel, Text, Button, Frame, Label
 from PIL import Image, ImageTk
 from core.agent import agent
 from .animations import apply_gravity, move_to_edge, climb_animation
+from .calendar import CalendarWindow
 import re
 import asyncio
 import threading
@@ -409,6 +410,9 @@ def setup_gui(root):
 
     # Bind Ctrl+Q to close the application
     root.bind("<Control-q>", lambda event: [print("Bye Bye Camarada"), root.destroy()])
+
+    # Bind Ctrl+C to open calendar
+    root.bind("<Control-c>", lambda event: CalendarWindow(root))
 
     return muneco_label, images
 

@@ -269,6 +269,19 @@ class MCPDatabaseServer:
                 }
             },
 
+            # 📅 HERRAMIENTAS DE CALENDARIO
+            "calendar_query": {
+                "name": "calendar_query",
+                "description": "Consultar tareas del calendario",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "query": {"type": "string", "description": "Consulta sobre tareas (ej: 'tareas hoy', 'tareas mañana')"}
+                    },
+                    "required": ["query"]
+                }
+            },
+
             # 📁 NUEVAS herramientas de filesystem
             "move_file": {
                 "name": "move_file",
@@ -374,6 +387,36 @@ class MCPDatabaseServer:
     async def _search_in_database(self, tool_name: str, arguments: dict) -> str:
         """Buscar en la base de datos SQLite antes de usar LLM"""
         try:
+            # Primero verificar si es consulta de calendario
+            if tool_name == "calendar_query":
+                from .database import Task
+                query = arguments.get("query", "").lower()
+
+                if "tareas hoy" in query or "qué tareas tengo hoy" in query:
+                    tasks = Task.get_tasks_for_today()
+                    if tasks:
+                        response = "**Tus tareas para hoy:**\n\n"
+                        for task in tasks:
+                            status = "✅" if task.completed else "⏳"
+                            time_str = f" ({task.time})" if task.time else ""
+                            response += f"{status} {task.title}{time_str}\n"
+                        return response
+                    else:
+                        return "No tienes tareas programadas para hoy."
+
+                elif "tareas mañana" in query:
+                    tomorrow = datetime.date.today() + datetime.timedelta(days=1)
+                    tasks = Task.get_tasks_for_date(tomorrow)
+                    if tasks:
+                        response = "**Tus tareas para mañana:**\n\n"
+                        for task in tasks:
+                            status = "✅" if task.completed else "⏳"
+                            time_str = f" ({task.time})" if task.time else ""
+                            response += f"{status} {task.title}{time_str}\n"
+                        return response
+                    else:
+                        return "No tienes tareas programadas para mañana."
+
             with self.session_factory() as session:
                 if tool_name == "code_analysis":
                     code = arguments.get("code", "").strip()
@@ -652,6 +695,7 @@ async def handle_mcp_command(command: str) -> str:
             # Separar herramientas por categoría
             db_tools = [t for t in tools if t['name'] in ['code_analysis', 'explain_concept', 'debug_code', 'search_knowledge']]
             fs_tools = [t for t in tools if t['name'] in ['read_file', 'list_directory', 'search_files', 'file_info', 'move_file']]
+            calendar_tools = [t for t in tools if t['name'] in ['calendar_query']]
 
             db_list = "\n".join([f"- **{tool['name']}**: {tool['description']}" for tool in db_tools])
             fs_list = "\n".join([f"- **{tool['name']}**: {tool['description']}" for tool in fs_tools])
@@ -659,13 +703,17 @@ async def handle_mcp_command(command: str) -> str:
             return f"""
 ## 🛠️ **Herramientas MCP Disponibles**
 
-### 🗄️ **Base de Datos**
+### 📅 **Calendario**
+{chr(10).join([f"- **{tool['name']}**: {tool['description']}" for tool in calendar_tools])}
+
+### ️ **Base de Datos**
 {db_list}
 
 ### 📁 **Filesystem**
 {fs_list}
 
 **📝 Ejemplos:**
+- `{{"tool": "calendar_query", "arguments": {{"query": "qué tareas tengo hoy"}}}}`
 - `{{"tool": "read_file", "arguments": {{"path": "/ruta/archivo.py"}}}}`
 - `{{"tool": "list_directory", "arguments": {{"path": "/home/usuario"}}}}`
 - `{{"tool": "move_file", "arguments": {{"source": "C:\\\\Users\\\\RuXx\\\\Downloads\\\\archivo.txt", "destination": "C:\\\\Users\\\\RuXx\\\\Documents\\\\archivo.txt"}}}}`

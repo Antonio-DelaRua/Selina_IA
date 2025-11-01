@@ -22,6 +22,9 @@ from config.settings import (
     SITES, CANCIONES, FILES, CONTACTS, ALARM_SOUND,
     VOICE_ENERGY_THRESHOLD, VOICE_PAUSE_THRESHOLD, VOICE_PHRASE_TIME_LIMIT, VOICE_NON_SPEAKING_DURATION
 )
+from core.database import Task, SessionLocal
+import datetime
+import re
 
 # Inicializar reconocimiento de voz y motor de texto a voz
 listener = sr.Recognizer()
@@ -355,8 +358,173 @@ def confirmar_accion(accion):
     confirmacion_pendiente = accion
     talk(f"¿Quieres {accion} el ordenador? Di sí o no")
 
+def get_tasks_for_date_voice(date_str):
+    """Obtener tareas para una fecha específica por voz"""
+    try:
+        # Parsear fecha desde texto
+        today = datetime.date.today()
+
+        if "hoy" in date_str.lower():
+            target_date = today
+        elif "mañana" in date_str.lower():
+            target_date = today + datetime.timedelta(days=1)
+        elif "ayer" in date_str.lower():
+            target_date = today - datetime.timedelta(days=1)
+        else:
+            # Intentar parsear fecha específica (ej: "15 de enero", "15/01", etc.)
+            # Por simplicidad, asumir hoy por defecto
+            target_date = today
+
+        tasks = Task.get_tasks_for_date(target_date)
+        if not tasks:
+            response = f"No tienes tareas programadas para {date_str}"
+            print(f"🎤 Respuesta de voz: {response}")
+            return response
+
+        pending_tasks = [t for t in tasks if not t.completed]
+        completed_tasks = [t for t in tasks if t.completed]
+
+        response = f"Tus tareas para {date_str}:\n"
+
+        if pending_tasks:
+            response += "\nPendientes:\n"
+            for task in pending_tasks:
+                time_str = f" a las {task.time}" if task.time else ""
+                priority_emoji = {"high": "🔴", "medium": "🟡", "low": "🟢"}.get(task.priority, "⚪")
+                response += f"{priority_emoji} {task.title}{time_str}\n"
+
+        if completed_tasks:
+            response += "\nCompletadas:\n"
+            for task in completed_tasks:
+                response += f"✅ {task.title}\n"
+
+        print(f"🎤 Respuesta de voz: {response}")
+        return response
+
+    except Exception as e:
+        error_msg = f"Error obteniendo tareas: {e}"
+        print(f"🎤 Error en voz: {error_msg}")
+        return error_msg
+
+def add_task_voice(title, date_str=None, time_str=None):
+    """Agregar tarea por voz"""
+    try:
+        # Parsear fecha
+        today = datetime.date.today()
+        if date_str:
+            if "mañana" in date_str.lower():
+                target_date = today + datetime.timedelta(days=1)
+            elif "pasado mañana" in date_str.lower():
+                target_date = today + datetime.timedelta(days=2)
+            else:
+                target_date = today
+        else:
+            target_date = today
+
+        # Crear tarea
+        session = SessionLocal()
+        try:
+            new_task = Task(
+                title=title,
+                description="",
+                date=datetime.datetime.combine(target_date, datetime.time.min),
+                time=time_str,
+                priority='medium',
+                completed=0,
+                category='personal'
+            )
+            session.add(new_task)
+            session.commit()
+            response = f"Tarea '{title}' agregada para {target_date.strftime('%d/%m/%Y')}"
+            print(f"🎤 Respuesta de voz: {response}")
+            return response
+        finally:
+            session.close()
+
+    except Exception as e:
+        error_msg = f"Error creando tarea: {e}"
+        print(f"🎤 Error en voz: {error_msg}")
+        return error_msg
+
+def complete_task_voice(title_part):
+    """Marcar tarea como completada por voz"""
+    try:
+        session = SessionLocal()
+        try:
+            # Buscar tarea por título parcial
+            tasks = session.query(Task).filter(
+                Task.title.ilike(f"%{title_part}%"),
+                Task.completed == 0
+            ).all()
+
+            if not tasks:
+                response = f"No encontré tareas pendientes con '{title_part}'"
+                print(f"🎤 Respuesta de voz: {response}")
+                return response
+
+            # Marcar la primera como completada
+            task = tasks[0]
+            task.completed = 1
+            session.commit()
+
+            response = f"Tarea '{task.title}' marcada como completada"
+            print(f"🎤 Respuesta de voz: {response}")
+            return response
+
+        finally:
+            session.close()
+
+    except Exception as e:
+        error_msg = f"Error completando tarea: {e}"
+        print(f"🎤 Error en voz: {error_msg}")
+        return error_msg
+
 def procesar_comando(rec):
     global confirmacion_pendiente, reproduccion_pendiente, alarma_activa, alarma_pendiente, asistente_activo
+
+    rec_lower = rec.lower()
+
+    # Comandos de calendario primero (más específicos)
+    if "tarea" in rec_lower or "tareas" in rec_lower:
+        if "qué" in rec_lower or "que" in rec_lower:
+            # "¿qué tareas tengo hoy?", "¿qué tareas tengo mañana?"
+            if "hoy" in rec_lower:
+                response = get_tasks_for_date_voice("hoy")
+                talk(response)
+                return
+            elif "mañana" in rec_lower:
+                response = get_tasks_for_date_voice("mañana")
+                talk(response)
+                return
+            else:
+                response = get_tasks_for_date_voice("hoy")
+                talk(response)
+                return
+
+        elif "agregar" in rec_lower or "añadir" in rec_lower or "crear" in rec_lower:
+            # "agregar tarea [título] para [fecha]"
+            # Extraer título (todo después de "agregar tarea" hasta "para" o fin)
+            title_match = re.search(r'agregar\s+tarea\s+(.+?)(?:\s+para\s+(.+))?$', rec_lower)
+            if title_match:
+                title = title_match.group(1).strip()
+                date_str = title_match.group(2) if title_match.group(2) else None
+                response = add_task_voice(title, date_str)
+                talk(response)
+                return
+
+        elif "completar" in rec_lower or "completada" in rec_lower or "terminar" in rec_lower:
+            # "marcar tarea [título] como completada"
+            title_match = re.search(r'(?:completar|completada|terminar)\s+tarea\s+(.+)', rec_lower)
+            if title_match:
+                title_part = title_match.group(1).strip()
+                response = complete_task_voice(title_part)
+                talk(response)
+                return
+
+        elif "calendario" in rec_lower or "calendar" in rec_lower:
+            talk("Abriendo calendario")
+            # Nota: El calendario se abre desde la GUI, no desde voz
+            return
 
     if alarma_pendiente:
         activar_alarma(rec)

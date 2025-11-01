@@ -61,6 +61,55 @@ class History(Base, BaseModel):
     embedding = Column(Text, nullable=True)
     date = Column(DateTime, default=datetime.datetime.now)
 
+class Task(Base, BaseModel):
+    __tablename__ = 'tasks'
+
+    id = Column(Integer, primary_key=True)
+    title = Column(String(255), nullable=False)
+    description = Column(Text, nullable=True)
+    date = Column(DateTime, nullable=False)
+    time = Column(String(10), nullable=True)  # HH:MM format
+    priority = Column(String(10), default='medium')  # low, medium, high
+    completed = Column(Integer, default=0)  # 0=False, 1=True
+    category = Column(String(50), default='personal')
+    created_at = Column(DateTime, default=datetime.datetime.now)
+    updated_at = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
+
+    @staticmethod
+    def get_tasks_for_date(target_date):
+        """Obtener tareas para una fecha específica"""
+        session = SessionLocal()
+        try:
+            start_date = datetime.datetime.combine(target_date, datetime.time.min)
+            end_date = datetime.datetime.combine(target_date, datetime.time.max)
+            return session.query(Task).filter(
+                Task.date >= start_date,
+                Task.date <= end_date
+            ).order_by(Task.time).all()
+        except Exception as e:
+            logger.error(f"❌ Error obteniendo tareas para fecha: {e}")
+            return []
+        finally:
+            session.close()
+
+    @staticmethod
+    def get_tasks_for_today():
+        """Obtener tareas para hoy"""
+        today = datetime.date.today()
+        return Task.get_tasks_for_date(today)
+
+    @staticmethod
+    def get_pending_tasks():
+        """Obtener tareas pendientes"""
+        session = SessionLocal()
+        try:
+            return session.query(Task).filter(Task.completed == 0).order_by(Task.date, Task.time).all()
+        except Exception as e:
+            logger.error(f"❌ Error obteniendo tareas pendientes: {e}")
+            return []
+        finally:
+            session.close()
+
 class PythonDB(Base, BaseModel):
     __tablename__ = 'python_db'
 
