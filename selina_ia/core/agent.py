@@ -955,13 +955,6 @@ Respuesta concisa:
             history_entry.set_embedding(embedding)
             history_entry.save()
 
-            # También guardar en PythonDB para MCP
-            with SessionLocal() as session:
-                python_entry = PythonDB(prompt=user_query, response=response)
-                python_entry.set_embedding(embedding)
-                session.add(python_entry)
-                session.commit()
-
             vector_store.add_to_index(embedding, user_query, response, "history")
         except Exception as e:
             logger.error(f"Error guardando en historial: {e}")
