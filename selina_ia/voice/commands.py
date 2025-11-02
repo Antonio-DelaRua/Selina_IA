@@ -346,7 +346,7 @@ def escribir_nota():
             f.write(texto + "\n")
 
         talk("Nota guardada correctamente")
-        sub.Popen("nota.txt", shell=True)
+        subprocess.Popen("nota.txt", shell=True)
 
     except Exception as e:
         talk("No pude escribir la nota")
@@ -406,6 +406,251 @@ def abrir_imagenes():
             subprocess.run(f'explorer "{images_path}"', shell=True)
             return
     talk("No se encontró la carpeta de imágenes en tu usuario.")
+
+def abrir_carpeta_personalizada(rec):
+    """Abrir carpeta personalizada por voz"""
+    # Extraer el nombre de la carpeta del comando
+    # Ejemplos: "abre carpeta documentos", "abre carpeta música", "abre carpeta videos"
+    folder_keywords = {
+        "documentos": ["Documentos", "Documents"],
+        "descargas": ["Descargas", "Downloads"],
+        "imágenes": ["Imágenes", "Pictures"],
+        "vídeos": ["Vídeos", "Videos"],
+        "música": ["Música", "Music"],
+        "escritorio": ["Escritorio", "Desktop"],
+        "papelera": ["Papelera de reciclaje", "Recycle Bin"],
+        "programas": ["Program Files", "Program Files (x86)"],
+        "usuario": [os.path.expanduser("~")],
+        "inicio": [os.path.expanduser("~")],
+        "raíz": ["C:\\"],
+        "sistema": ["C:\\Windows\\System32"],
+        "temp": ["C:\\Windows\\Temp", os.path.expanduser("~\\AppData\\Local\\Temp")],
+        "onedrive": ["OneDrive"],
+        "appdata": ["AppData"],
+        "programdata": ["ProgramData"],
+        "windows": ["C:\\Windows"],
+        "system32": ["C:\\Windows\\System32"],
+        "boot": ["C:\\Boot"],
+        "drivers": ["C:\\Windows\\System32\\drivers"],
+        "fonts": ["C:\\Windows\\Fonts"],
+        "inf": ["C:\\Windows\\INF"],
+        "logs": ["C:\\Windows\\Logs"],
+        "prefetch": ["C:\\Windows\\Prefetch"],
+        "winsxs": ["C:\\Windows\\WinSxS"],
+        "perfil": [os.path.expanduser("~")],
+        "local": [os.path.expanduser("~\\AppData\\Local")],
+        "roaming": [os.path.expanduser("~\\AppData\\Roaming")],
+        "publico": ["C:\\Users\\Public"],
+        "todos los usuarios": ["C:\\ProgramData"],
+        "archivos de programa": ["C:\\Program Files"],
+        "archivos de programa x86": ["C:\\Program Files (x86)"],
+        "windows defender": ["C:\\ProgramData\\Microsoft\\Windows Defender"],
+        "microsoft": ["C:\\Program Files\\Microsoft Office"],
+        "office": ["C:\\Program Files\\Microsoft Office"],
+        "steam": [os.path.expanduser("~\\AppData\\Roaming\\Steam")],
+        "epic games": [os.path.expanduser("~\\AppData\\Local\\EpicGamesLauncher")],
+        "ubisoft": [os.path.expanduser("~\\Program Files (x86)\\Ubisoft")],
+        "origin": [os.path.expanduser("~\\AppData\\Local\\Origin")],
+        "battle.net": [os.path.expanduser("~\\AppData\\Local\\Battle.net")],
+        "nvidia": ["C:\\Program Files\\NVIDIA Corporation"],
+        "amd": ["C:\\Program Files\\AMD"],
+        "intel": ["C:\\Program Files\\Intel"],
+        "realtek": ["C:\\Program Files\\Realtek"],
+        "asus": ["C:\\Program Files (x86)\\ASUS"],
+        "lenovo": ["C:\\Program Files\\Lenovo"],
+        "hp": ["C:\\Program Files\\HP"],
+        "dell": ["C:\\Program Files\\Dell"],
+        "acer": ["C:\\Program Files\\Acer"],
+        "samsung": ["C:\\Program Files\\Samsung"],
+        "sony": ["C:\\Program Files\\Sony"],
+        "panasonic": ["C:\\Program Files\\Panasonic"],
+        "canon": ["C:\\Program Files\\Canon"],
+        "epson": ["C:\\Program Files\\Epson"],
+        "brother": ["C:\\Program Files\\Brother"],
+        "lexmark": ["C:\\Program Files\\Lexmark"],
+        "xerox": ["C:\\Program Files\\Xerox"],
+        "kodak": ["C:\\Program Files\\Kodak"],
+        "fuji": ["C:\\Program Files\\Fuji"],
+        "nikon": ["C:\\Program Files\\Nikon"],
+        "olympus": ["C:\\Program Files\\Olympus"],
+        "pentax": ["C:\\Program Files\\Pentax"],
+        "sigma": ["C:\\Program Files\\Sigma"],
+        "tamron": ["C:\\Program Files\\Tamron"],
+        "tokina": ["C:\\Program Files\\Tokina"],
+        "zeiss": ["C:\\Program Files\\Zeiss"],
+        "leica": ["C:\\Program Files\\Leica"],
+        "hasselblad": ["C:\\Program Files\\Hasselblad"],
+        "phase one": ["C:\\Program Files\\Phase One"],
+        "mamiya": ["C:\\Program Files\\Mamiya"],
+        "rollei": ["C:\\Program Files\\Rollei"],
+        "contax": ["C:\\Program Files\\Contax"],
+        "minolta": ["C:\\Program Files\\Minolta"],
+        "konica": ["C:\\Program Files\\Konica"],
+        "ricoh": ["C:\\Program Files\\Ricoh"],
+        "pentax": ["C:\\Program Files\\Pentax"],
+        "sigma": ["C:\\Program Files\\Sigma"],
+        "tamron": ["C:\\Program Files\\Tamron"],
+        "tokina": ["C:\\Program Files\\Tokina"],
+        "zeiss": ["C:\\Program Files\\Zeiss"],
+        "leica": ["C:\\Program Files\\Leica"],
+        "hasselblad": ["C:\\Program Files\\Hasselblad"],
+        "phase one": ["C:\\Program Files\\Phase One"],
+        "mamiya": ["C:\\Program Files\\Mamiya"],
+        "rollei": ["C:\\Program Files\\Rollei"],
+        "contax": ["C:\\Program Files\\Contax"],
+        "minolta": ["C:\\Program Files\\Minolta"],
+        "konica": ["C:\\Program Files\\Konica"],
+        "ricoh": ["C:\\Program Files\\Ricoh"],
+    }
+
+    rec_lower = rec.lower()
+    for keyword, folders in folder_keywords.items():
+        if keyword in rec_lower:
+            for folder in folders:
+                if keyword == "papelera":
+                    # Para papelera de reciclaje
+                    subprocess.run('start shell:RecycleBinFolder', shell=True)
+                    talk(f"Abriendo {keyword}")
+                    return
+                elif keyword == "raíz":
+                    subprocess.run(f'explorer "{folder}"', shell=True)
+                    talk(f"Abriendo carpeta raíz")
+                    return
+                elif keyword == "sistema":
+                    subprocess.run(f'explorer "{folder}"', shell=True)
+                    talk(f"Abriendo carpeta del sistema")
+                    return
+                elif keyword == "temp":
+                    for temp_folder in folders:
+                        if os.path.exists(temp_folder):
+                            subprocess.run(f'explorer "{temp_folder}"', shell=True)
+                            talk(f"Abriendo carpeta temporal")
+                            return
+                else:
+                    folder_path = os.path.join(os.path.expanduser("~"), folder)
+                    if os.path.isdir(folder_path):
+                        subprocess.run(f'explorer "{folder_path}"', shell=True)
+                        talk(f"Abriendo carpeta {keyword}")
+                        return
+
+    # Si no encuentra carpeta específica, intentar abrir cualquier carpeta mencionada
+    # Buscar patrones como "abre carpeta X" o "abre X"
+    import re
+    match = re.search(r'abre(?:\s+carpeta)?\s+(.+)', rec_lower)
+    if match:
+        folder_name = match.group(1).strip()
+        # Intentar rutas comunes
+        possible_paths = [
+            os.path.join(os.path.expanduser("~"), folder_name),
+            f"C:\\{folder_name}",
+            f"C:\\Program Files\\{folder_name}",
+            f"C:\\Program Files (x86)\\{folder_name}",
+            folder_name  # Ruta absoluta si se proporciona
+        ]
+
+        for path in possible_paths:
+            if os.path.isdir(path):
+                subprocess.run(f'explorer "{path}"', shell=True)
+                talk(f"Abriendo carpeta {folder_name}")
+                return
+
+    talk("No pude encontrar esa carpeta")
+
+def abrir_aplicacion(rec):
+    """Abrir aplicación por voz"""
+    app_keywords = {
+        "calculadora": "start calc",
+        "paint": "start mspaint",
+        "wordpad": "start write",
+        "notepad": "start notepad",
+        "explorer": "start explorer",
+        "navegador": "start chrome",
+        "chrome": "start chrome",
+        "firefox": "start firefox",
+        "edge": "start msedge",
+        "word": "start winword",
+        "excel": "start excel",
+        "powerpoint": "start powerpnt",
+        "outlook": "start outlook",
+        "teams": "start teams",
+        "zoom": "start zoom",
+        "discord": "start discord",
+        "spotify": "start spotify",
+        "steam": "start steam",
+        "photoshop": "start photoshop",
+        "illustrator": "start illustrator",
+        "premiere": "start premiere",
+        "after effects": "start afterfx",
+        "blender": "start blender",
+        "unity": "start unity",
+        "visual studio": "start devenv",
+        "android studio": "start studio64",
+        "eclipse": "start eclipse",
+        "netbeans": "start netbeans",
+        "sublime": "start sublime_text",
+        "atom": "start atom",
+        "brackets": "start brackets",
+        "notepad++": "start notepad++",
+        "vscode": "start code",
+        "terminal": "start cmd",
+        "powershell": "start powershell",
+        "cmd": "start cmd",
+        "explorador": "start explorer",
+        "archivos": "start explorer",
+        "mi pc": "start explorer",
+        "este equipo": "start explorer",
+        "panel": "start control",
+        "configuración": "start ms-settings:",
+        "tienda": "start ms-windows-store:",
+        "microsoft store": "start ms-windows-store:",
+        "paint 3d": "start ms-paint:",
+        "fotos": "start ms-photos:",
+        "reproductor": "start wmplayer",
+        "windows media player": "start wmplayer",
+        "vlc": "start vlc",
+        "winrar": "start winrar",
+        "7zip": "start 7zFM",
+        "skype": "start skype",
+        "whatsapp": "start whatsapp",
+        "telegram": "start telegram",
+        "slack": "start slack",
+        "trello": "start trello",
+        "evernote": "start evernote",
+        "onenote": "start onenote",
+        "dropbox": "start dropbox",
+        "google drive": "start googledrivesync",
+        "onedrive": "start onedrive",
+        "adobe reader": "start AcroRd32",
+        "pdf": "start AcroRd32",
+        "libreoffice": "start soffice",
+        "openoffice": "start soffice",
+    }
+
+    rec_lower = rec.lower()
+    for app_name, command in app_keywords.items():
+        if app_name in rec_lower:
+            try:
+                subprocess.run(command, shell=True)
+                talk(f"Abriendo {app_name}")
+                return
+            except Exception as e:
+                print(f"Error abriendo {app_name}: {e}")
+                talk(f"No pude abrir {app_name}")
+                return
+
+    # Si no encuentra app específica, intentar buscar en PATH
+    import re
+    match = re.search(r'abre\s+(.+)', rec_lower)
+    if match:
+        app_name = match.group(1).strip()
+        try:
+            subprocess.run(app_name, shell=True)
+            talk(f"Abriendo {app_name}")
+            return
+        except Exception as e:
+            print(f"Error abriendo {app_name}: {e}")
+
+    talk("No encontré esa aplicación")
 
 def quitar_sonido():
     devices = AudioUtilities.GetSpeakers()
@@ -551,7 +796,7 @@ def procesar_comando(rec):
     # Comandos de calendario primero (más específicos)
     if "tarea" in rec_lower or "tareas" in rec_lower:
         if "qué" in rec_lower or "que" in rec_lower:
-            # "¿qué tareas tengo hoy?", "¿qué tareas tengo mañana?"
+            # "qué tareas tengo hoy" según manual.md
             if "hoy" in rec_lower:
                 response = get_tasks_for_date_voice("hoy")
                 talk(response)
@@ -566,19 +811,18 @@ def procesar_comando(rec):
                 return
 
         elif "agregar" in rec_lower or "añadir" in rec_lower or "crear" in rec_lower:
-            # "agregar tarea [título] para [fecha]"
-            # Extraer título (todo después de "agregar tarea" hasta "para" o fin)
-            title_match = re.search(r'agregar\s+tarea\s+(.+?)(?:\s+para\s+(.+))?$', rec_lower)
+            # "tarea agregar [título]" según manual.md
+            # Extraer título (todo después de "tarea agregar" hasta fin)
+            title_match = re.search(r'tarea\s+agregar\s+(.+)', rec_lower)
             if title_match:
                 title = title_match.group(1).strip()
-                date_str = title_match.group(2) if title_match.group(2) else None
-                response = add_task_voice(title, date_str)
+                response = add_task_voice(title)
                 talk(response)
                 return
 
-        elif "completar" in rec_lower or "completada" in rec_lower or "terminar" in rec_lower:
-            # "marcar tarea [título] como completada"
-            title_match = re.search(r'(?:completar|completada|terminar)\s+tarea\s+(.+)', rec_lower)
+        elif "completar" in rec_lower or "completada" in rec_lower or "terminar" in rec_lower or "marcar" in rec_lower:
+            # "marcar tarea [título] como completada" según manual.md
+            title_match = re.search(r'marcar\s+tarea\s+(.+?)\s+como\s+completada', rec_lower)
             if title_match:
                 title_part = title_match.group(1).strip()
                 response = complete_task_voice(title_part)
@@ -620,6 +864,31 @@ def procesar_comando(rec):
         confirmacion_pendiente = None  # Resetear confirmación
         return  # Salir después de manejar la confirmación
 
+    # Función para determinar si "abre" es para app o sitio web
+    def procesar_abre(rec):
+        rec_lower = rec.lower()
+        # Lista de aplicaciones conocidas
+        apps_conocidas = [
+            "chrome", "firefox", "edge", "word", "excel", "powerpoint", "outlook",
+            "vscode", "código", "terminal", "powershell", "visual studio", "android studio",
+            "eclipse", "sublime", "notepad++", "calculadora", "paint", "paint 3d", "fotos",
+            "spotify", "vlc", "configuración", "panel", "explorador", "mi pc", "tienda",
+            "steam", "discord", "zoom", "teams", "skype", "whatsapp", "telegram"
+        ]
+
+        # Verificar si menciona una aplicación conocida
+        for app in apps_conocidas:
+            if app in rec_lower:
+                return abrir_aplicacion(rec)
+
+        # Verificar si menciona un sitio web conocido
+        for site in SITES:
+            if site in rec_lower:
+                return abrir_sitio(rec, SITES)
+
+        # Si no es específico, intentar abrir como aplicación primero
+        return abrir_aplicacion(rec)
+
     # Diccionario de comandos
     comandos = {
         "reproduce": lambda x: reproduce_musica(),
@@ -627,7 +896,7 @@ def procesar_comando(rec):
         "detener": lambda x: [globals().update(alarma_activa=False), mixer.music.stop(), talk("Alarma detenida")] if alarma_activa else None,
         "alarma": lambda x: activar_alarma(),
         "cámara": lambda x: manejar_camara(),
-        "abre": lambda x: abrir_sitio(x, SITES),
+        "abre": lambda x: procesar_abre(x),
         "cerrar web": lambda x: cerrar_web(),
         "música": lambda x: abrir_sitio(x, CANCIONES),
         "archivo": lambda x: abrir_archivo(x, FILES),
@@ -637,6 +906,10 @@ def procesar_comando(rec):
         "descargas": lambda x: abrir_descargas(),
         "documentos": lambda x: abrir_documentos(),
         "imágenes": lambda x: abrir_imagenes(),
+        "carpeta": lambda x: abrir_carpeta_personalizada(x),
+        "abre carpeta": lambda x: abrir_carpeta_personalizada(x),
+        "abre aplicación": lambda x: abrir_aplicacion(x),
+        "abre app": lambda x: abrir_aplicacion(x),
         "mute": lambda x: quitar_sonido(),
         "sube el volumen": lambda x: cambiar_volumen("subir"),
         "baja volumen": lambda x: cambiar_volumen("bajar"),
@@ -646,8 +919,9 @@ def procesar_comando(rec):
         "salir": lambda x: [talk("bye bye"), detener_asistente()],
     }
 
-    # Buscar coincidencias en comandos
-    for clave, funcion in comandos.items():
+    # Buscar coincidencias en comandos (ordenar por longitud para priorizar frases más específicas)
+    comandos_ordenados = sorted(comandos.items(), key=lambda x: len(x[0]), reverse=True)
+    for clave, funcion in comandos_ordenados:
         if clave in rec:
             funcion(rec)
             return
