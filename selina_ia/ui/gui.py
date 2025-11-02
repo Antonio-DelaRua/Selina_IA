@@ -99,6 +99,7 @@ def show_combined_window(root, muneco_label, images):
                                        spacing1=5, spacing3=5, padx=10, highlightthickness=0, bd=1, relief='solid')
             self.text_widget.pack(side='left', fill='x', expand=True)
             self.text_widget.bind("<Return>", lambda event: self.send_message())
+            self.text_widget.bind("<KeyRelease>", self.adjust_text_height)
 
             # Añadir ayuda MCP en la interfaz
             help_label = tk.Label(self.input_frame, text="💡 Usa /mcp help para herramientas",
@@ -199,10 +200,19 @@ def show_combined_window(root, muneco_label, images):
             self.response_text_widget.insert(tk.END, "\n\n", "code")
             self.response_text_widget.insert(tk.END, "\n\n")
 
+        def adjust_text_height(self, event=None):
+            # Calcular el número de líneas basado en el contenido
+            lines = self.text_widget.get("1.0", tk.END).split('\n')
+            num_lines = len(lines)
+            # Ajustar la altura mínima a 1 y máxima a 10 para evitar que sea demasiado grande
+            height = min(max(num_lines, 1), 10)
+            self.text_widget.config(height=height)
+
         def send_message(self):
             user_input = self.text_widget.get("1.0", tk.END).strip()
             if user_input:
                 self.text_widget.delete("1.0", tk.END)
+                self.adjust_text_height()  # Reset height after clearing
                 self.complete_text = ""
                 self.response_text_widget.config(state="normal")
                 self.response_text_widget.delete("1.0", tk.END)
