@@ -1,4 +1,8 @@
-# movimientos.py
+"""
+Animaciones del muñeco - refactorizado de movimientos.py
+"""
+import tkinter as tk
+
 def apply_gravity(muneco_label, root, fall_images, muneco_photo, muneco_active_image, window_abierta):
     global animacion_id
 
@@ -39,7 +43,7 @@ def move_to_edge(direction, muneco_label, root, walk_images, muneco_photo, munec
         # Verificar existencia antes de cada actualización
         if not muneco_label.winfo_exists() or not root.winfo_exists():
             return
-            
+
         x = muneco_label.winfo_x()
         y = muneco_label.winfo_y()
 
