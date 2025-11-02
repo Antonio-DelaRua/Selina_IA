@@ -82,23 +82,84 @@ def capture():
     cv2.destroyAllWindows()
 
 def cambiar_volumen(accion):
-    devices = AudioUtilities.GetSpeakers()
-    interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
-    volume = ctypes.cast(interface, ctypes.POINTER(IAudioEndpointVolume))
+    try:
+        import os
+        if platform.system() == "Windows":
+            if accion == "subir":
+                # Método 1: Usar PowerShell para Windows moderno
+                try:
+                    # Comando PowerShell para subir volumen
+                    ps_command = 'powershell -c "(New-Object -ComObject WScript.Shell).SendKeys([char]175)"'
+                    os.system(ps_command)
+                    talk("Subiendo el volumen")
+                    print("🔊 Volumen aumentado con PowerShell")
+                    return
+                except:
+                    pass
 
-    current_volume = volume.GetMasterVolumeLevelScalar()  # Obtener volumen actual (0.0 a 1.0)
+                # Método 2: Usar pyautogui con más pulsaciones
+                try:
+                    import pyautogui as pg
+                    for _ in range(3):  # Más pulsaciones para notar el cambio
+                        pg.press('volumeup')
+                        pg.sleep(0.1)  # Pequeña pausa
+                    talk("Subiendo el volumen")
+                    print("🔊 Volumen aumentado con teclas")
+                    return
+                except:
+                    pass
 
-    if accion == "subir":
-        nuevo_volumen = min(1.0, current_volume + 0.1)  # Aumenta en 10%
-        talk("Subiendo el volumen")
-    elif accion == "bajar":
-        nuevo_volumen = max(0.0, current_volume - 0.1)  # Disminuye en 10%
-        talk("Bajando el volumen")
-    else:
-        return
+                # Método 3: Usar nircmd si está disponible
+                try:
+                    result = os.system("nircmd.exe changesysvolume 10000 >nul 2>&1")  # +10000 unidades
+                    if result == 0:
+                        talk("Subiendo el volumen")
+                        print("🔊 Volumen aumentado con NirCmd")
+                        return
+                except:
+                    pass
 
-    volume.SetMasterVolumeLevelScalar(nuevo_volumen, None)
-    print(f"🔊 Volumen ajustado a {int(nuevo_volumen * 100)}%")
+            elif accion == "bajar":
+                # Método 1: Usar PowerShell para Windows moderno
+                try:
+                    ps_command = 'powershell -c "(New-Object -ComObject WScript.Shell).SendKeys([char]174)"'
+                    os.system(ps_command)
+                    talk("Bajando el volumen")
+                    print("🔊 Volumen reducido con PowerShell")
+                    return
+                except:
+                    pass
+
+                # Método 2: Usar pyautogui con más pulsaciones
+                try:
+                    import pyautogui as pg
+                    for _ in range(3):  # Más pulsaciones para notar el cambio
+                        pg.press('volumedown')
+                        pg.sleep(0.1)  # Pequeña pausa
+                    talk("Bajando el volumen")
+                    print("🔊 Volumen reducido con teclas")
+                    return
+                except:
+                    pass
+
+                # Método 3: Usar nircmd si está disponible
+                try:
+                    result = os.system("nircmd.exe changesysvolume -10000 >nul 2>&1")  # -10000 unidades
+                    if result == 0:
+                        talk("Bajando el volumen")
+                        print("🔊 Volumen reducido con NirCmd")
+                        return
+                except:
+                    pass
+
+        # Si estamos en otro sistema operativo
+        talk("Función de volumen no disponible en este sistema")
+        print("⚠️ Control de volumen no soportado en este sistema")
+
+    except Exception as e:
+        error_msg = f"Error ajustando volumen: {e}"
+        print(f"❌ {error_msg}")
+        talk("No pude ajustar el volumen del sistema")
 
 def talk(text):
     """Función para que el asistente hable bloqueando la escucha"""
