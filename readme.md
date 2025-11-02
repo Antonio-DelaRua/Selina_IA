@@ -1,163 +1,406 @@
-# SeliNa Python
-
-Un chatbot inteligente integrado en un avatar 3D con animaciones avanzadas y funcionalidades interactivas.
-
-## Tabla de Contenidos
-
-- [Acerca de](#acerca-de)
-- [Tecnologías Utilizadas](#tecnologías-utilizadas)
-- [Comandos](#comandos)
-- [Palabras Clave y Temas](#palabras-clave-y-temas)
-- [Herramientas Adicionales](#herramientas-adicionales)
-- [Habilidades Blandas](#habilidades-blandas)
-- [Especializaciones](#especializaciones)
-- [Guía de Herramientas MCP](#guía-de-herramientas-mcp)
-
-## Acerca de
-
-💻 **Desarrollador**: RuXx
-
-Este proyecto combina inteligencia artificial conversacional con una interfaz 3D inmersiva, proporcionando una experiencia única de aprendizaje y asistencia en programación Python.
-
-## Tecnologías Utilizadas
+# Selina IA - Asistente Virtual Inteligente
 
 <div align="center">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/c/cf/Angular_full_color_logo.svg" title="Angular" alt="Angular" width="45" height="45"/>
-    <img src="https://github.com/devicons/devicon/blob/master/icons/html5/html5-original.svg" title="HTML5" alt="HTML" width="40" height="40"/>
-    <img src="https://github.com/devicons/devicon/blob/master/icons/css3/css3-plain-wordmark.svg" title="CSS3" alt="CSS" width="40" height="40"/>
-    <img src="https://github.com/devicons/devicon/blob/master/icons/javascript/javascript-original.svg" title="JavaScript" alt="JavaScript" width="40" height="40"/>
-    <img src="https://github.com/devicons/devicon/blob/master/icons/sass/sass-original.svg" title="SASS" alt="Sass" width="40" height="40"/>
-    <img src="https://github.com/devicons/devicon/blob/master/icons/mysql/mysql-original-wordmark.svg" title="MySQL" alt="MySQL" width="40" height="40"/>
-    <img src="https://github.com/devicons/devicon/blob/master/icons/git/git-original-wordmark.svg" title="Git" alt="Git" width="40" height="40"/>
-    <img src="https://github.com/devicons/devicon/blob/master/icons/python/python-original.svg" title="Python" alt="Python" width="40" height="40"/>
-    <img src="https://github.com/devicons/devicon/blob/master/icons/docker/docker-original-wordmark.svg" title="Docker" alt="Docker" width="40" height="40"/>
-    <img src="https://github.com/devicons/devicon/blob/master/icons/firebase/firebase-plain-wordmark.svg" title="Firebase" alt="Firebase" width="40" height="40"/>
-    <img src="https://github.com/devicons/devicon/blob/master/icons/java/java-original-wordmark.svg" title="Java" alt="Java" width="40" height="40"/>
+  <img src="img/logo.ico" alt="Selina IA Logo" width="120" height="120">
+  <h3>🎤 Asistente Virtual con Control por Voz y Gestión de Tareas</h3>
+  <p><em>Un asistente inteligente con interfaz gráfica y control por voz completo</em></p>
 </div>
 
-## Comandos
+## 📋 Tabla de Contenidos
 
-- `Ctrl + Q`: Cerrar la aplicación
-- `kiv`: Interfaz táctil para móviles y tablets
-- `historia`, `ver historial`, `abrir historia`: Mostrar los últimos 10 prompts
+- [🚀 Características Principales](#-características-principales)
+- [💻 Tecnologías Utilizadas](#-tecnologías-utilizadas)
+- [📦 Instalación y Configuración](#-instalación-y-configuración)
+- [🎯 Guía de Uso](#-guía-de-uso)
+- [🎤 Comandos de Voz](#-comandos-de-voz)
+- [📅 Gestión de Tareas](#-gestión-de-tareas)
+- [🖥️ Control de Aplicaciones](#️-control-de-aplicaciones)
+- [🔧 Herramientas MCP](#-herramientas-mcp)
+- [🛠️ Desarrollo y Contribución](#️-desarrollo-y-contribución)
+- [📄 Licencia](#-licencia)
+- [👨‍💻 Autor](#-autor)
 
-## Palabras Clave y Temas
+## 🚀 Características Principales
 
-| Tema | Descripción |
-|------|-------------|
-| **Base de Datos Python** | Introducción a Python y sus aplicaciones |
-| ├── Instalar Python en Windows | Guía de instalación en Windows |
-| ├── Fundamentos de Python | Conceptos básicos del lenguaje |
-| ├── Tipos de Datos Básicos | int, float, complex, str, bool, list, set, dict |
-| ├── Operadores Aritméticos | Operaciones matemáticas básicas |
-| ├── Operadores Lógicos | and, or, not |
-| ├── Operadores de Comparación | ==, !=, <, >, <=, >= |
-| ├── Operadores de Asignación | =, +=, -=, *=, /=, %= |
-| ├── Estructuras de Control | if/elif/else, for/while |
-| ├── Programación Orientada a Objetos | Clases, instancias, métodos, herencia |
-| ├── Frameworks Web | Django, Flask |
-| ├── Spring Boot | Framework Java para desarrollo |
-| ├── Módulos | Creación y uso de módulos |
-| ├── Iteradores | Trabajo con iteradores |
-| ├── Decoradores | Uso de decoradores |
-| ├── Context Managers | Manejo de contexto |
-| ├── Metaclases | Creación y uso de metaclases |
-| ├── GIL | Global Interpreter Lock |
-| ├── Gestión de Memoria | Administración de memoria |
-| ├── Protocolos | Implementación de protocolos |
-| ├── Testing | Pytest, unittest |
-| ├── Debugging | Herramientas de depuración |
-| ├── Logging | Registros de aplicaciones |
-| ├── Code Quality | Flake8, Black, Mypy, isort |
-| ├── Gestión de Dependencias | pip, requirements.txt |
-| ├── Packaging | Empaquetado y distribución |
-| ├── FastAPI | Framework web asíncrono |
-| ├── SQLAlchemy | ORM para bases de datos SQL |
-| ├── Alembic | Migraciones de base de datos |
-| ├── Autenticación | OAuth2, JWT |
-| ├── GraphQL | API de consultas |
-| ├── Bases de Datos | PostgreSQL, MySQL, MongoDB, Redis |
-| ├── Conexiones Asíncronas | asyncpg, aiomysql |
-| ├── Patrones de Diseño | Singleton, Factory, Observer, Strategy |
-| ├── SOLID | Principios SOLID |
-| └── Microservicios | Arquitectura de microservicios |
+### 🎤 Control por Voz Avanzado
+- **Reconocimiento de voz en español** con Google Speech Recognition
+- **Procesamiento de comandos naturales** con múltiples alternativas
+- **Feedback de voz** con síntesis de texto a voz (TTS)
+- **Estados de conversación** para comandos multi-paso
 
-## Herramientas Adicionales
+### 💬 Interfaz Gráfica Moderna
+- **Avatar 3D animado** con múltiples estados y animaciones
+- **Chat dinámico** con formato de texto enriquecido
+- **Historial de conversaciones** persistente
+- **Interfaz táctil** optimizada para móviles y tablets
 
-### Monitorización
-- Prometheus, Grafana, Sentry
+### 📅 Gestión Completa de Tareas
+- **Agregar tareas por voz** con fechas y horarios
+- **Consultar tareas pendientes/completadas**
+- **Marcar tareas como completadas**
+- **Base de datos SQLite** para persistencia
 
-### Infraestructura como Código
-- Terraform, CloudFormation
+### 🖥️ Control de Sistema Completo
+- **Abrir/cerrar aplicaciones** del sistema
+- **Control de volumen** del sistema
+- **Gestión de carpetas** del usuario
+- **Acceso a sitios web** conocidos
+- **Sistema de archivos** completo
 
-### Seguridad
-- **OWASP Top 10**: Prevención de SQLi, XSS, CSRF
-- **Hardening**: Configuración segura de servidores
-- **Criptografía**: bcrypt, cryptography
-- **Auditorías**: Bandit para análisis estático
+### 🔧 Arquitectura Robusta
+- **Sistema TTS thread-safe** con colas de mensajes
+- **Manejo de errores** con múltiples fallbacks
+- **Base de datos vectorial** para embeddings
+- **Sistema MCP** para herramientas especializadas
 
-## Habilidades Blandas
+## 💻 Tecnologías Utilizadas
 
-- **Trabajo en Equipo**: Metodologías ágiles (Scrum, Kanban)
-- **Mentoría**: Guía para desarrolladores junior
-- **Comunicación**: Explicación de conceptos técnicos
-- **Gestión de Tiempo**: Priorización de tareas
+<div align="center">
 
-## Especializaciones
+### 🎯 Core Technologies
+| Tecnología | Versión | Propósito |
+|------------|---------|-----------|
+| <img src="https://github.com/devicons/devicon/blob/master/icons/python/python-original.svg" width="32"/> **Python** | 3.8+ | Lenguaje principal |
+| <img src="https://github.com/devicons/devicon/blob/master/icons/sqlite/sqlite-original.svg" width="32"/> **SQLite** | 3.x | Base de datos local |
+| <img src="https://github.com/devicons/devicon/blob/master/icons/tkinter/tkinter-original.svg" width="32"/> **Tkinter** | - | Interfaz gráfica |
+| <img src="https://github.com/devicons/devicon/blob/master/icons/opencv/opencv-original.svg" width="32"/> **OpenCV** | 4.x | Procesamiento de imágenes |
 
-### Ciencia de Datos
-- Pandas, NumPy, Matplotlib
+### 🎤 Voice & Audio
+| Tecnología | Propósito |
+|------------|-----------|
+| **SpeechRecognition** | Reconocimiento de voz |
+| **pyttsx3** | Síntesis de voz (TTS) |
+| **pycaw** | Control de audio de Windows |
+| **pygame** | Reproducción de sonidos |
 
-### Machine Learning
-- Scikit-learn, TensorFlow, PyTorch
+### 🤖 AI & ML
+| Tecnología | Propósito |
+|------------|-----------|
+| **FAISS** | Búsqueda vectorial |
+| **Sentence Transformers** | Embeddings de texto |
+| **SQLite Vector** | Base de datos vectorial |
 
-### Automatización
-- Scripts con `click` o `argparse`
+### 🔧 System Integration
+| Tecnología | Propósito |
+|------------|-----------|
+| **pyautogui** | Automatización de interfaz |
+| **keyboard** | Control de teclado |
+| **subprocess** | Ejecución de comandos del sistema |
+| **threading** | Procesamiento concurrente |
 
-### Web Scraping
-- BeautifulSoup, Scrapy, Selenium
+</div>
 
+## 📦 Instalación y Configuración
 
+### Requisitos del Sistema
+- **SO**: Windows 10/11
+- **Python**: 3.8 o superior
+- **RAM**: 4GB mínimo
+- **Espacio**: 500MB disponible
 
-## Guía de Herramientas MCP
+### Instalación
 
-### ¿Qué son las Herramientas MCP?
+1. **Clonar el repositorio**
+   ```bash
+   git clone https://github.com/RuXx/selina-ia.git
+   cd selina-ia
+   ```
 
-Las Herramientas MCP (Model Context Protocol) son funciones especializadas que facilitan tareas específicas de programación. Funcionan como "asistentes especializados" dentro de la aplicación, priorizando la base de datos local y utilizando IA solo cuando es necesario.
+2. **Crear entorno virtual**
+   ```bash
+   python -m venv venv
+   .\venv\Scripts\activate  # Windows
+   ```
 
-### Cómo Acceder a las Herramientas
+3. **Instalar dependencias**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-#### Paso 1: Abrir el Chat
-- Haz doble clic en el avatar de la aplicación
-- Se abrirá una ventana de chat
-- En la parte inferior verás: 💡 Usa `/mcp help` para herramientas
+4. **Configurar base de datos**
+   ```bash
+   python -c "from core.database import init_db; init_db()"
+   ```
 
-#### Paso 2: Ver Herramientas Disponibles
-Escribe en el chat:
+5. **Ejecutar la aplicación**
+   ```bash
+   python selina_ia/main.py
+   ```
+
+### Configuración Inicial
+
+Edita `selina_ia/config/settings.py` para personalizar:
+- **Umbrales de voz** para mejor reconocimiento
+- **Rutas de archivos** y aplicaciones
+- **Sitios web** favoritos
+- **Configuración de audio**
+
+## 🎯 Guía de Uso
+
+### Inicio Rápido
+
+1. **Ejecuta** `python selina_ia/main.py`
+2. **Haz doble clic** en el avatar de Selina
+3. **Presiona el botón** 🎤 para activar voz
+4. **Di comandos** naturales en español
+
+### Interfaz Principal
+
+- **Avatar animado**: Haz doble clic para abrir chat
+- **Botón micrófono**: Activa/desactiva reconocimiento de voz
+- **Área de chat**: Conversaciones con formato enriquecido
+- **Historial**: Accede a conversaciones anteriores
+
+### Atajos de Teclado
+- **Ctrl + Q**: Cerrar aplicación
+- **Ctrl + C**: Abrir calendario de tareas
+- **Doble clic**: Abrir interfaz de chat
+
+## 🎤 Comandos de Voz
+
+Selina IA responde a comandos naturales en español. Di "Selina" seguido de tu comando.
+
+### 🗂️ Gestión de Carpetas
+```bash
+"abre carpeta documentos"    # Abre Documentos
+"abre carpeta descargas"     # Abre Descargas
+"abre carpeta imágenes"      # Abre Imágenes
+"abre carpeta vídeos"        # Abre Vídeos
+"abre carpeta música"        # Abre Música
+"abre carpeta escritorio"    # Abre Escritorio
+"abre carpeta raíz"          # Abre C:\
+"abre carpeta sistema"       # Abre C:\Windows\System32
+"abre carpeta temp"          # Abre carpeta temporal
 ```
-/mcp help
+
+### 🖥️ Aplicaciones del Sistema
+```bash
+"abre calculadora"           # Calculadora
+"abre paint"                 # Paint
+"abre word"                  # Microsoft Word
+"abre excel"                 # Microsoft Excel
+"abre powerpoint"            # Microsoft PowerPoint
+"abre vscode"                # Visual Studio Code
+"abre terminal"              # Command Prompt
+"abre configuración"         # Configuración de Windows
+"abre explorador"            # Explorador de archivos
 ```
-Verás una lista completa de todas las herramientas disponibles con ejemplos de sintaxis nueva y antigua.
+
+### 🌐 Navegadores y Web
+```bash
+"abre chrome"                # Google Chrome
+"abre firefox"               # Mozilla Firefox
+"abre edge"                  # Microsoft Edge
+"abre google"                # Buscar en Google
+"cerrar web"                 # Cierra Chrome
+```
+
+### 🎵 Entretenimiento
+```bash
+"reproduce [canción]"        # Busca en YouTube
+"alarma"                     # Configura alarma
+"detener"                    # Detiene alarma activa
+```
+
+### 🔍 Búsqueda e Información
+```bash
+"busca [tema]"              # Busca en Wikipedia
+```
+
+### ✍️ Productividad
+```bash
+"escribe"                   # Toma nota por voz
+"tarea agregar [título]"    # Agrega nueva tarea
+"qué tareas tengo hoy"      # Consulta tareas del día
+"marcar tarea [título] como completada"  # Completa tarea
+```
+
+### 🔧 Sistema
+```bash
+"sube el volumen"           # Aumenta volumen
+"baja volumen"              # Reduce volumen
+"mute"                      # Silencia audio
+"apagar"                    # Apaga sistema (confirma)
+"reiniciar"                 # Reinicia sistema (confirma)
+```
+
+### 🚪 Control de Aplicaciones
+```bash
+"cierra word"               # Cierra Microsoft Word
+"cierra chrome"             # Cierra Google Chrome
+"cierra calculadora"        # Cierra Calculadora
+"cierra vscode"             # Cierra VS Code
+# ... y muchas más aplicaciones
+```
+
+## 📅 Gestión de Tareas
+
+### Agregar Tareas
+```bash
+Di: "tarea agregar comprar leche"
+Di: "tarea agregar reunión con cliente mañana"
+Di: "tarea agregar proyecto deadline viernes"
+```
+
+### Consultar Tareas
+```bash
+Di: "qué tareas tengo hoy"
+Di: "qué tareas tengo mañana"
+Di: "qué tareas tengo"
+```
+
+### Completar Tareas
+```bash
+Di: "marcar tarea comprar leche como completada"
+Di: "marcar tarea reunión con cliente como completada"
+```
+
+### Características
+- ✅ **Base de datos persistente** (SQLite)
+- 📅 **Fechas y horarios** opcionales
+- 🏷️ **Categorización** automática
+- 📊 **Estados**: pendiente/completada
+- 🔄 **Sincronización** en tiempo real
+
+## 🖥️ Control de Aplicaciones
+
+### Abrir Aplicaciones
+Selina puede abrir más de **50 aplicaciones** del sistema:
+
+**Desarrollo:**
+- VS Code, Visual Studio, Android Studio, Eclipse
+- Terminal, PowerShell, Git Bash
+
+**Oficina:**
+- Word, Excel, PowerPoint, Outlook
+- Teams, OneNote, Access
+
+**Multimedia:**
+- Spotify, VLC, Windows Media Player
+- Fotos, Paint 3D
+
+**Sistema:**
+- Calculadora, Explorador de archivos
+- Configuración, Panel de control
+
+### Cerrar Aplicaciones
+Comando simétrico para cerrar aplicaciones:
+```bash
+"cierra [aplicación]"  # Cierra la aplicación específica
+```
+
+### Gestión Inteligente
+- 🔍 **Detección automática** de apps vs sitios web
+- ⚡ **Múltiples métodos** de apertura (directo, start, subprocess)
+- 🛡️ **Manejo de errores** robusto
+- 📊 **Feedback de voz** en tiempo real
+
+
+
+## 🔧 Herramientas MCP
+
+Selina IA incluye un sistema avanzado de **Herramientas MCP** (Model Context Protocol) que permite interactuar con el sistema de archivos, bases de datos y herramientas especializadas.
+
+### Acceso a Herramientas
+
+1. **Abrir chat**: Doble clic en el avatar
+2. **Ver herramientas**: Escribe `/mcp help`
+3. **Sintaxis moderna**: Comandos naturales en español
+
+### 🗄️ Herramientas de Base de Datos
+
+#### Análisis de Código
+```bash
+/mcp analizar def suma(a, b): return a + b
+```
+- ✅ Explica qué hace el código
+- 🔍 Detecta errores potenciales
+- 💡 Sugiere mejoras
+
+#### Explicación de Conceptos
+```bash
+/mcp explicar listas en Python
+/mcp explicar funciones lambda
+```
+- 📚 Definiciones claras
+- 💡 Ejemplos prácticos
+- 🎯 Casos de uso
+
+#### Debugging de Código
+```bash
+/mcp debug print(10/0): ZeroDivisionError
+```
+- 🔎 Identifica causas de errores
+- 🛠️ Proporciona soluciones
+- ✅ Muestra código corregido
+
+### 📁 Herramientas de Sistema de Archivos
+
+#### Gestión de Archivos
+```bash
+/mcp leer C:\Users\RuXx\Desktop\script.py
+/mcp listar C:\Users\RuXx\Documents
+/mcp buscar .pdf en C:\Users\RuXx\Downloads
+/mcp info C:\Users\RuXx\Desktop\archivo.txt
+```
+
+#### Operaciones de Archivos
+```bash
+/mcp mover origen destino
+```
+- 📋 Leer contenido de archivos
+- 📂 Listar directorios
+- 🔍 Buscar archivos por extensión
+- ℹ️ Obtener información detallada
+- 📦 Mover/renombrar archivos
+
+
+### ⚡ Arquitectura de Rendimiento
+
+Selina IA utiliza un **sistema de tres niveles** para máxima eficiencia:
+
+1. **Filesystem** 🚀 - Respuestas instantáneas
+2. **Base de Datos** 🗄️ - Búsqueda en SQLite local
+3. **IA** 🤖 - Solo cuando es necesario
+
+### 🔄 Flujo de Trabajo Típico
+
+```mermaid
+graph TD
+    A[Usuario pregunta] --> B{¿En filesystem?}
+    B -->|Sí| C[Respuesta instantánea]
+    B -->|No| D{¿En BD local?}
+    D -->|Sí| E[Respuesta desde BD]
+    D -->|No| F[Consulta IA + guarda en BD]
+```
+3. **IA** 🤖 - Solo cuando es necesario
+
+### 📊 Base de Datos Vectorial
+
+- **Embeddings semánticos** para búsquedas inteligentes
+- **FAISS** para indexación vectorial rápida
+- **Historial persistente** de conversaciones
+- **Aprendizaje continuo** del usuario
+
+### 🔄 Flujo de Trabajo Típico
+
+```mermaid
+graph TD
+    A[Usuario pregunta] --> B{¿En filesystem?}
+    B -->|Sí| C[Respuesta instantánea]
+    B -->|No| D{¿En BD local?}
+    D -->|Sí| E[Respuesta desde BD]
+    D -->|No| F[Consulta IA + guarda en BD]
+```
 
 ### Herramientas Disponibles
 
 #### 1. 🔍 Análisis de Código
 **Propósito**: Analizar y mejorar código Python.
 
-**Sintaxis Antigua (JSON)**:
-```
-/mcp {"tool": "code_analysis", "arguments": {"code": "tu código aquí"}}
-```
-
-**🆕 Sintaxis Nueva (Natural)**:
+**Sintaxis**:
 ```
 /mcp analizar def suma(a, b): return a + b
-```
-
-**Ejemplos**:
-```
-/mcp analizar def suma(a, b):\n    return a + b
-/mcp {"tool": "code_analysis", "arguments": {"code": "def suma(a, b):\n    return a + b"}}
 ```
 
 **Beneficios**:
@@ -169,21 +412,10 @@ Verás una lista completa de todas las herramientas disponibles con ejemplos de 
 #### 2. 📖 Explicar Conceptos
 **Propósito**: Aprender sobre temas de programación.
 
-**Sintaxis Antigua (JSON)**:
-```
-/mcp {"tool": "explain_concept", "arguments": {"concept": "tema a explicar"}}
-```
-
-**🆕 Sintaxis Nueva (Natural)**:
+**Sintaxis**:
 ```
 /mcp explicar listas
 /mcp explicar bucles en Python
-```
-
-**Ejemplos**:
-```
-/mcp explicar funciones lambda
-/mcp {"tool": "explain_concept", "arguments": {"concept": "listas"}}
 ```
 
 **Resultado**:
@@ -195,21 +427,10 @@ Verás una lista completa de todas las herramientas disponibles con ejemplos de 
 #### 3. 🐛 Debuggear Código
 **Propósito**: Encontrar y solucionar errores en el código.
 
-**Sintaxis Antigua (JSON)**:
-```
-/mcp {"tool": "debug_code", "arguments": {"code": "tu código", "error": "mensaje de error"}}
-```
-
-**🆕 Sintaxis Nueva (Natural)**:
+**Sintaxis**:
 ```
 /mcp debug print(10/0): ZeroDivisionError
 /mcp debug def funcion(): pass
-```
-
-**Ejemplos**:
-```
-/mcp debug edad = input("edad: "); if edad > 18: print("mayor")
-/mcp {"tool": "debug_code", "arguments": {"code": "print(10/0)", "error": "ZeroDivisionError"}}
 ```
 
 **Beneficios**:
@@ -227,26 +448,16 @@ Verás una lista completa de todas las herramientas disponibles con ejemplos de 
        print("Hola " + nombre)
        return True
    ```
-2. **🆕 Sintaxis Nueva**: Escribe en el chat:
+2. Escribe en el chat:
    ```
-   /mcp analizar def saludar(nombre):
-       print("Hola " + nombre)
-       return True
+   /mcp analizar def saludar(nombre): print("Hola " + nombre); return True
    ```
-3. **Sintaxis Antigua**: O usa JSON:
-   ```
-   /mcp {"tool": "code_analysis", "arguments": {"code": "def saludar(nombre):\n    print(\"Hola \" + nombre)\n    return True"}}
-   ```
-4. Presiona Enter y obtendrás un análisis completo con sugerencias de mejora.
+3. Presiona Enter y obtendrás un análisis completo con sugerencias de mejora.
 
 #### Ejemplo 2: Aprender sobre Listas
-**🆕 Sintaxis Nueva**:
+Escribe en el chat:
 ```
 /mcp explicar listas
-```
-**Sintaxis Antigua**:
-```
-/mcp {"tool": "explain_concept", "arguments": {"concept": "listas en Python"}}
 ```
 Obtendrás una explicación completa sobre el uso de listas en Python.
 
@@ -257,31 +468,25 @@ Obtendrás una explicación completa sobre el uso de listas en Python.
    if edad > 18:
        print("Eres mayor de edad")
    ```
-2. **🆕 Sintaxis Nueva**: Escribe en el chat:
+2. Escribe en el chat:
    ```
-   /mcp debug edad = input("¿Cuántos años tienes? ")
-   if edad > 18:
-       print("Eres mayor de edad"): TypeError: '>' not supported between instances of 'str' and 'int'
+   /mcp debug edad = input("¿Cuántos años tienes? "); if edad > 18: print("Eres mayor de edad"): TypeError
    ```
-3. **Sintaxis Antigua**: O usa JSON:
-   ```
-   /mcp {"tool": "debug_code", "arguments": {"code": "edad = input(\"¿Cuántos años tienes? \")\nif edad > 18:\n    print(\"Eres mayor de edad\")", "error": "TypeError: '>' not supported between instances of 'str' and 'int'"}}
-   ```
-4. Obtendrás la solución del error y explicación de su causa.
+3. Obtendrás la solución del error y explicación de su causa.
 
-### Consejos para Usuarios Novatos
+### Consejos para Usuarios
 
 #### 📋 Formato Correcto
-- **Sintaxis Nueva**: Solo escribe comandos naturales como "explicar listas"
-- **Sintaxis Antigua**: Usa siempre comillas dobles `"` en el JSON
-- El código debe ir entre comillas con `\n` para saltos de línea
+- Escribe comandos naturales en español
+- Para código, usa una línea o separa con punto y coma
+- Incluye el mensaje de error cuando debuguees
 - Copia y pega los ejemplos exactamente como están
 
 #### 🔄 Si Cometes un Error
 No te preocupes, la aplicación indicará qué salió mal. Puedes intentarlo de nuevo.
 
 #### 📚 Para Aprender Programación
-Usa frecuentemente `explain_concept` con temas como:
+Usa frecuentemente con temas como:
 - `/mcp explicar variables`
 - `/mcp explicar condicionales if`
 - `/mcp explicar bucles for`
@@ -290,9 +495,8 @@ Usa frecuentemente `explain_concept` con temas como:
 
 #### 🐛 Para Resolver Problemas
 Cuando tu código no funcione:
-- **Sintaxis Nueva**: `/mcp debug [tu código]: [mensaje de error]`
-- **Sintaxis Antigua**: Copia el código exacto y mensaje de error en JSON
-- Usa la herramienta `debug_code`
+- `/mcp debug [tu código]: [mensaje de error]`
+- Incluye el error exacto para mejor diagnóstico
 
 ### Preguntas Frecuentes
 
@@ -313,20 +517,14 @@ Sí, todas las conversaciones se guardan automáticamente en el historial.
 ### 🎓 Ejercicios para Practicar
 
 **Nivel Principiante:**
-- **Sintaxis Nueva**: `/mcp analizar print("Hola Mundo")`
-- **Sintaxis Antigua**: `/mcp {"tool": "code_analysis", "arguments": {"code": "print(\"Hola Mundo\")"}}`
-- **Sintaxis Nueva**: `/mcp explicar variables`
-- **Sintaxis Antigua**: `/mcp {"tool": "explain_concept", "arguments": {"concept": "variables"}}`
-- **Sintaxis Nueva**: `/mcp debug print("5" + 3)`
-- **Sintaxis Antigua**: `/mcp {"tool": "debug_code", "arguments": {"code": "print(\"5\" + 3)"}}`
+- `/mcp analizar print("Hola Mundo")`
+- `/mcp explicar variables`
+- `/mcp debug print("5" + 3): TypeError`
 
 **Nivel Intermedio:**
-- **Sintaxis Nueva**: `/mcp analizar def area_circulo(radio): return 3.14159 * radio ** 2`
-- **Sintaxis Antigua**: `/mcp {"tool": "code_analysis", "arguments": {"code": "def area_circulo(radio): return 3.14159 * radio ** 2"}}`
-- **Sintaxis Nueva**: `/mcp explicar comprensión de listas`
-- **Sintaxis Antigua**: `/mcp {"tool": "explain_concept", "arguments": {"concept": "comprensión de listas"}}`
-- **Sintaxis Nueva**: `/mcp debug while True: pass`
-- **Sintaxis Antigua**: `/mcp {"tool": "debug_code", "arguments": {"code": "while True: pass"}}`
+- `/mcp analizar def area_circulo(radio): return 3.14159 * radio ** 2`
+- `/mcp explicar comprensión de listas`
+- `/mcp debug while True: pass: KeyboardInterrupt`
 
 
 

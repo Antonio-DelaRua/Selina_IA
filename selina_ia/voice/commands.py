@@ -653,11 +653,42 @@ def abrir_aplicacion(rec):
     talk("No encontré esa aplicación")
 
 def quitar_sonido():
-    devices = AudioUtilities.GetSpeakers()
-    interface = devices.Activate(
-        IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
-    volume = ctypes.cast(interface, ctypes.POINTER(IAudioEndpointVolume))
-    volume.SetMasterVolumeLevelScalar(0.0, None)  # Volumen al 0%
+    """Silenciar el audio del sistema usando pycaw"""
+    try:
+        # Obtener el dispositivo de audio predeterminado
+        devices = AudioUtilities.GetSpeakers()
+        interface = devices.Activate(
+            IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+        volume = cast(interface, POINTER(IAudioEndpointVolume))
+
+        # Obtener el estado actual del mute
+        current_mute = volume.GetMute()
+        # Alternar el estado del mute
+        new_mute_state = 1 if current_mute == 0 else 0
+        volume.SetMute(new_mute_state, None)
+
+        if new_mute_state == 1:
+            talk("Audio silenciado")
+        else:
+            talk("Audio reactivado")
+
+    except Exception as e:
+        print(f"Error controlando mute: {e}")
+        # Fallback: usar comandos del sistema
+        try:
+            import os
+            if platform.system() == "Windows":
+                # Usar nircmd para mute si está disponible
+                result = os.system("nircmd.exe mutesysvolume 2 >nul 2>&1")
+                if result == 0:
+                    talk("Audio silenciado con nircmd")
+                    return
+                # Usar PowerShell como alternativa
+                ps_command = 'powershell -c "(New-Object -ComObject WScript.Shell).SendKeys([char]173)"'
+                os.system(ps_command)
+                talk("Audio silenciado")
+        except:
+            talk("No pude controlar el audio del sistema")
 
 def abrir_vscode():
     subprocess.run("code", shell=True)
