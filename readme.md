@@ -860,7 +860,7 @@ Usuario: /mcp {"tool": "explain_concept", "arguments": {"concept": "listas"}}
 # O específicamente
 /mcp tools
 ```
- .\venv\Scripts\Activate.ps1
+
 
 
 
