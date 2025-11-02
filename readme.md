@@ -137,20 +137,26 @@ Escribe en el chat:
 ```
 /mcp help
 ```
-Verás una lista completa de todas las herramientas disponibles.
+Verás una lista completa de todas las herramientas disponibles con ejemplos de sintaxis nueva y antigua.
 
 ### Herramientas Disponibles
 
 #### 1. 🔍 Análisis de Código
 **Propósito**: Analizar y mejorar código Python.
 
-**Uso**:
+**Sintaxis Antigua (JSON)**:
 ```
 /mcp {"tool": "code_analysis", "arguments": {"code": "tu código aquí"}}
 ```
 
-**Ejemplo**:
+**🆕 Sintaxis Nueva (Natural)**:
 ```
+/mcp analizar def suma(a, b): return a + b
+```
+
+**Ejemplos**:
+```
+/mcp analizar def suma(a, b):\n    return a + b
 /mcp {"tool": "code_analysis", "arguments": {"code": "def suma(a, b):\n    return a + b"}}
 ```
 
@@ -163,16 +169,21 @@ Verás una lista completa de todas las herramientas disponibles.
 #### 2. 📖 Explicar Conceptos
 **Propósito**: Aprender sobre temas de programación.
 
-**Uso**:
+**Sintaxis Antigua (JSON)**:
 ```
 /mcp {"tool": "explain_concept", "arguments": {"concept": "tema a explicar"}}
 ```
 
+**🆕 Sintaxis Nueva (Natural)**:
+```
+/mcp explicar listas
+/mcp explicar bucles en Python
+```
+
 **Ejemplos**:
 ```
-/mcp {"tool": "explain_concept", "arguments": {"concept": "bucles en Python"}}
+/mcp explicar funciones lambda
 /mcp {"tool": "explain_concept", "arguments": {"concept": "listas"}}
-/mcp {"tool": "explain_concept", "arguments": {"concept": "funciones lambda"}}
 ```
 
 **Resultado**:
@@ -184,13 +195,20 @@ Verás una lista completa de todas las herramientas disponibles.
 #### 3. 🐛 Debuggear Código
 **Propósito**: Encontrar y solucionar errores en el código.
 
-**Uso**:
+**Sintaxis Antigua (JSON)**:
 ```
 /mcp {"tool": "debug_code", "arguments": {"code": "tu código", "error": "mensaje de error"}}
 ```
 
-**Ejemplo**:
+**🆕 Sintaxis Nueva (Natural)**:
 ```
+/mcp debug print(10/0): ZeroDivisionError
+/mcp debug def funcion(): pass
+```
+
+**Ejemplos**:
+```
+/mcp debug edad = input("edad: "); if edad > 18: print("mayor")
 /mcp {"tool": "debug_code", "arguments": {"code": "print(10/0)", "error": "ZeroDivisionError"}}
 ```
 
@@ -209,14 +227,24 @@ Verás una lista completa de todas las herramientas disponibles.
        print("Hola " + nombre)
        return True
    ```
-2. Escribe en el chat:
+2. **🆕 Sintaxis Nueva**: Escribe en el chat:
+   ```
+   /mcp analizar def saludar(nombre):
+       print("Hola " + nombre)
+       return True
+   ```
+3. **Sintaxis Antigua**: O usa JSON:
    ```
    /mcp {"tool": "code_analysis", "arguments": {"code": "def saludar(nombre):\n    print(\"Hola \" + nombre)\n    return True"}}
    ```
-3. Presiona Enter y obtendrás un análisis completo con sugerencias de mejora.
+4. Presiona Enter y obtendrás un análisis completo con sugerencias de mejora.
 
 #### Ejemplo 2: Aprender sobre Listas
-Escribe en el chat:
+**🆕 Sintaxis Nueva**:
+```
+/mcp explicar listas
+```
+**Sintaxis Antigua**:
 ```
 /mcp {"tool": "explain_concept", "arguments": {"concept": "listas en Python"}}
 ```
@@ -229,16 +257,23 @@ Obtendrás una explicación completa sobre el uso de listas en Python.
    if edad > 18:
        print("Eres mayor de edad")
    ```
-2. Escribe en el chat:
+2. **🆕 Sintaxis Nueva**: Escribe en el chat:
+   ```
+   /mcp debug edad = input("¿Cuántos años tienes? ")
+   if edad > 18:
+       print("Eres mayor de edad"): TypeError: '>' not supported between instances of 'str' and 'int'
+   ```
+3. **Sintaxis Antigua**: O usa JSON:
    ```
    /mcp {"tool": "debug_code", "arguments": {"code": "edad = input(\"¿Cuántos años tienes? \")\nif edad > 18:\n    print(\"Eres mayor de edad\")", "error": "TypeError: '>' not supported between instances of 'str' and 'int'"}}
    ```
-3. Obtendrás la solución del error y explicación de su causa.
+4. Obtendrás la solución del error y explicación de su causa.
 
 ### Consejos para Usuarios Novatos
 
 #### 📋 Formato Correcto
-- Usa siempre comillas dobles `"` en el JSON
+- **Sintaxis Nueva**: Solo escribe comandos naturales como "explicar listas"
+- **Sintaxis Antigua**: Usa siempre comillas dobles `"` en el JSON
 - El código debe ir entre comillas con `\n` para saltos de línea
 - Copia y pega los ejemplos exactamente como están
 
@@ -247,16 +282,16 @@ No te preocupes, la aplicación indicará qué salió mal. Puedes intentarlo de 
 
 #### 📚 Para Aprender Programación
 Usa frecuentemente `explain_concept` con temas como:
-- "variables"
-- "condicionales if"
-- "bucles for"
-- "funciones"
-- "clases y objetos"
+- `/mcp explicar variables`
+- `/mcp explicar condicionales if`
+- `/mcp explicar bucles for`
+- `/mcp explicar funciones`
+- `/mcp explicar clases y objetos`
 
 #### 🐛 Para Resolver Problemas
 Cuando tu código no funcione:
-- Copia el código exacto
-- Copia el mensaje de error exacto
+- **Sintaxis Nueva**: `/mcp debug [tu código]: [mensaje de error]`
+- **Sintaxis Antigua**: Copia el código exacto y mensaje de error en JSON
 - Usa la herramienta `debug_code`
 
 ### Preguntas Frecuentes
@@ -278,14 +313,20 @@ Sí, todas las conversaciones se guardan automáticamente en el historial.
 ### 🎓 Ejercicios para Practicar
 
 **Nivel Principiante:**
-- Analiza: `print("Hola Mundo")`
-- Pregunta: "¿qué son las variables?"
-- Debuggea: `print("5" + 3)`
+- **Sintaxis Nueva**: `/mcp analizar print("Hola Mundo")`
+- **Sintaxis Antigua**: `/mcp {"tool": "code_analysis", "arguments": {"code": "print(\"Hola Mundo\")"}}`
+- **Sintaxis Nueva**: `/mcp explicar variables`
+- **Sintaxis Antigua**: `/mcp {"tool": "explain_concept", "arguments": {"concept": "variables"}}`
+- **Sintaxis Nueva**: `/mcp debug print("5" + 3)`
+- **Sintaxis Antigua**: `/mcp {"tool": "debug_code", "arguments": {"code": "print(\"5\" + 3)"}}`
 
 **Nivel Intermedio:**
-- Analiza una función que calcule el área de un círculo
-- Pregunta sobre "comprensión de listas"
-- Debuggea un bucle infinito
+- **Sintaxis Nueva**: `/mcp analizar def area_circulo(radio): return 3.14159 * radio ** 2`
+- **Sintaxis Antigua**: `/mcp {"tool": "code_analysis", "arguments": {"code": "def area_circulo(radio): return 3.14159 * radio ** 2"}}`
+- **Sintaxis Nueva**: `/mcp explicar comprensión de listas`
+- **Sintaxis Antigua**: `/mcp {"tool": "explain_concept", "arguments": {"concept": "comprensión de listas"}}`
+- **Sintaxis Nueva**: `/mcp debug while True: pass`
+- **Sintaxis Antigua**: `/mcp {"tool": "debug_code", "arguments": {"code": "while True: pass"}}`
 
 
 
@@ -299,7 +340,12 @@ Las Herramientas MCP (Model Context Protocol) permiten interactuar con la aplica
 ##### 1. 🔍 code_analysis - Análisis de Código
 **Descripción**: Analiza código Python utilizando primero la base de datos local.
 
-**Ejemplo de uso**:
+**🆕 Sintaxis Nueva**:
+```bash
+/mcp analizar def suma(a, b): return a + b
+```
+
+**Sintaxis Antigua (JSON)**:
 ```bash
 /mcp {"tool": "code_analysis", "arguments": {"code": "def suma(a, b):\n    return a + b"}}
 ```
@@ -317,7 +363,12 @@ Esta función suma dos números. Mejora: añadir validación de tipos. Posible e
 ##### 2. 📖 explain_concept - Explicar Conceptos
 **Descripción**: Explica conceptos de programación utilizando la base de datos local.
 
-**Ejemplo de uso**:
+**🆕 Sintaxis Nueva**:
+```bash
+/mcp explicar listas en Python
+```
+
+**Sintaxis Antigua (JSON)**:
 ```bash
 /mcp {"tool": "explain_concept", "arguments": {"concept": "listas en Python"}}
 ```
@@ -338,7 +389,12 @@ Las listas en Python son colecciones ordenadas y mutables de elementos...
 ##### 3. 🐛 debug_code - Debuggear Código
 **Descripción**: Encuentra y soluciona errores en código Python.
 
-**Ejemplo de uso**:
+**🆕 Sintaxis Nueva**:
+```bash
+/mcp debug print(10/0): ZeroDivisionError
+```
+
+**Sintaxis Antigua (JSON)**:
 ```bash
 /mcp {"tool": "debug_code", "arguments": {"code": "print(10/0)", "error": "ZeroDivisionError"}}
 ```
@@ -356,7 +412,12 @@ Error: división por cero. Solución: validar que el divisor no sea cero antes d
 ##### 4. 🔎 search_knowledge - Búsqueda de Conocimiento
 **Descripción**: Búsqueda completa en toda la base de conocimientos.
 
-**Ejemplo de uso**:
+**🆕 Sintaxis Nueva**:
+```bash
+/mcp conocimiento decoradores
+```
+
+**Sintaxis Antigua (JSON)**:
 ```bash
 /mcp {"tool": "search_knowledge", "arguments": {"query": "decoradores"}}
 ```
@@ -377,7 +438,12 @@ Los decoradores se usan con @ y pueden añadir funcionalidad como logging...
 ##### 5. 📄 read_file - Leer Archivos
 **Descripción**: Lee el contenido de archivos locales de forma segura.
 
-**Ejemplo de uso**:
+**🆕 Sintaxis Nueva**:
+```bash
+/mcp leer C:\Users\RuXx\Desktop\mi_script.py
+```
+
+**Sintaxis Antigua (JSON)**:
 ```bash
 /mcp {"tool": "read_file", "arguments": {"path": "C:\\Users\\RuXx\\Desktop\\mi_script.py"}}
 ```
@@ -395,7 +461,12 @@ def hola_mundo():
 ##### 6. 📂 list_directory - Listar Directorios
 **Descripción**: Lista archivos y directorios de una ruta específica.
 
-**Ejemplo de uso**:
+**🆕 Sintaxis Nueva**:
+```bash
+/mcp listar C:\Users\RuXx\Desktop
+```
+
+**Sintaxis Antigua (JSON)**:
 ```bash
 /mcp {"tool": "list_directory", "arguments": {"path": "C:\\Users\\RuXx\\Desktop"}}
 ```
@@ -417,7 +488,12 @@ def hola_mundo():
 ##### 7. 🔍 search_files - Buscar Archivos
 **Descripción**: Busca archivos por nombre en un directorio.
 
-**Ejemplo de uso**:
+**🆕 Sintaxis Nueva**:
+```bash
+/mcp buscar .py en C:\Users\RuXx\Desktop
+```
+
+**Sintaxis Antigua (JSON)**:
 ```bash
 /mcp {"tool": "search_files", "arguments": {"query": ".py", "path": "C:\\Users\\RuXx\\Desktop"}}
 ```
@@ -435,7 +511,12 @@ def hola_mundo():
 ##### 8. 📊 file_info - Información de Archivo
 **Descripción**: Obtiene información detallada de un archivo o directorio.
 
-**Ejemplo de uso**:
+**🆕 Sintaxis Nueva**:
+```bash
+/mcp info C:\Users\RuXx\Desktop\mi_script.py
+```
+
+**Sintaxis Antigua (JSON)**:
 ```bash
 /mcp {"tool": "file_info", "arguments": {"path": "C:\\Users\\RuXx\\Desktop\\mi_script.py"}}
 ```
@@ -455,7 +536,12 @@ def hola_mundo():
 ##### 9. 🚀 move_file - Mover Archivos
 **Descripción**: Mueve o renombra archivos y directorios.
 
-**Ejemplo de uso**:
+**🆕 Sintaxis Nueva**:
+```bash
+/mcp mover C:\Users\RuXx\Downloads\archivo.txt C:\Users\RuXx\Documents\archivo.txt
+```
+
+**Sintaxis Antigua (JSON)**:
 ```bash
 /mcp {"tool": "move_file", "arguments": {"source": "C:\\Users\\RuXx\\Downloads\\archivo.txt", "destination": "C:\\Users\\RuXx\\Documents\\archivo.txt"}}
 ```
@@ -487,62 +573,65 @@ Usuario: /mcp {"tool": "explain_concept", "arguments": {"concept": "listas"}}
 
 **Para Máxima Velocidad:**
 ```bash
-# Usa herramientas filesystem para operaciones rápidas
-/mcp {"tool": "list_directory", "arguments": {"path": "."}}
-/mcp {"tool": "read_file", "arguments": {"path": "script.py"}}
+# 🆕 Sintaxis Nueva - herramientas filesystem para operaciones rápidas
+/mcp listar .
+/mcp leer script.py
 ```
 
 **Para Aprendizaje:**
 ```bash
-# Consulta conceptos básicos
-/mcp {"tool": "explain_concept", "arguments": {"concept": "funciones"}}
-/mcp {"tool": "explain_concept", "arguments": {"concept": "bucles"}}
+# 🆕 Sintaxis Nueva - consulta conceptos básicos
+/mcp explicar funciones
+/mcp explicar bucles
 ```
 
 **Para Debugging:**
 ```bash
-# Analiza y corrige código
-/mcp {"tool": "code_analysis", "arguments": {"code": "tu_codigo_aqui"}}
-/mcp {"tool": "debug_code", "arguments": {"code": "codigo_con_error", "error": "mensaje_error"}}
+# 🆕 Sintaxis Nueva - analiza y corrige código
+/mcp analizar def funcion(): pass
+/mcp debug print(10/0): ZeroDivisionError
 ```
 
 **Para Gestión de Archivos:**
 ```bash
-# Organiza tus archivos
-/mcp {"tool": "search_files", "arguments": {"query": ".pdf", "path": "C:\\Users\\RuXx\\Downloads"}}
-/mcp {"tool": "move_file", "arguments": {"source": "C:\\Users\\RuXx\\Downloads\\doc.pdf", "destination": "C:\\Users\\RuXx\\Documents\\doc.pdf"}}
+# 🆕 Sintaxis Nueva - organiza tus archivos
+/mcp buscar .pdf en C:\Users\RuXx\Downloads
+/mcp mover C:\Users\RuXx\Downloads\doc.pdf C:\Users\RuXx\Documents\doc.pdf
 ```
 
 #### Ejemplos Prácticos Comunes
 
 **Mover todos los PDFs de Descargas a Documentos:**
 ```bash
+# 🆕 Sintaxis Nueva
 # 1. Buscar PDFs
-/mcp {"tool": "search_files", "arguments": {"query": ".pdf", "path": "C:\\Users\\RuXx\\Downloads"}}
+/mcp buscar .pdf en C:\Users\RuXx\Downloads
 
 # 2. Mover cada archivo (repetir por cada PDF)
-/mcp {"tool": "move_file", "arguments": {"source": "C:\\Users\\RuXx\\Downloads\\documento1.pdf", "destination": "C:\\Users\\RuXx\\Documents\\documento1.pdf"}}
+/mcp mover C:\Users\RuXx\Downloads\documento1.pdf C:\Users\RuXx\Documents\documento1.pdf
 ```
 
 **Analizar y Mejorar un Script:**
 ```bash
+# 🆕 Sintaxis Nueva
 # 1. Leer el script
-/mcp {"tool": "read_file", "arguments": {"path": "C:\\Users\\RuXx\\Desktop\\mi_script.py"}}
+/mcp leer C:\Users\RuXx\Desktop\mi_script.py
 
 # 2. Analizar el código
-/mcp {"tool": "code_analysis", "arguments": {"code": "contenido_del_script"}}
+/mcp analizar [contenido_del_script]
 
 # 3. Debuggear si hay errores
-/mcp {"tool": "debug_code", "arguments": {"code": "codigo_con_error", "error": "Error específico"}}
+/mcp debug [codigo_con_error]: [Error específico]
 ```
 
 **Aprender sobre un Concepto Nuevo:**
 ```bash
+# 🆕 Sintaxis Nueva
 # 1. Buscar explicaciones existentes
-/mcp {"tool": "search_knowledge", "arguments": {"query": "decoradores"}}
+/mcp conocimiento decoradores
 
 # 2. Obtener explicación detallada
-/mcp {"tool": "explain_concept", "arguments": {"concept": "decoradores en Python"}}
+/mcp explicar decoradores en Python
 ```
 
 #### Solución de Problemas

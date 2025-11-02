@@ -674,6 +674,95 @@ class MCPDatabaseServer:
         """Listar herramientas disponibles"""
         return list(self.tools.values())
 
+async def parse_natural_command(command: str) -> dict:
+    """Parsear comandos naturales en español a formato MCP"""
+    command = command.lower().strip()
+
+    # 📁 FILESYSTEM COMMANDS
+    if command.startswith("listar"):
+        # "listar ." o "listar /ruta"
+        parts = command.split()
+        if len(parts) >= 2:
+            path = parts[1] if len(parts) > 1 else "."
+            return {"tool": "list_directory", "arguments": {"path": path}}
+        return {"tool": "list_directory", "arguments": {"path": "."}}
+
+    elif command.startswith("leer"):
+        # "leer archivo.py"
+        parts = command.split()
+        if len(parts) >= 2:
+            path = " ".join(parts[1:])  # Permitir espacios en nombres de archivo
+            return {"tool": "read_file", "arguments": {"path": path}}
+
+    elif command.startswith("buscar"):
+        # "buscar 'palabra' en /ruta" o "buscar palabra"
+        parts = command.split()
+        if len(parts) >= 2:
+            # Extraer término de búsqueda (puede estar entre comillas)
+            query = parts[1]
+            if query.startswith('"') and query.endswith('"'):
+                query = query[1:-1]
+            elif query.startswith("'") and query.endswith("'"):
+                query = query[1:-1]
+
+            # Verificar si hay "en ruta"
+            path = "."
+            if "en" in parts and len(parts) > parts.index("en") + 1:
+                path = parts[parts.index("en") + 1]
+
+            return {"tool": "search_files", "arguments": {"query": query, "path": path}}
+
+    elif command.startswith("info"):
+        # "info archivo.txt"
+        parts = command.split()
+        if len(parts) >= 2:
+            path = " ".join(parts[1:])
+            return {"tool": "file_info", "arguments": {"path": path}}
+
+    elif command.startswith("mover"):
+        # "mover origen.txt destino.txt"
+        parts = command.split()
+        if len(parts) >= 3:
+            source = parts[1]
+            destination = " ".join(parts[2:])
+            return {"tool": "move_file", "arguments": {"source": source, "destination": destination}}
+
+    # 📅 CALENDAR COMMANDS
+    elif command.startswith("calendario") or command.startswith("tareas"):
+        # "calendario tareas hoy" o "tareas mañana"
+        query = command.replace("calendario", "").replace("tareas", "").strip()
+        if not query:
+            query = "tareas hoy"
+        return {"tool": "calendar_query", "arguments": {"query": query}}
+
+    # 🗄️ DATABASE COMMANDS
+    elif command.startswith("analizar"):
+        # "analizar def funcion(): ..."
+        code = command.replace("analizar", "").strip()
+        return {"tool": "code_analysis", "arguments": {"code": code}}
+
+    elif command.startswith("explicar"):
+        # "explicar listas"
+        concept = command.replace("explicar", "").strip()
+        return {"tool": "explain_concept", "arguments": {"concept": concept}}
+
+    elif command.startswith("debug"):
+        # "debug def funcion(): ..." o "debug error: mensaje"
+        content = command.replace("debug", "").strip()
+        if ":" in content:
+            code, error = content.split(":", 1)
+            return {"tool": "debug_code", "arguments": {"code": code.strip(), "error": error.strip()}}
+        else:
+            return {"tool": "debug_code", "arguments": {"code": content}}
+
+    # 🔍 GENERAL SEARCH
+    elif command.startswith("conocimiento") or command.startswith("saber"):
+        # "conocimiento python" o "saber sobre listas"
+        query = command.replace("conocimiento", "").replace("saber", "").replace("sobre", "").strip()
+        return {"tool": "search_knowledge", "arguments": {"query": query}}
+
+    # No reconocido
+    return None
 def convert_single_quotes_to_double(json_str):
     """Convierte comillas simples a dobles para JSON válido"""
     pattern = r"'([^']*)'"
@@ -687,7 +776,7 @@ def convert_single_quotes_to_double(json_str):
     return result
 
 async def handle_mcp_command(command: str) -> str:
-    """Manejar comandos MCP - AHORA CON FILESYSTEM"""
+    """Manejar comandos MCP - AHORA CON FILESYSTEM Y COMANDOS NATURALES"""
     try:
         if command == "help" or command == "tools":
             tools = mcp_server.list_tools()
@@ -712,14 +801,44 @@ async def handle_mcp_command(command: str) -> str:
 ### 📁 **Filesystem**
 {fs_list}
 
-**📝 Ejemplos:**
-- `{{"tool": "calendar_query", "arguments": {{"query": "qué tareas tengo hoy"}}}}`
-- `{{"tool": "read_file", "arguments": {{"path": "/ruta/archivo.py"}}}}`
-- `{{"tool": "list_directory", "arguments": {{"path": "/home/usuario"}}}}`
-- `{{"tool": "move_file", "arguments": {{"source": "C:\\\\Users\\\\RuXx\\\\Downloads\\\\archivo.txt", "destination": "C:\\\\Users\\\\RuXx\\\\Documents\\\\archivo.txt"}}}}`
-- `{{"tool": "explain_concept", "arguments": {{"concept": "listas"}}}}`
+**📝 Sintaxis Antigua (JSON):**
+- `/mcp {{"tool": "list_directory", "arguments": {{"path": "."}}}}`
+
+**🆕 Sintaxis Nueva (Natural):**
+- `/mcp listar .`
+- `/mcp leer archivo.py`
+- `/mcp buscar "palabra" en /ruta`
+- `/mcp info archivo.txt`
+- `/mcp mover origen.txt destino.txt`
+- `/mcp calendario tareas hoy`
+
+**📋 Comandos Naturales Disponibles:**
+- `listar [ruta]` → list_directory
+- `leer [archivo]` → read_file
+- `buscar "término" [en ruta]` → search_files
+- `info [archivo]` → file_info
+- `mover [origen] [destino]` → move_file
+- `calendario [consulta]` → calendar_query
+- `analizar [código]` → code_analysis
+- `explicar [concepto]` → explain_concept
+- `debug [código]` → debug_code
+- `buscar [término]` → search_knowledge
 """
 
+        # 🆕 NUEVO: Parsear comandos naturales en español
+        parsed_command = await parse_natural_command(command.strip())
+        if parsed_command:
+            tool_name = parsed_command["tool"]
+            arguments = parsed_command["arguments"]
+
+            # Ejecutar herramienta MEJORADA
+            response = await asyncio.wait_for(
+                mcp_server.call_tool(tool_name, arguments),
+                timeout=45.0
+            )
+            return response
+
+        # Fallback: Sintaxis JSON antigua
         # Convertir comillas simples a dobles
         command_clean = command.strip()
         if "'" in command_clean and '"' not in command_clean:
@@ -741,7 +860,7 @@ async def handle_mcp_command(command: str) -> str:
             return response
 
         except json.JSONDecodeError as e:
-            return f"❌ Error en formato JSON. Usa: /mcp {{\"tool\": \"nombre\", \"arguments\": {{\"param\": \"valor\"}}}}"
+            return f"❌ Error en formato. Usa sintaxis natural o JSON válido.\n\nEjemplos:\n- `/mcp listar .`\n- `/mcp {{\"tool\": \"list_directory\", \"arguments\": {{\"path\": \".\"}}}}`"
 
     except Exception as e:
         logger.error(f"Error en comando MCP: {e}")
