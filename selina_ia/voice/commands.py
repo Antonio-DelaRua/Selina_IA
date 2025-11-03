@@ -256,7 +256,7 @@ def reproduce_musica(rec=None):
     if not reproduccion_pendiente:
         # Primera parte: preguntar por la canción
         reproduccion_pendiente = True
-        talk("¿dime?")
+        print("¿dime?")
         return
 
     # Segunda parte: recibir el título
@@ -295,7 +295,7 @@ def activar_alarma(rec=None):
     if not alarma_pendiente:
         # Primera parte: preguntar por la hora
         alarma_pendiente = True
-        talk("¿A qué hora quieres la alarma?")
+        print("¿A qué hora quieres la alarma?")
         return
 
     # Segunda parte: recibir la hora
@@ -852,7 +852,30 @@ def procesar_comando(rec):
     global confirmacion_pendiente, reproduccion_pendiente, alarma_activa, alarma_pendiente, asistente_activo
 
     rec_lower = rec.lower()
-
+    
+    # Manejar confirmación
+    if confirmacion_pendiente:
+        rec = rec.lower().strip()
+        if rec in ["sí", "si", "sí.", "si.", "sí por favor", "sí claro"]:
+            if confirmacion_pendiente == "apagar":
+                talk("Apagando el sistema")
+                if platform.system() == "Windows":
+                    subprocess.run("shutdown /s /t 0", shell=True)
+                else:
+                    subprocess.run("shutdown -h now", shell=True)
+            elif confirmacion_pendiente == "reiniciar":
+                talk("Reiniciando el sistema")
+                if platform.system() == "Windows":
+                    subprocess.run("shutdown /r /t 0", shell=True)
+                else:
+                    subprocess.run("shutdown -r now", shell=True)
+            confirmacion_pendiente = None
+            return
+        elif rec in ["no", "no gracias", "no quiero"]:
+            talk("Operación cancelada")
+            confirmacion_pendiente = None
+            return
+    
     # Comandos de calendario primero (más específicos)
     if "tarea" in rec_lower or "tareas" in rec_lower:
         if "qué" in rec_lower or "que" in rec_lower:
@@ -902,27 +925,7 @@ def procesar_comando(rec):
         reproduce_musica(rec)
         return
 
-    # Manejar confirmación primero
-    if confirmacion_pendiente:
-        rec = rec.lower().strip()
-        if rec in ["sí", "si", "sí.", "si.", "sí por favor", "sí claro"]:
-            if confirmacion_pendiente == "apagar":
-                talk("Apagando el sistema")
-                if platform.system() == "Windows":
-                    subprocess.run("shutdown /s /t 0", shell=True)
-                else:
-                    subprocess.run("shutdown -h now", shell=True)
-            elif confirmacion_pendiente == "reiniciar":
-                talk("Reiniciando el sistema")
-                if platform.system() == "Windows":
-                    subprocess.run("shutdown /r /t 0", shell=True)
-                else:
-                    subprocess.run("shutdown -r now", shell=True)
-        elif rec in ["no", "no gracias", "no quiero"]:
-            talk("Operación cancelada")
-
-        confirmacion_pendiente = None  # Resetear confirmación
-        return  # Salir después de manejar la confirmación
+    # Confirmación ya manejada arriba
 
     # Función para determinar si "abre" es para app o sitio web
     def procesar_abre(rec):
@@ -982,7 +985,8 @@ def procesar_comando(rec):
     # Buscar coincidencias en comandos (ordenar por longitud para priorizar frases más específicas)
     comandos_ordenados = sorted(comandos.items(), key=lambda x: len(x[0]), reverse=True)
     for clave, funcion in comandos_ordenados:
-        if clave in rec:
+        # Usar word boundaries para evitar matches parciales
+        if re.search(r'\b' + re.escape(clave) + r'\b', rec_lower):
             funcion(rec)
             return
 
