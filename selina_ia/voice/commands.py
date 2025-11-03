@@ -2,6 +2,7 @@
 Procesamiento de comandos de voz - refactorizado de bot.py
 """
 import webbrowser
+import numpy as np
 import pyautogui as at
 import time
 import socket
