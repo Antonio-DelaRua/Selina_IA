@@ -848,6 +848,26 @@ def complete_task_voice(title_part):
         print(f"🎤 Error en voz: {error_msg}")
         return error_msg
 
+def decir_hora():
+    """Decir la hora actual"""
+    now = datetime.datetime.now()
+    hora_actual = now.strftime("%H:%M")
+    talk(f"Son las {hora_actual}")
+
+def decir_fecha():
+    """Decir la fecha actual"""
+    now = datetime.datetime.now()
+    fecha_actual = now.strftime("%d de %B de %Y")
+    # Traducir el mes al español
+    meses = {
+        "January": "enero", "February": "febrero", "March": "marzo", "April": "abril",
+        "May": "mayo", "June": "junio", "July": "julio", "August": "agosto",
+        "September": "septiembre", "October": "octubre", "November": "noviembre", "December": "diciembre"
+    }
+    for eng, esp in meses.items():
+        fecha_actual = fecha_actual.replace(eng, esp)
+    talk(f"Hoy es {fecha_actual}")
+
 def procesar_comando(rec):
     global confirmacion_pendiente, reproduccion_pendiente, alarma_activa, alarma_pendiente, asistente_activo
 
@@ -979,6 +999,11 @@ def procesar_comando(rec):
         "apagar": lambda x: confirmar_accion("apagar"),
         "reiniciar": lambda x: confirmar_accion("reiniciar"),
         "configuración": lambda x: abrir_configuracion(),
+        "qué hora es": lambda x: decir_hora(),
+        "hora es": lambda x: decir_hora(),
+        "qué día es hoy": lambda x: decir_fecha(),
+        "día es hoy": lambda x: decir_fecha(),
+        "fecha de hoy": lambda x: decir_fecha(),
         "salir": lambda x: [talk("bye bye"), detener_asistente()],
     }
 
