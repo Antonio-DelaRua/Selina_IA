@@ -18,7 +18,11 @@ from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 import ctypes
 import threading
 import speech_recognition as sr
-import pyttsx3, pywhatkit, wikipedia, keyboard
+import pywhatkit, wikipedia, keyboard
+from gtts import gTTS
+import io
+import tempfile
+import os
 from config.settings import (
     SITES, CANCIONES, FILES, CONTACTS, ALARM_SOUND,
     VOICE_ENERGY_THRESHOLD, VOICE_PAUSE_THRESHOLD, VOICE_PHRASE_TIME_LIMIT, VOICE_NON_SPEAKING_DURATION
@@ -33,7 +37,6 @@ listener.dynamic_energy_threshold = True  # Umbral dinámico de energía
 listener.pause_threshold = VOICE_PAUSE_THRESHOLD  # Tiempo de pausa entre frases
 listener.phrase_time_limit = VOICE_PHRASE_TIME_LIMIT  # Límite máximo de frase
 listener.non_speaking_duration = VOICE_NON_SPEAKING_DURATION  # Silencios no considerados como pausas
-engine = pyttsx3.init()
 
 # Variable global
 ultimo_comando = None
@@ -163,15 +166,40 @@ def cambiar_volumen(accion):
         talk("No pude ajustar el volumen del sistema")
 
 def talk(text):
-    """Función para que el asistente hable bloqueando la escucha"""
+    """Función para que el asistente hable bloqueando la escucha usando gTTS + pygame"""
     global ocupado, estado_asistente
     with lock:
         ocupado = True
 
     print(f"🗣️ {text}")
     estado_asistente.set(f"🗣️ {text}")
-    engine.say(text)
-    engine.runAndWait()
+
+    try:
+        # Generar audio con gTTS
+        tts = gTTS(text=text, lang='es', slow=False)
+        # Crear archivo temporal
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.mp3') as temp_file:
+            temp_filename = temp_file.name
+            tts.save(temp_filename)
+
+        # Reproducir con pygame
+        mixer.music.load(temp_filename)
+        mixer.music.play()
+
+        # Esperar a que termine la reproducción
+        while mixer.music.get_busy():
+            time.sleep(0.1)
+
+        # Limpiar archivo temporal
+        try:
+            os.unlink(temp_filename)
+        except:
+            pass
+
+    except Exception as e:
+        print(f"Error en TTS: {e}")
+        # Fallback: solo imprimir si falla
+        pass
 
     # Pequeña pausa para asegurar que el audio termine
     time.sleep(0.1)
